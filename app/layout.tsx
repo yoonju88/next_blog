@@ -21,12 +21,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.className} antialiased`}
+        className={`${inter.className} antialiased bg-background`}
       >
         <AuthProvider>
           <Providers>
             <Nav />
-            <main className='container mx-auto min-h-screen relative flex items-center justify-center'>
+            <main className='container mx-auto min-h-screen relative flex items-center justify-center '>
               {children}
               <Toaster />
             </main>

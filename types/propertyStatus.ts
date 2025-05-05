@@ -1,0 +1,1 @@
+export type PropertyStatus = "Awailable" | "Sold Out" | "Limited edition" 

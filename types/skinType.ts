@@ -1,0 +1,1 @@
+export type SkinType = "Oily Skin" | "Dry Skin" | "Combination Skin" | "Sensitive Skin" | "Normal Skin"

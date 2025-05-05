@@ -1,8 +1,42 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { ChevronRight, MoreHorizontal } from "lucide-react"
+import Link from "next/link"
 
 import { cn } from "@/lib/utils"
+
+interface BreadcrumbItem {
+  href?: string;
+  label: string;
+}
+interface BreadcrumbsProps {
+  items: BreadcrumbItem[]
+}
+//React.FC<Props>를 사용해 함수형 컴포넌트 타입을 명확하게 설정.
+const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
+  return (
+    <Breadcrumb>
+      <BreadcrumbList>
+        {items.map((item, i) => (
+          <React.Fragment key={item.label}>
+            <BreadcrumbItem>
+              {!!item.href ?
+                <Link href={item.href}>
+                  {item.label}
+                </Link> :
+                <BreadcrumbPage>
+                  {item.label}
+                </BreadcrumbPage>
+              }
+            </BreadcrumbItem>
+            {i < items.length - 1 && <BreadcrumbSeparator />}
+          </React.Fragment>
+        ))}
+      </BreadcrumbList>
+    </Breadcrumb>
+  )
+}
+Breadcrumbs.displayName = "Breadcrumbs"
 
 function Breadcrumb({ ...props }: React.ComponentProps<"nav">) {
   return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />
@@ -100,6 +134,7 @@ function BreadcrumbEllipsis({
 
 export {
   Breadcrumb,
+  Breadcrumbs,
   BreadcrumbList,
   BreadcrumbItem,
   BreadcrumbLink,

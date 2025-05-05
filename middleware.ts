@@ -54,21 +54,23 @@ export async function middleware(request: NextRequest) {
         )
     }
 
-    // //관리자가 아닌데, /admin-dashboard 페이지에 접근하려고 한다면 (홈페이지)로 리다이렉트
-    // if (!decodedToken.admin && pathname.startsWith("/admin-dashboard")) {
-    //     return NextResponse.redirect(new URL("/", request.url))
-    // }
+    //관리자가 아닌데, /admin-dashboard 페이지에 접근하려고 한다면 (홈페이지)로 리다이렉트
+    if (!decodedToken.admin && pathname.startsWith("/admin-dashboard")) {
+        return NextResponse.redirect(new URL("/", request.url))
+    }
 
-    // //사용자가 관리자? 요청한 URL 경로가 /account/my-favorites로 시작하면 홈(/)으로 리다이렉트
-    // if (decodedToken.admin && pathname.startsWith("account/my-favorites")) {
-    //     return NextResponse.redirect(new URL("/", request.url))
-    // }
+    //사용자가 관리자? 요청한 URL 경로가 /account/my-favorites로 시작하면 홈(/)으로 리다이렉트
+    if (decodedToken.admin && pathname.startsWith("account/my-favorites")) {
+        return NextResponse.redirect(new URL("/", request.url))
+    }
 
     return NextResponse.next()
 }
 
 export const config = {
     matcher: [
+        "/admin-dashboard",
+        "/admin-dashboard/:path*",
         "/login",
         "/forgot-password",
         "/register",

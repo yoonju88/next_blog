@@ -1,6 +1,6 @@
 import { firestore, getTotalPages } from "@/firebase/server";
 import { Property } from "@/types/property";
-import { ProductStatus } from "@/types/propertyStatus";
+import { PropertyStatus } from "@/types/propertyStatus";
 import "server-only"
 
 type GetPropetyOptions = {

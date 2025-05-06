@@ -8,7 +8,7 @@ export type Property = {
     category: string;
     origin: string;
     manufacturer: string;
-    volumes: number;
+    volume: number;
     description: string;
     status: PropertyStatus;
     brand: string;
@@ -17,5 +17,6 @@ export type Property = {
     keyIngredients: string;
     skinType: SkinType;
     howToUse: string;
-    ExpireDate: Date | string;
+    expireDate: string;
+    stockQuantity: number;
 }

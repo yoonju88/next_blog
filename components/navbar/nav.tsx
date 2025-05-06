@@ -29,7 +29,7 @@ export default function Nav() {
         <header className="p-8 flex items-center justify-between">
             <h1 className='text-2xl text-primary font-bold'>
                 <Link href="/">
-                    Yoonju's Blog
+                    CosCorée
                 </Link>
             </h1>
             <nav className="flex space-x-6">

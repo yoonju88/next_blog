@@ -4,6 +4,7 @@ import { getProperties } from '@/data/product'
 import { EyeIcon, PencilIcon } from 'lucide-react';
 import Link from 'next/link';
 import numeral from "numeral";//npm install numeral , npm install @types/numeral
+import Image from 'next/image';
 
 export default async function PropertyTable({
     page = 1
@@ -27,9 +28,12 @@ export default async function PropertyTable({
             <Table className="mt-5 " >
                 <TableHeader>
                     <TableRow>
-                        <TableHead>Address</TableHead>
-                        <TableHead>Lasting Price</TableHead>
-                        <TableHead>Status </TableHead>
+                        <TableHead />
+                        <TableHead>Item Name</TableHead>
+                        <TableHead>Price</TableHead>
+                        <TableHead>Brand</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Stock quantity</TableHead>
                         <TableHead />
                     </TableRow>
                 </TableHeader>
@@ -37,10 +41,20 @@ export default async function PropertyTable({
                     {data.map(property => {
                         return (
                             <TableRow key={property.id}>
+                                <TableCell>
+                                    <Image
+                                        src="#"
+                                        alt='item visual'
+                                        className="w-fit bg-accent"
+                                    />
+                                </TableCell>
                                 <TableCell>{property.name}</TableCell>
                                 <TableCell>€ {numeral(property.price).format("0,0")}</TableCell>
                                 <TableCell>
                                     {property.brand}
+                                </TableCell>
+                                <TableCell>
+                                    {property.stockQuantity}
                                 </TableCell>
                                 <TableCell className="flex justify-end gap-1">
                                     <Button asChild variant="outline" size="sm">

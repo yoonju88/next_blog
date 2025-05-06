@@ -1,11 +1,12 @@
 import { PropertyStatus } from "./propertyStatus";
 import { SkinType } from "./skinType"
+import { CategoryType } from "./categoryType"
 
 export type Property = {
     id: string;
     name: string;
     price: number;
-    category: string;
+    category: CategoryType;
     origin: string;
     manufacturer: string;
     volume: number;

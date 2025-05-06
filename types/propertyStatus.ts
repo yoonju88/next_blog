@@ -1,1 +1,1 @@
-export type PropertyStatus = "Aailable" | "Sold Out" | "Limited edition" 
+export type PropertyStatus = "Available" | "Sold Out" | "Limited edition" 

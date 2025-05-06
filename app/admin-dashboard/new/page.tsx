@@ -1,6 +1,7 @@
 import { Breadcrumbs } from '@/components/ui/breadcrumb'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import React from 'react'
+import NewPropertyForm from './new-property-form'
 
 export default function NewProduct() {
     return (
@@ -23,7 +24,7 @@ export default function NewProduct() {
                     </CardTitle>
                 </CardHeader>
                 <CardContent>
-
+                    <NewPropertyForm />
                 </CardContent>
             </Card>
         </div >

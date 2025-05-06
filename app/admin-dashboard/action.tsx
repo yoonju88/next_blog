@@ -3,7 +3,7 @@
 import { auth, firestore } from "@/firebase/server";
 import { z } from "zod"
 
-export const saveProductImages = async ({
+export const savePropertyImages = async ({
     propertyId,
     images,
 }: {

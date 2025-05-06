@@ -25,7 +25,7 @@ export default async function AdminDashboard({
                 asChild
                 className="inline-flex pl-2 gap-2 mt-4"
             >
-                <Link href="/admin-dashboard/new">
+                <Link href="/admin-dashboard/new-property">
                     <PlusCircleIcon /> New Product
                 </Link>
             </Button>

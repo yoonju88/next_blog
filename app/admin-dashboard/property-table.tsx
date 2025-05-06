@@ -4,7 +4,7 @@ import { getProperties } from '@/data/product'
 import { EyeIcon, PencilIcon } from 'lucide-react';
 import Link from 'next/link';
 import numeral from "numeral";//npm install numeral , npm install @types/numeral
-import Image from 'next/image';
+
 
 export default async function PropertyTable({
     page = 1
@@ -19,21 +19,20 @@ export default async function PropertyTable({
     });
     return <>
         {!data && (
-            <h1 className=' text-center text-zinc-400 py-20 font-bold text-3xl'>
+            <h1 className='text-center text-zinc-400 py-20 font-bold text-3xl'>
                 You have no properties
             </h1>
         )}
 
         {!!data && (
-            <Table className="mt-5 " >
+            <Table className="mt-10 text-center w-full" >
                 <TableHeader>
                     <TableRow>
-                        <TableHead />
                         <TableHead>Item Name</TableHead>
                         <TableHead>Price</TableHead>
                         <TableHead>Brand</TableHead>
                         <TableHead>Status</TableHead>
-                        <TableHead>Stock quantity</TableHead>
+                        <TableHead>Stock Qty</TableHead>
                         <TableHead />
                     </TableRow>
                 </TableHeader>
@@ -41,17 +40,13 @@ export default async function PropertyTable({
                     {data.map(property => {
                         return (
                             <TableRow key={property.id}>
-                                <TableCell>
-                                    <Image
-                                        src="#"
-                                        alt='item visual'
-                                        className="w-fit bg-accent"
-                                    />
-                                </TableCell>
                                 <TableCell>{property.name}</TableCell>
                                 <TableCell>€ {numeral(property.price).format("0,0")}</TableCell>
                                 <TableCell>
                                     {property.brand}
+                                </TableCell>
+                                <TableCell>
+                                    {property.status}
                                 </TableCell>
                                 <TableCell>
                                     {property.stockQuantity}

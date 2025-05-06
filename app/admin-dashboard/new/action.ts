@@ -15,12 +15,12 @@ export const createProperty = async (
         price: number;
         category: string;
         origin: string;
-        manufacturer?: string;
+        manufacturer: string;
         volume: number;
         description: string;
         status: "Available" | "Sold Out" | "Limited edition";
-        ingredients?: string;
-        keyIngredients?: string;
+        ingredients: string;
+        keyIngredients: string;
         skinType: "Oily Skin" | "Dry Skin" | "Combination Skin" | "Sensitive Skin" | "Normal Skin";
         howToUse: string;
         expireDate: string;

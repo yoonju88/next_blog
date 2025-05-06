@@ -8,8 +8,8 @@ import { Badge } from "./ui/badge";
 import { MoveIcon, XIcon } from "lucide-react";
 
 export type ImageUpload = {
-    id: string;
-    url: string;
+    id?: string;
+    url?: string;
     file?: File;
 }
 
@@ -47,6 +47,7 @@ export default function MultiImageUpload({
         items.splice(result.destination.index, 0, reorderImages) // 새로운 위치에 이미지 추가
         onImagesChangeAction(items) // 변경되 이미지 목록 업데이트
     }
+    // 이미지 업로드 리스트에서 삭제
     const handleDelete = (id: string) => {
         const updatedImages = images.filter((image) => image.id !== id)
         onImagesChangeAction(updatedImages)

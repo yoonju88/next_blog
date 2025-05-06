@@ -13,11 +13,11 @@ export type Property = {
     description: string;
     status: PropertyStatus;
     brand: string;
-    images?: string[];
     ingredients: string;
     keyIngredients: string;
     skinType: SkinType;
     howToUse: string;
     expireDate: string;
     stockQuantity: number;
+    images: string[];
 }

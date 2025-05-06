@@ -9,8 +9,8 @@ import { AuthProvider } from "@/context/auth";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Yoonju's Blog and to do list",
-  description: "꾸준히 공부하장!!",
+  title: "Coscorée — The Essence of K-Beauty Trends",
+  description: "Glow up with the hottest Korean beauty trends",
 };
 
 export default function RootLayout({

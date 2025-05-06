@@ -84,13 +84,6 @@ export default async function PropertyTable({
                                                 <PencilIcon />
                                             </Link>
                                         </Button>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            className="mx-1"
-                                        >
-                                            <TrashIcon />
-                                        </Button>
                                     </div>
                                 </TableCell>
                             </TableRow>

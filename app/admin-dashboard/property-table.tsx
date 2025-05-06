@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
 import { Table, TableRow, TableHead, TableHeader, TableBody, TableCell, TableFooter } from '@/components/ui/table'
 import { getProperties } from '@/data/product'
-import { EyeIcon, PencilIcon } from 'lucide-react';
+import { EyeIcon, PencilIcon, TrashIcon, XIcon } from 'lucide-react';
 import Link from 'next/link';
 import numeral from "numeral";//npm install numeral , npm install @types/numeral
 import Image from 'next/image';
@@ -25,9 +25,8 @@ export default async function PropertyTable({
                 You have no properties
             </h1>
         )}
-
         {!!data && (
-            <Table className="mt-10 text-center w-full" >
+            <Table className="mt-10 text-center" >
                 <TableHeader>
                     <TableRow>
                         <TableHead>Product Image</TableHead>
@@ -81,9 +80,16 @@ export default async function PropertyTable({
                                             </Link>
                                         </Button>
                                         <Button asChild variant="outline" size="sm" className="mx-1">
-                                            <Link href={`/admin-dashboard/edit/${property.id}`}>
+                                            <Link href={`/admin-dashboard/edit-property/${property.id}`}>
                                                 <PencilIcon />
                                             </Link>
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="mx-1"
+                                        >
+                                            <TrashIcon />
                                         </Button>
                                     </div>
                                 </TableCell>

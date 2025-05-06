@@ -53,8 +53,8 @@ export default function PropertyForm({
     console.log("Submit Button Label:", submitButtonLabel);
     return <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmitAction)}>
-            <div className="grid grid-cols-2 gap-4">
-                <fieldset className="flex flex-col gap-2" disabled={form.formState.isSubmitting}>
+            <div className="grid grid-cols-2 gap-8">
+                <fieldset className="flex flex-col gap-4" disabled={form.formState.isSubmitting}>
                     <FormField
                         control={form.control}
                         name="name"

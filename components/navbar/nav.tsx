@@ -9,7 +9,7 @@ import { NavLinks } from '@/lib/links'
 
 export const links: NavLinks[] = [
     { href: '/', label: "home" },
-    { href: '/products', label: "Products" },
+    { href: '/property', label: "Products" },
     { href: '/blog', label: "blog" },
     { href: '/contact-us', label: "Contact" },
 ]

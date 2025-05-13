@@ -336,10 +336,13 @@ export default function PropertyForm({
                                 }}
                                 images={field.value}
                                 urlFormatter={(image) => {
-                                    if (!image.file) {
-                                        return `https://firebasestorage.googleapis.com/v0/b/fire-home-ff343.firebasestorage.app/o/${encodeURIComponent(image.url)}?alt=media`
-                                    }
-                                    return image.url
+                                    // 새로 업로드한 이미지라면 미리보기 URL 사용
+                                    if (image.file) return image.url;
+                                    // 서버에서 가져온 이미지라면 그대로 사용
+                                    if (image.url?.startsWith("http")) return image.url;
+                                    // 혹시 상대 경로라면 firebase storage URL로 변환
+                                    return `https://firebasestorage.googleapis.com/v0/b/yoonju-blog.firebasestorage.app/o/${encodeURIComponent(image.url ?? "")}?alt=media`;
+
                                 }}
                             />
                         </FormControl>

@@ -22,7 +22,7 @@ type Props = {
 export default function MultiImageUpload({
     images = [],
     onImagesChangeAction,
-    urlFormatter
+    urlFormatter,
 }: Props
 ) {
 
@@ -81,58 +81,62 @@ export default function MultiImageUpload({
                             {...provided.droppableProps}
                             ref={provided.innerRef}
                         >
-                            {images.map((image, index) => (
-                                <Draggable
-                                    key={image.id}
-                                    draggableId={image.id.toString()}
-                                    index={index}
-                                >
-                                    {(provided) => (
-                                        <div
-                                            {...provided.draggableProps}
-                                            {...provided.dragHandleProps}
-                                            ref={provided.innerRef}
-                                            className="relative p-2"
-                                        >
-                                            <div className="bg-gray-100 rounded-lg flex items-center overflow-hidden gap-4">
-                                                <div className="size-16 relative">
-                                                    <Image
-                                                        src={urlFormatter ? urlFormatter(image) : image.url}
-                                                        alt={`item image${index}`}
-                                                        fill
-                                                        className='object-cover'
-                                                    />
-                                                </div>
-                                                <div className="flex-grow">
-                                                    <p className="text-xm font-medium">
-                                                        Image {index + 1}
-                                                    </p>
-                                                    {index === 0 &&
-                                                        <Badge variant="primary">
-                                                            Main
-                                                        </Badge>
-                                                    }
-                                                </div>
-                                                <div className="flex items-center p-4">
-                                                    <button
-                                                        className="text-orange-500 p-2"
-                                                        onClick={() => handleDelete(image.id)}>
-                                                        <XIcon />
-                                                    </button>
-                                                    <div className="text-blue-400">
-                                                        <MoveIcon />
+                            {images.map((image, index) => {
+                                const formattedUrl = urlFormatter(image);
+                                console.log("🔍 Formatted image URL:", formattedUrl); // ✅ 요기!
+                                return (
+                                    < Draggable
+                                        key={image.id}
+                                        draggableId={image.id.toString()}
+                                        index={index}
+                                    >
+                                        {(provided) => (
+                                            <div
+                                                {...provided.draggableProps}
+                                                {...provided.dragHandleProps}
+                                                ref={provided.innerRef}
+                                                className="relative p-2"
+                                            >
+                                                <div className="bg-gray-100 rounded-lg flex items-center overflow-hidden gap-4">
+                                                    <div className="size-16 relative">
+                                                        <Image
+                                                            src={urlFormatter ? urlFormatter(image) : image.url}
+                                                            alt={`item image${index}`}
+                                                            fill
+                                                            className='object-cover'
+                                                        />
+                                                    </div>
+                                                    <div className="flex-grow">
+                                                        <p className="text-xm font-medium">
+                                                            Image {index + 1}
+                                                        </p>
+                                                        {index === 0 &&
+                                                            <Badge variant="primary">
+                                                                Main
+                                                            </Badge>
+                                                        }
+                                                    </div>
+                                                    <div className="flex items-center p-4">
+                                                        <button
+                                                            className="text-orange-500 p-2"
+                                                            onClick={() => handleDelete(image.id)}>
+                                                            <XIcon />
+                                                        </button>
+                                                        <div className="text-blue-400">
+                                                            <MoveIcon />
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    )}
-                                </Draggable>
-                            ))}
+                                        )}
+                                    </Draggable>
+                                )
+                            })}
                             {provided.placeholder}
                         </div>
                     )}
                 </Droppable>
             </DragDropContext>
-        </div>
+        </div >
     )
 }

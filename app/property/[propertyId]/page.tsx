@@ -95,7 +95,7 @@ export default async function Property({ params }: { params: Promise<{ propertyI
                         <div className="flex mt-10 mb-14">
                             <span className="title-font font-medium text-2xl text-foreground hover:text-primary transition-all duration-300">€ {numeral(property?.price).format("0,0")}</span>
                             <div className="flex space-x-4 ml-auto">
-                                <Button variant="outline"> Add to panier</Button>
+                                <Button variant="outline"> Add to Wish List</Button>
                                 <Button> Add to Cart</Button>
                             </div>
                         </div>

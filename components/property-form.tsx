@@ -71,6 +71,19 @@ export default function PropertyForm({
                     />
                     <FormField
                         control={form.control}
+                        name="subTitle"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Sub Title</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
                         name="brand"
                         render={({ field }) => (
                             <FormItem>
@@ -243,7 +256,7 @@ export default function PropertyForm({
                         )}
                     />
                 </fieldset>
-                <fieldset className="flex flex-col gap-2" disabled={form.formState.isSubmitting}>
+                <fieldset className="flex flex-col gap-4" disabled={form.formState.isSubmitting}>
                     <FormField
                         control={form.control}
                         name="description"
@@ -251,7 +264,7 @@ export default function PropertyForm({
                             <FormItem>
                                 <FormLabel>Description</FormLabel>
                                 <FormControl>
-                                    <Textarea {...field} rows={10} className='resize-none max-h-[160px] overflow-y-auto' />
+                                    <Textarea {...field} rows={10} className='resize-none h-[100px] max-h-[160px] overflow-y-auto' />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -277,20 +290,7 @@ export default function PropertyForm({
                             <FormItem>
                                 <FormLabel>Ingredients</FormLabel>
                                 <FormControl>
-                                    <Textarea {...field} rows={5} className='resize-none max-h-[160px] overflow-y-auto' />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
-                    <FormField
-                        control={form.control}
-                        name="keyIngredients"
-                        render={({ field }) => (
-                            <FormItem>
-                                <FormLabel>Key Ingredients</FormLabel>
-                                <FormControl>
-                                    <Textarea {...field} rows={5} className='resize-none' />
+                                    <Textarea {...field} rows={10} className='resize-none h-[100px] max-h-[160px] overflow-y-auto' />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -303,7 +303,7 @@ export default function PropertyForm({
                             <FormItem>
                                 <FormLabel>How to use</FormLabel>
                                 <FormControl>
-                                    <Textarea {...field} rows={5} className='resize-none max-h-[160px] overflow-y-auto' />
+                                    <Textarea {...field} rows={5} className='resize-none h-[100px] max-h-[160px] overflow-y-auto' />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

@@ -37,6 +37,7 @@ export default async function EditProperty({ params }: { params: Promise<{ prope
                     <EditPropertyForm
                         id={property.id}
                         name={property.name}
+                        subTitle={property.subTitle}
                         price={property.price}
                         category={property.category}
                         origin={property.origin}

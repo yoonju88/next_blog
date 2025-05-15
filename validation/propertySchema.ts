@@ -2,6 +2,7 @@ import { z } from "zod"
 
 export const propertyDataSchema = z.object({
     name: z.string().min(2, "Name must contain a value"),
+    subTitle: z.string().min(2, "subTitle must contain a value"),
     price: z.coerce.number().positive("Price must be greater than 0"),
     category: z.enum(["Make Up", "Skin Care", "Sun Care"]),
     origin: z.string().min(2, "Origin must contain a value"),

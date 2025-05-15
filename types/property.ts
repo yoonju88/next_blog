@@ -6,6 +6,7 @@ import { Review } from '@/types/review'
 export type Property = {
     id: string;
     name?: string;
+    subTitle: string;
     price?: number;
     category?: CategoryType;
     origin?: string;

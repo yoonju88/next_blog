@@ -5,14 +5,8 @@ import { DarkModeSwatch } from './DarkModeSwatch'
 import AuthButtons from './auth-buttons'
 import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
-import { NavLinks } from '@/lib/links'
+import { HeartIcon, ShoppingCartIcon } from 'lucide-react'
 
-export const links: NavLinks[] = [
-    { href: '/', label: "home" },
-    { href: '/property', label: "Products" },
-    { href: '/blog', label: "blog" },
-    { href: '/contact-us', label: "Contact" },
-]
 
 export default function Nav() {
     const pathname = usePathname() // Current page path
@@ -35,18 +29,17 @@ export default function Nav() {
             </h1>
             <nav className="flex space-x-6">
                 <div className="flex gap-6 text-md items-center">
+                    <Link
+                        href='/my-favourites'
+                    >
+                        <HeartIcon />
+                    </Link>
+                    <Link
+                        href='/cart'
+                    >
+                        <ShoppingCartIcon />
+                    </Link>
 
-                    {links.map((link) => {
-                        return (
-                            <Link
-                                key={link.href}
-                                href={link.href}
-                                className={isActive(link.href) ? "text-primary font-semibold" : "text-foreground hover:text-primary transition-colors duration-300"}
-                            >
-                                {link.label}
-                            </Link>
-                        )
-                    })}
                 </div>
                 <div className="flex space-x-6 items-center">
                     <span className="border-x-1 px-4 border-muted-foreground/30">

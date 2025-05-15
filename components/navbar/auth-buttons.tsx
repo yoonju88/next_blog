@@ -52,6 +52,11 @@ export default function AuthButtons() {
                                 My Account
                             </Link>
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href="/reviews" >
+                                My reviews
+                            </Link>
+                        </DropdownMenuItem>
                         {!!auth.customClaims?.admin && (
                             <DropdownMenuItem asChild>
                                 <Link href="/admin-dashboard" >

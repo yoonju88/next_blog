@@ -42,6 +42,7 @@ export default function PropertyForm({
             howToUse: "",
             expireDate: "",
             stockQuantity: 0,
+            skinBenfit: "",
         },
         ...defaultValues,
     }
@@ -131,7 +132,7 @@ export default function PropertyForm({
                                         onValueChange={field.onChange}
                                         defaultValue={field.value}
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger className="w-full">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -164,7 +165,7 @@ export default function PropertyForm({
                                         onValueChange={field.onChange}
                                         defaultValue={field.value}
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger className="w-full">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -206,7 +207,7 @@ export default function PropertyForm({
                                         onValueChange={field.onChange}
                                         defaultValue={field.value}
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger className="w-full">
                                             <SelectValue />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -228,6 +229,19 @@ export default function PropertyForm({
                             </FormItem>
                         )}
                     />
+                    <FormField
+                        control={form.control}
+                        name="skinBenefit"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Skin Benfit</FormLabel>
+                                <FormControl>
+                                    <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
                 </fieldset>
                 <fieldset className="flex flex-col gap-2" disabled={form.formState.isSubmitting}>
                     <FormField
@@ -237,7 +251,7 @@ export default function PropertyForm({
                             <FormItem>
                                 <FormLabel>Description</FormLabel>
                                 <FormControl>
-                                    <Textarea {...field} rows={10} className='resize-none' />
+                                    <Textarea {...field} rows={10} className='resize-none max-h-[160px] overflow-y-auto' />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -263,7 +277,7 @@ export default function PropertyForm({
                             <FormItem>
                                 <FormLabel>Ingredients</FormLabel>
                                 <FormControl>
-                                    <Textarea {...field} rows={5} className='resize-none' />
+                                    <Textarea {...field} rows={5} className='resize-none max-h-[160px] overflow-y-auto' />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -289,7 +303,7 @@ export default function PropertyForm({
                             <FormItem>
                                 <FormLabel>How to use</FormLabel>
                                 <FormControl>
-                                    <Textarea {...field} rows={5} className='resize-none' />
+                                    <Textarea {...field} rows={5} className='resize-none max-h-[160px] overflow-y-auto' />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -321,7 +335,6 @@ export default function PropertyForm({
                             </FormItem>
                         )}
                     />
-
                 </fieldset>
             </div>
             <FormField

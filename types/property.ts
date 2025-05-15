@@ -17,6 +17,7 @@ export type Property = {
     ingredients?: string;
     keyIngredients?: string;
     skinType?: SkinType;
+    skinBenefit?: string;
     howToUse?: string;
     expireDate?: string;
     stockQuantity?: number;

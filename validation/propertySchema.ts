@@ -13,6 +13,7 @@ export const propertyDataSchema = z.object({
     ingredients: z.string().min(4, "Ingredients must contain a value"),
     keyIngredients: z.string().min(4, "Key ingredients must contain a value"),
     skinType: z.enum(["Oily Skin", "Dry Skin", "Combination Skin", "Sensitive Skin", "Normal Skin", "All Skin"]),
+    skinBenefit: z.string().min(2, "Skin benefit must contain a value"),
     howToUse: z.string().min(2, "How to use must contain a value"),
     expireDate: z.string().min(2, "expire date must contain a value"),
     stockQuantity: z.coerce.number().int()

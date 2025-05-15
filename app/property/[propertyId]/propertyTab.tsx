@@ -34,8 +34,8 @@ export default function PropertyTab({
     const displayedText = expanded ? getContent : getContent.slice(0, maxLength);
 
     return (
-        <div className="w-full max-w-[100]">
-            <div className="flex mb-4 text-center">
+        <div className="relative mb-4 max-w-[80%] mx-auto">
+            <div className="flex justify-center text-center gap-x-4 ">
                 {Tabs.map(tab => (
                     <button
                         key={tab}
@@ -43,26 +43,24 @@ export default function PropertyTab({
                             setSelectedTab(tab)
                             setExpanded(false)
                         }}
-                        className={`flex-grow border-b-2 py-2 text-lg px-1 transition-all duration-300 hover:border-primary hover:text-primary hover:font-bold  ${selectedTab === tab ? "border-primary text-primary font-bold " : "border-muted-foreground text-foreground"}`}
+                        className={`flex-grow py-4 text-lg font-semibold transition-all duration-300 hover:text-primary hover:uppercase hover:bg-primary/10 rounded-t ${selectedTab === tab ? "text-primary font-bold bg-primary/10 uppercase " : "border-muted-foreground text-foreground"}`}
                     >
                         {tab}
                     </button>
                 ))}
             </div>
-            <div className="w-full">
-                <p className="leading-relaxed mb-4 break-words whitespace-pre-wrap text-center">
-                    {displayedText}
-                    {isLong && (
-                        <button
-                            onClick={() => setExpanded(prev => !prev)}
-                            className="text-primary transition-all duration-300 hover:font-bold"
-                        >
-                            {expanded ? "  See less" : " ...See more"}
-                        </button>
-                    )}
-                </p>
-            </div>
-
+            <hr className=" w-full border-t border-muted-foreground" />
+            <p className="leading-relaxed mb-4 break-words whitespace-pre-wrap text-center mt-10  max-w-[70%] mx-auto">
+                {displayedText}
+                {isLong && (
+                    <button
+                        onClick={() => setExpanded(prev => !prev)}
+                        className="text-primary transition-all duration-300 hover:font-bold"
+                    >
+                        {expanded ? "  See less" : " ...See more"}
+                    </button>
+                )}
+            </p>
         </div>
     )
 }

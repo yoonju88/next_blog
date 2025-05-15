@@ -1,12 +1,12 @@
 import React from 'react'
-import EmtyList from '@/components/home/EmtyList'
+import EmptyList from '@/components/home/EmptyList'
 
 export default function ReviewsPage() {
 
 
     return (
         <div>
-            <EmtyList />
+            <EmptyList />
 
         </div>
     )

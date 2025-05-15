@@ -11,8 +11,14 @@ import Image from "next/image";
 //import BackButton from './back-button'
 import imageUrlFormatter from "@/lib/imageUrlFormatter";
 import BackButton from "./back-button";
-import Link from "next/link";
 import PropertyTab from "./propertyTab";
+import { Button } from "@/components/ui/button";
+import numeral from "numeral";
+import { cookies } from "next/headers";
+import { auth } from "@/firebase/server";
+import { DecodedIdToken } from "firebase-admin/auth";
+import { getUserFavourites } from "@/data/favourites";
+import ToggleFavouriteButton from "@/components/toggle-favourite-button"
 
 export const dynamic = "force-static"
 
@@ -21,64 +27,83 @@ export default async function Property({ params }: { params: Promise<{ propertyI
     const property = await getPropertyById(propertyId)
     console.log(property)
     const linkStyle = "flex-grow text-foreground border-b-2 border-muted-foreground py-2 text-lg px-1 transition-all duration-300 hover:border-primary hover:text-primary hover:font-bold"
+    const InfoRow = ({ label, value }) => (
+        <div className="flex border-t border-muted-foreground py-4 w-full">
+            <span className="text-muted-foreground">{label}</span>
+            <span className="ml-auto text-muted-foreground">{value}</span>
+        </div>
+    )
+    const userFavourites = await getUserFavourites();
+    if (!userFavourites) { return }
+    const cookieStore = await cookies()
+    const token = cookieStore.get("firevaseAuthToken")?.value
+    let verifiedToken: DecodedIdToken | null
 
+    if (token) {
+        verifiedToken = await auth.verifyIdToken(token)
+    }
     return (
-        <section className="overflow-hidden">
+        <section className='w-[100%]'>
             <div className="container px-5 py-24 mx-auto">
-                <div className="lg:w4/5 mx-auto flex flex-col md:flex-row space-x-10">
-                    {!!property?.images && (
-                        <Carousel className="w-full">
-                            <CarouselContent>
-                                {property?.images.map((image, index) => (
-                                    <CarouselItem key={image}>
-                                        <div className="relative h-[80vh]">
-                                            <Image
-                                                src={imageUrlFormatter(image)}
-                                                alt={`Image ${index + 1}`}
-                                                fill
-                                                className="object-cover"
-                                            />
-                                        </div>
-                                    </CarouselItem>
-                                ))}
-                            </CarouselContent>
-                            {property.images.length > 1 && (
-                                <>
-                                    <CarouselPrevious className="translate-x-16 size-12" />
-                                    <CarouselNext className=" -translate-x-16 size-12" />
-                                </>
-                            )}
-                        </Carousel>
-                    )}
-                    <div className="lg-w-1/2 w-full lg:pl-10 ls:py-6 mb-6 lg:mb-0">
+                <div className="flex flex-wrap lg:flex-nowrap">
+                    <div className="lg:basis-1/2 lg:min-w-0 lg:max-w-1/2 w-full">
+                        {!!property?.images && (
+                            <Carousel className=" w-full h-full">
+                                <CarouselContent>
+                                    {property?.images.map((image, index) => (
+                                        <CarouselItem key={image}>
+                                            <div className="relative h-[80vh]">
+                                                {(!verifiedToken || !verifiedToken.admin) && (
+                                                    <ToggleFavouriteButton
+                                                        isFavourite={userFavourites.propertyIds.includes[property.id]}
+                                                        propertyId={property.id}
+                                                    />
+                                                )
+                                                }
+                                                <Image
+                                                    src={imageUrlFormatter(image)}
+                                                    alt={`Image ${index + 1}`}
+                                                    fill
+                                                    className="object-cover object-center rounded"
+                                                />
+                                            </div>
+                                        </CarouselItem>
+                                    ))}
+                                </CarouselContent>
+                                {property.images.length > 1 && (
+                                    <>
+                                        <CarouselPrevious className="translate-x-16 size-12" />
+                                        <CarouselNext className=" -translate-x-16 size-12" />
+                                    </>
+                                )}
+                            </Carousel>
+                        )}
+                    </div>
+                    <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mb-6 lg:mb-0">
                         <BackButton />
-                        <h2 className="text-foreground title-font tracking-widest">{property.brand}</h2>
-                        <h1 className="text-3xl title-font font-medium mb-4"> {property.name}</h1>
-                        <PropertyTab
-                            description={property.description}
-                            ingredients={property.ingredients}
-                            howToUse={property.howToUse}
-                            review={property.review}
-                        />
-                        <div className="flex border-t border-muted-foreground py-4">
-                            <span className="text-muted-foreground">Origin</span>
-                            <span className="ml-auto text-muted-foreground">{property.origin}</span>
-                        </div>
-                        <div className="flex border-t border-muted-foreground py-4">
-                            <span className="text-muted-foreground">Skin Type</span>
-                            <span className="ml-auto text-muted-foreground">{property.skinType}</span>
-                        </div>
-                        <div className="flex border-t border-muted-foreground py-4">
-                            <span className="text-muted-foreground">Expire Date</span>
-                            <span className="ml-auto text-muted-foreground">{property.expireDate}</span>
-                        </div>
+                        <h2 className="text-muted-foreground title-font tracking-widest uppercase mb-2 ">{property.brand}</h2>
+                        <h1 className="text-4xl title-font font-medium mb-6"> {property.name}</h1>
+                        <InfoRow label="Skin Type" value={property.skinType} />
+                        <InfoRow label="Skin Benfit" value={property.skinBenefit} />
 
-                        <div className="flex">
-                            <span className="title-font font-medium text-2xl text-foreground">€ {property.price}</span>
+                        <div className="flex mt-4">
+                            <span className="title-font font-medium text-2xl text-foreground">€ {numeral(property?.price).format("0,0")}</span>
+                            <div className="flex space-x-4 ml-auto">
+                                <Button> Add to panier</Button>
+                                <Button> Add to Cart</Button>
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div className="min-w-full mt-10">
+                    <PropertyTab
+                        description={property.description}
+                        ingredients={property.ingredients}
+                        howToUse={property.howToUse}
+                    />
+                </div>
             </div>
+
         </section >
     )
 }

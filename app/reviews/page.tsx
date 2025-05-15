@@ -3,7 +3,6 @@ import EmptyList from '@/components/home/EmptyList'
 
 export default function ReviewsPage() {
 
-
     return (
         <div>
             <EmptyList />

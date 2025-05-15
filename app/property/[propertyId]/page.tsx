@@ -1,5 +1,5 @@
 import { getPropertyById } from "@/lib/properties";
-import ReactMarkdown from 'react-markdown' // npm i react-markdown@8.0.6
+//import ReactMarkdown from 'react-markdown' // npm i react-markdown@8.0.6
 import {
     Carousel,
     CarouselContent,
@@ -8,7 +8,6 @@ import {
     CarouselPrevious
 } from '@/components/ui/carousel';
 import Image from "next/image";
-//import BackButton from './back-button'
 import imageUrlFormatter from "@/lib/imageUrlFormatter";
 import BackButton from "./back-button";
 import PropertyTab from "./propertyTab";
@@ -53,13 +52,6 @@ export default async function Property({ params }: { params: Promise<{ propertyI
                                     {property?.images.map((image, index) => (
                                         <CarouselItem key={image}>
                                             <div className="relative h-[80vh]">
-                                                {(!verifiedToken || !verifiedToken.admin) && (
-                                                    <ToggleFavouriteButton
-                                                        isFavourite={userFavourites.propertyIds.includes[property.id]}
-                                                        propertyId={property.id}
-                                                    />
-                                                )
-                                                }
                                                 <Image
                                                     src={imageUrlFormatter(image)}
                                                     alt={`Image ${index + 1}`}
@@ -79,23 +71,37 @@ export default async function Property({ params }: { params: Promise<{ propertyI
                             </Carousel>
                         )}
                     </div>
-                    <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mb-6 lg:mb-0">
+                    <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mb-6 lg:mb-0 relative">
                         <BackButton />
+                        {(!verifiedToken || !verifiedToken.admin) && (
+                            <ToggleFavouriteButton
+                                isFavourite={userFavourites.propertyIds.includes[property.id]}
+                                propertyId={property.id}
+                            />
+                        )
+                        }
                         <h2 className="text-muted-foreground title-font tracking-widest uppercase mb-2 ">{property.brand}</h2>
-                        <h1 className="text-4xl title-font font-medium mb-6"> {property.name}</h1>
+                        <h1 className="text-4xl title-font font-medium mb-2"> {property.name}</h1>
+                        <h3 className="text-primary tracking-widest mb-6 font-semibold ">{property.subTitle}</h3>
+                        <div className="mb-14">
+                            RATING HERE
+                        </div>
                         <InfoRow label="Skin Type" value={property.skinType} />
                         <InfoRow label="Skin Benfit" value={property.skinBenefit} />
-
-                        <div className="flex mt-4">
-                            <span className="title-font font-medium text-2xl text-foreground">€ {numeral(property?.price).format("0,0")}</span>
+                        <div className="flex border-t border-muted-foreground py-4 w-full">
+                            <span className="text-muted-foreground">Volume</span>
+                            <span className="ml-auto text-muted-foreground">{property.volume} ml</span>
+                        </div>
+                        <div className="flex mt-10 mb-14">
+                            <span className="title-font font-medium text-2xl text-foreground hover:text-primary transition-all duration-300">€ {numeral(property?.price).format("0,0")}</span>
                             <div className="flex space-x-4 ml-auto">
-                                <Button> Add to panier</Button>
+                                <Button variant="outline"> Add to panier</Button>
                                 <Button> Add to Cart</Button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className="min-w-full mt-10">
+                <div className="min-w-full mt-20">
                     <PropertyTab
                         description={property.description}
                         ingredients={property.ingredients}

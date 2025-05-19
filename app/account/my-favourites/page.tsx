@@ -56,7 +56,7 @@ export default async function MyFavourites({
                                                     src={imageUrlFormatter(property.images[0])}
                                                     alt="main image"
                                                     fill
-                                                    className="object-cover hover:scale-110 transition-all duration-300"
+                                                    className="object-cover hover:scale-105 transition-all duration-300"
                                                 />
                                             ) : (
                                                 <Image
@@ -66,8 +66,14 @@ export default async function MyFavourites({
                                                     className="bject-cover"
                                                 />
                                             )}
-                                            <RemoveFavouriteButton propertyId={property.id} />
-                                            <ProductStatusBadge status={property.status} className="absolute top-4 left-4" />
+                                            <RemoveFavouriteButton
+                                                propertyId={property.id}
+                                                className="absolute top-4 right-4  bg-gray-300 p-1.5 rounded-md text-foreground hover:text-primary hover:bg-gray-100  hover:shadow-foreground/30 hover:shadow-sm duration-300 transition-all"
+                                            />
+                                            <ProductStatusBadge
+                                                status={property.status}
+                                                className="absolute top-4 left-4"
+                                            />
                                         </div>
                                         <h4 className="text-foreground/50 mt-6 mb-2 px-4 uppercase text-sm">{property.brand}</h4>
                                         <h3 className="text-base text-foreground px-4 mb-4 uppercase">{property.name}</h3>

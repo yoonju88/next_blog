@@ -1,5 +1,5 @@
 'use client'
-import { TrashIcon } from "lucide-react"
+import { Trash2Icon, TrashIcon } from "lucide-react"
 import { removefavourite } from "@/app/property/[propertyId]/action"
 import { useAuth } from "@/context/auth"
 import { useRouter } from "next/navigation"
@@ -8,17 +8,18 @@ import { Button } from "@/components/ui/button"
 
 
 export default function RemoveFavouriteButton({
-    propertyId
+    propertyId,
+    className
 }: {
     propertyId: string;
+    className?: string;
 }) {
     const auth = useAuth()
     const router = useRouter()
 
     return (
-        <Button
-            variant="outline"
-            className="absolute top-3 bottom-0 right-3"
+        <button
+            className={className}
             onClick={async () => {
                 const tokenResult = await auth?.currentUser?.getIdTokenResult()
                 if (!tokenResult) { return }
@@ -29,7 +30,7 @@ export default function RemoveFavouriteButton({
                 router.refresh()
             }}
         >
-            <TrashIcon />
-        </Button>
+            <Trash2Icon />
+        </button>
     )
 }

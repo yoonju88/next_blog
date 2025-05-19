@@ -106,6 +106,7 @@ export default async function Property({ params }: { params: Promise<{ propertyI
                         description={property.description}
                         ingredients={property.ingredients}
                         howToUse={property.howToUse}
+                        reviews={property.review}
                     />
                 </div>
             </div>

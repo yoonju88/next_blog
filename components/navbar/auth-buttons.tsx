@@ -57,6 +57,11 @@ export default function AuthButtons() {
                                 My reviews
                             </Link>
                         </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href="/account/my-favourites" >
+                                My Favourites
+                            </Link>
+                        </DropdownMenuItem>
                         {!!auth.customClaims?.admin && (
                             <DropdownMenuItem asChild>
                                 <Link href="/admin-dashboard" >
@@ -64,13 +69,13 @@ export default function AuthButtons() {
                                 </Link>
                             </DropdownMenuItem>
                         )}
-                        {!auth.customClaims?.admin && (
+                        {/* {!auth.customClaims?.admin && (
                             <DropdownMenuItem asChild>
                                 <Link href="/account/my-favourites" >
                                     My Favourites
                                 </Link>
                             </DropdownMenuItem>
-                        )}
+                        )} */}
                         <DropdownMenuItem
                             onClick={async () => {
                                 await auth.logout()

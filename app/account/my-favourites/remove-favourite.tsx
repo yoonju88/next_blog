@@ -1,10 +1,9 @@
 'use client'
 import { TrashIcon } from "lucide-react"
-import { addFavourite, removefavourite } from "@/app/property/[propertyId]/action"
+import { removefavourite } from "@/app/property/[propertyId]/action"
 import { useAuth } from "@/context/auth"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 
 

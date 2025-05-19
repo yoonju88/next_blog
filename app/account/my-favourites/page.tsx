@@ -10,6 +10,7 @@ import imageUrlFormatter from '@/lib/imageUrlFormatter';
 import RemoveFavouriteButton from './remove-favourite'
 
 import { Input } from '@/components/ui/input'
+import ProductStatusBadge from '@/components/Product-status-badge'
 
 export default async function MyFavourites({
     searchParams
@@ -66,7 +67,7 @@ export default async function MyFavourites({
                                                 />
                                             )}
                                             <RemoveFavouriteButton propertyId={property.id} />
-                                            <span className="absolute text-sm text-white p-1.5 rounded-lg bg-gray-500 bottom-3 left-4 ">{property.status}</span>
+                                            <ProductStatusBadge status={property.status} className="absolute top-4 left-4" />
                                         </div>
                                         <h4 className="text-foreground/50 mt-6 mb-2 px-4 uppercase text-sm">{property.brand}</h4>
                                         <h3 className="text-base text-foreground px-4 mb-4 uppercase">{property.name}</h3>

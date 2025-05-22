@@ -18,13 +18,23 @@ import { auth } from "@/firebase/server";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { getUserFavourites } from "@/data/favourites";
 import ToggleFavouriteButton from "@/components/toggle-favourite-button"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { PlusIcon } from "lucide-react";
+import { NewReviewForm } from "./new-review-form";
 
 export const dynamic = "force-static"
 
 export default async function Property({ params }: { params: Promise<{ propertyId: string }> }) {
     const { propertyId } = await params
     const property = await getPropertyById(propertyId)
-    console.log(property)
+    //console.log(property)
     const linkStyle = "flex-grow text-foreground border-b-2 border-muted-foreground py-2 text-lg px-1 transition-all duration-300 hover:border-primary hover:text-primary hover:font-bold"
     const InfoRow = ({ label, value }) => (
         <div className="flex border-t border-muted-foreground py-4 w-full">
@@ -78,13 +88,27 @@ export default async function Property({ params }: { params: Promise<{ propertyI
                                 isFavourite={userFavourites.propertyIds.includes[property.id]}
                                 propertyId={property.id}
                             />
-                        )
-                        }
+                        )}
                         <h2 className="text-muted-foreground title-font tracking-widest uppercase mb-2 ">{property.brand}</h2>
                         <h1 className="text-4xl title-font font-medium mb-2"> {property.name}</h1>
                         <h3 className="text-primary tracking-widest mb-6 font-semibold ">{property.subTitle}</h3>
                         <div className="mb-14">
-                            RATING HERE
+                            <Dialog>
+                                <DialogTrigger asChild>
+                                    <Button variant="default">
+                                        New Review
+                                    </Button>
+                                </DialogTrigger>
+                                <DialogContent className="sm:max-w-[425px]">
+                                    <DialogHeader>
+                                        <DialogTitle>New Review</DialogTitle>
+                                        <DialogDescription>
+                                            Create your review of this product.
+                                        </DialogDescription>
+                                    </DialogHeader>
+                                    <NewReviewForm propertyId={propertyId} />
+                                </DialogContent>
+                            </Dialog>
                         </div>
                         <InfoRow label="Skin Type" value={property.skinType} />
                         <InfoRow label="Skin Benfit" value={property.skinBenefit} />
@@ -95,7 +119,7 @@ export default async function Property({ params }: { params: Promise<{ propertyI
                         <div className="flex mt-10 mb-14">
                             <span className="title-font font-medium text-2xl text-foreground hover:text-primary transition-all duration-300">€ {numeral(property?.price).format("0,0")}</span>
                             <div className="flex space-x-4 ml-auto">
-                                <Button variant="outline"> Add to Wish List</Button>
+                                <Button variant="outline" className="bg-white"> Add to Wish List</Button>
                                 <Button> Add to Cart</Button>
                             </div>
                         </div>
@@ -106,7 +130,7 @@ export default async function Property({ params }: { params: Promise<{ propertyI
                         description={property.description}
                         ingredients={property.ingredients}
                         howToUse={property.howToUse}
-                        reviews={property.review}
+                    // review={property.review}
                     />
                 </div>
             </div>

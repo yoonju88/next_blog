@@ -2,6 +2,8 @@
 import { auth, firestore } from "@/firebase/server"
 import { FieldValue } from "firebase-admin/firestore"
 import { collection, addDoc, getFirestore } from "firebase/firestore";
+import { z } from "zod"
+
 
 export const addFavourite = async (proeprtyId: string, authToken: string) => {
     const verifiedToken = await auth.verifyIdToken(authToken)
@@ -43,7 +45,15 @@ export const removefavourite = async (propertyId: string, authToken: string) => 
         });
 }
 
-export const createReview = async (propertyId: string, authToken: string) => {
+export const createReview = async (
+    propertyId: string,
+    authToken: string,
+    reviewData: {
+        rating: number;
+        comment: string;
+    }
+
+) => {
     const verifiedToken = await auth.verifyIdToken(authToken)
     if (!verifiedToken) {
         return {
@@ -51,25 +61,58 @@ export const createReview = async (propertyId: string, authToken: string) => {
             message: "Unauthorized, login first to create the review"
         }
     }
+    const userId = verifiedToken.uid
+    const reviewDoc = {
+        userId,
+        propertyId,
+        ...reviewData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    }
+
+    const review = await firestore
+        .collection("reviews")
+        .add(reviewDoc)
+
+    return {
+        reviewId: review.id
+    }
 
 }
 
-// 리뷰 데이터 추가 함수
-async function addReview(reviewerName: string, reviewText: string, rating: number) {
-    try {
-        // 'reviews' 컬렉션에 새 문서 추가
-        const docRef = await addDoc(collection(db, "reviews"), {
-            reviewer: reviewerName,
-            text: reviewText,
-            rating: rating,
-            timestamp: new Date(), // 리뷰 작성 시간 기록
-            // 필요에 따라 다른 필드를 추가할 수 있습니다.
-            // 예: productId: '...' 또는 userId: '...'
-        });
-        console.log("리뷰 문서가 성공적으로 추가되었습니다. 문서 ID:", docRef.id);
-        return docRef.id; // 추가된 문서의 ID 반환
-    } catch (e) {
-        console.error("리뷰 문서 추가 중 오류 발생: ", e);
-        throw e; // 오류 발생 시 예외 처리
+export const saveReviewImages = async ({
+    reviewId,
+    images,
+}: {
+    reviewId: string
+    images: string[]
+}, authToken: string
+) => {
+    const verifiedToken = await auth.verifyIdToken(authToken);
+    if (!verifiedToken.admin) {
+        return {
+            error: true,
+            message: 'Unauthorized'
+        }
     }
+
+    const schema = z.object({
+        reviewId: z.string(),
+        images: z.array(z.string()),
+    })
+
+    const validation = schema.safeParse({ reviewId, images })
+    if (!validation.success) {
+        return {
+            error: true,
+            _message: validation.error.issues[0]?.message ?? "An error occured."
+        }
+    }
+    await firestore
+        .collection("reviews")
+        .doc(reviewId)
+        .update({
+            images,
+            updatedAt: new Date(),
+        })
 }

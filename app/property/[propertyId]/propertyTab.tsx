@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { Property } from '@/types/property'
-import Reviews from '@/components/reviews'
 
 type PropertyPick = Pick<Property, 'description' | 'howToUse' | 'ingredients'>
 type TabType = "Description" | "How to use" | "Ingredients"

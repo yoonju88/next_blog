@@ -33,7 +33,7 @@ export default async function MyFavourites({
         redirect(`/account/my-favourites?page=${totalPages}`)
     }
     const properties = await getPropertiesById(paginatedFavourites)
-    console.log({ properties })
+    //console.log({ properties })
     return (
         <div className='text-center'>
             <h1 className="text-3xl font-semibold">My Favourites lists.</h1>

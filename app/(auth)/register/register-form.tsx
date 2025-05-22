@@ -9,7 +9,7 @@ import { registerUser } from './action';
 import { z } from "zod"
 import { toast } from 'sonner';
 import { useRouter } from "next/navigation";
-import LoginByGoogle from '@/components/Login-by-google';
+import LoginByGoogle from '@/components/login/Login-by-google';
 import Link from 'next/link';
 
 
@@ -129,7 +129,6 @@ export default function RegisterForm() {
                     </Link>
                 </div>
             </div>
-
         </Form>
     )
 }

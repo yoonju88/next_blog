@@ -6,7 +6,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { zodResolver } from "@hookform/resolvers/zod"
-import LoginByGoogle from '@/components/Login-by-google'
+import LoginByGoogle from '@/components/login/Login-by-google'
 import Link from "next/link"
 import { useAuth } from "@/context/auth"
 import { toast } from "sonner"

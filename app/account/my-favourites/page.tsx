@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Image from 'next/image'
 import imageUrlFormatter from '@/lib/imageUrlFormatter';
 import RemoveFavouriteButton from './remove-favourite'
-
 import { Input } from '@/components/ui/input'
 import ProductStatusBadge from '@/components/Product-status-badge'
 

@@ -4,8 +4,7 @@ import { useAuth } from "@/context/auth";
 import { useRouter } from "next/navigation";
 import { reviewSchema, reviewDataSchema } from '@/validation/reviewSchema'
 import { z } from "zod"
-import { createReview } from "./action"
-import { saveReviewImages } from './action';
+import { createReview, saveReviewImages } from "../../reviews/action"
 import { toast } from 'sonner'
 import { ref, uploadBytesResumable, UploadTask } from 'firebase/storage';
 import { storage } from '@/firebase/client';

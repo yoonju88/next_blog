@@ -17,6 +17,7 @@ import { cookies } from "next/headers";
 import { auth } from "@/firebase/server";
 import { DecodedIdToken } from "firebase-admin/auth";
 import { getUserFavourites } from "@/data/favourites";
+import { getReviewsByPropertyId, getAverageRating } from '@/lib/reviews';
 import ToggleFavouriteButton from "@/components/toggle-favourite-button"
 import {
     Dialog,
@@ -26,15 +27,18 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { PlusIcon } from "lucide-react";
 import { NewReviewForm } from "./new-review-form";
-
 export const dynamic = "force-static"
+import Rating from "@/components/review/Rating";
 
 export default async function Property({ params }: { params: Promise<{ propertyId: string }> }) {
     const { propertyId } = await params
     const property = await getPropertyById(propertyId)
     //console.log(property)
+    const reviewsAverage = await getAverageRating(propertyId)
+    const roundedAverage = Math.round(reviewsAverage * 10) / 10
+    const allreviews = await getReviewsByPropertyId(propertyId)
+    console.log('average', reviewsAverage)
     const linkStyle = "flex-grow text-foreground border-b-2 border-muted-foreground py-2 text-lg px-1 transition-all duration-300 hover:border-primary hover:text-primary hover:font-bold"
     const InfoRow = ({ label, value }) => (
         <div className="flex border-t border-muted-foreground py-4 w-full">
@@ -93,22 +97,31 @@ export default async function Property({ params }: { params: Promise<{ propertyI
                         <h1 className="text-4xl title-font font-medium mb-2"> {property.name}</h1>
                         <h3 className="text-primary tracking-widest mb-6 font-semibold ">{property.subTitle}</h3>
                         <div className="mb-14">
-                            <Dialog>
-                                <DialogTrigger asChild>
-                                    <Button variant="default">
-                                        New Review
-                                    </Button>
-                                </DialogTrigger>
-                                <DialogContent className="sm:max-w-[425px]">
-                                    <DialogHeader>
-                                        <DialogTitle>New Review</DialogTitle>
-                                        <DialogDescription>
-                                            Create your review of this product.
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <NewReviewForm propertyId={propertyId} />
-                                </DialogContent>
-                            </Dialog>
+                            {!allreviews ? (
+                                <Dialog>
+                                    <DialogTrigger asChild>
+                                        <Button variant="default">
+                                            New Review
+                                        </Button>
+                                    </DialogTrigger>
+                                    <DialogContent className="sm:max-w-[425px]">
+                                        <DialogHeader>
+                                            <DialogTitle>New Review</DialogTitle>
+                                            <DialogDescription>
+                                                Create your review of this product.
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <NewReviewForm propertyId={propertyId} />
+                                    </DialogContent>
+                                </Dialog>
+                            ) : (
+                                <div className="flex items-center gap-2">
+                                    <Rating rating={roundedAverage} />
+                                    <span className="text-foreground tracking-widest"> | {roundedAverage}/5</span>
+                                </div>
+
+                            )
+                            }
                         </div>
                         <InfoRow label="Skin Type" value={property.skinType} />
                         <InfoRow label="Skin Benfit" value={property.skinBenefit} />

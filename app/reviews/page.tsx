@@ -1,6 +1,6 @@
 import React from 'react'
 import EmptyList from '@/components/home/EmptyList'
-import { getUserReviews } from '@/data/reviews'
+import { getUserReviews } from '@/lib/reviews'
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
 import imageUrlFormatter from '@/lib/imageUrlFormatter';

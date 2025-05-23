@@ -33,7 +33,7 @@ export default function AuthButtons() {
                                 width={70}
                                 height={70}
                             />
-                            <AvatarFallback className="text-sky-950">
+                            <AvatarFallback className="text-foreground">
                                 {(user.displayName || user.email || "U")?.[0]}
                             </AvatarFallback>
                         </Avatar>
@@ -89,7 +89,7 @@ export default function AuthButtons() {
                 <div>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                            <div className="text-foreground/70 hover:text-primary transition-all duration-300">
+                            <div className="text-foreground hover:text-primary transition-all duration-300">
                                 <CircleUserRound />
                             </div>
                         </DropdownMenuTrigger>

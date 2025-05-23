@@ -5,13 +5,23 @@ import { redirect } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
 import imageUrlFormatter from '@/lib/imageUrlFormatter';
-import Rating from '@/components/review/Rating';
+import { formatDistanceToNow } from 'date-fns'
+import {
+    Carousel,
+    CarouselContent,
+    CarouselItem,
+    CarouselNext,
+    CarouselPrevious
+} from '@/components/ui/carousel';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default async function ReviewsPage({
     searchParams
 }: {
     searchParams?: Promise<Record<string, string | undefined>>
 }) {
+
     const searchParamsValue = await searchParams;
     const page = searchParamsValue?.page ? parseInt(searchParamsValue.page) : 1
 
@@ -26,7 +36,6 @@ export default async function ReviewsPage({
             />
         )
     }
-
     const totalPages = Math.ceil(reviews.length / pageSize)
     const paginatedReviews = reviews.slice(
         (page - 1) * pageSize,
@@ -36,38 +45,81 @@ export default async function ReviewsPage({
         redirect(`/reviews?page=${totalPages}`)
     }
 
-
     return (
-        <div className="flex gap-10 w-full">
-            {paginatedReviews.map((review) => (
-                <Card key={review.id} className="w-[500px]">
-                    <CardHeader className="px-0 flex">
-                        <CardTitle>
-                            <div className="relative w-full h-50">
-                                {review.images && review.images.length > 0 ? (
-                                    <Image
-                                        src={imageUrlFormatter(review.images[0])}
-                                        alt="main image"
-                                        fill
-                                        className="object-cover hover:scale-105 transition-all duration-300"
-                                    />
-                                ) : (
-                                    <Image
-                                        src="/fallback.jpg"
-                                        alt="No image"
-                                        fill
-                                        className="bject-cover"
-                                    />
+        <section className="w-full mx-auto container px-10 py-10">
+            <h1 className="font-title font-semibold text-3xl mb-10">Your Review list.</h1>
+            <div className="grid md:grid-cols-2 grid-cols-1 items-center gap-10 ">
+
+                {paginatedReviews.map((review) => {
+                    const createdAtDate = review.createdAt
+                        ? new Date(review.createdAt.seconds * 1000)
+                        : null;
+                    const relativeTime = createdAtDate
+                        ? formatDistanceToNow(createdAtDate, { addSuffix: true })
+                        : '';
+                    const images = review.images || [];
+
+                    return (
+                        <div key={review.id} className="w-full flex py-4 px-4 bg-white rounded-xl group hover:shadow-lg hover:shadow-foreground/20 transition-all duration-300">
+                            <div className="flex flex-col w-[80%] text-gray-800 space-y-2">
+                                <div className="flex gap-4 items-center">
+                                    <div className="p-4 bg-gray-300 rounded-2xl relative overflow-hidden">
+                                        {review.userPhotoURL && (
+                                            <Image src={review.userPhotoURL} alt="user avatar" className="object-cover" fill />
+                                        )}
+                                    </div>
+                                    <h3 className="font-semibold ">{review.userName}</h3>
+                                </div>
+                                <div className="flex gap-2 items-center text-sm">
+                                    <p className="font-semibold text-primary">{review.rating}/5</p>
+                                    <p className="capitalize text-gray-600">{relativeTime}</p>
+                                </div>
+                                <p className="mb-4">{review.comment}</p>
+                            </div>
+                            <div className="relative w-full overflow-hidden">
+                                {images && images.length > 0 && (
+                                    <Carousel className="w-full h-full">
+                                        <CarouselContent>
+                                            {images.length > 0 &&
+                                                images.map((image, index) => (
+                                                    <CarouselItem key={image}>
+                                                        <div className="relative h-[150px] w-full">
+                                                            <Image
+                                                                src={imageUrlFormatter(image)}
+                                                                alt={`Image ${index + 1}`}
+                                                                fill
+                                                                className="object-cover object-center rounded group-hover:scale-105 transition-all duration-300"
+                                                            />
+                                                        </div>
+                                                    </CarouselItem>
+                                                ))}
+                                        </CarouselContent>
+                                        {images.length > 1 && (
+                                            <>
+                                                <CarouselPrevious className="translate-x-16 size-12" />
+                                                <CarouselNext className="-translate-x-16 size-12" />
+                                            </>
+                                        )}
+                                    </Carousel>
                                 )}
                             </div>
-                            <h4>{review.comment}</h4>
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <CardDescription><Rating rating={review.rating} /></CardDescription>
-                    </CardContent>
-                </Card>
-            ))}
-        </div>
-    )
+                        </div>
+                    );
+                })}
+            </div >
+            <div className="flex justify-center mt-4">
+                {Array.from({ length: totalPages }).map((_, i) => (
+                    <Button
+                        key={i}
+                        asChild={page !== i + 1} // 현재 페이지가 아닐 때만 asChild 적용
+                        variant="outline"
+                        className='mx-1'
+                        disabled={page === i + 1} // 현재 페이지 버튼은 비활성화
+                    >
+                        <Link href={`/reviews?page=${i + 1}`}>{i + 1}</Link>
+                    </Button>
+                ))}
+            </div>
+        </section>
+    );
 }

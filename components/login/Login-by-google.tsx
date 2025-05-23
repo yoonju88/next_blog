@@ -9,6 +9,7 @@ import GoogleLogo from "@/public/Google-logo.png"
 export default function LoginByGoogle() {
     const auth = useAuth()
     const router = useRouter()
+
     return (
         <Button
             onClick={async () => {

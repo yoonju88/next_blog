@@ -4,23 +4,25 @@ import { Skeleton } from '@/components/ui/skeleton'
 
 export default function loading() {
     return (
-        <section className='grid grid-cols-2 gap-8 mt-4'>
+        <section className='grid grid-cols-3 gap-8 mt-4'>
+            <ReviewLoadingCard />
             <ReviewLoadingCard />
             <ReviewLoadingCard />
         </section>
     )
 }
 
-
 const ReviewLoadingCard = () => {
     return (
-        <Card >
+        <Card className="w-[400px] h-[150px] border-none">
             <CardHeader>
                 <div className='flex items-center'>
                     <Skeleton className='w-12 h-12 rounded-full' />
                     <div className='ml-4'>
-                        <Skeleton className='w-[150px] h-4 mb-2' />
-                        <Skeleton className='w-[100px] h-4' />
+                        <Skeleton className='w-[260px] h-4 mb-3' />
+                        <Skeleton className='w-[260px] h-4 mb-3' />
+                        <Skeleton className='w-[260px] h-4 mb-3' />
+                        <Skeleton className='w-[260px] h-4 mb-3' />
                     </div>
                 </div>
             </CardHeader>

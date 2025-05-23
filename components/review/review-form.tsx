@@ -10,15 +10,20 @@ import { Button } from '@/components/ui/button'
 import MultiImageUpload, { ImageUpload } from '@/components/multi-image-upload'
 import { reviewSchema } from '@/validation/reviewSchema'
 import { Star } from 'lucide-react';
+import { Input } from '../ui/input';
 
 type Props = {
     handleSubmitAction: (data: z.infer<typeof reviewSchema>) => void;
     defaultValues?: z.infer<typeof reviewSchema>
+    userName: string;
+    userPhotoURL: string;
 }
 
 export default function ReviewForm({
     handleSubmitAction,
     defaultValues,
+    userName,
+    userPhotoURL,
 }: Props) {
     const [hovered, setHovered] = useState(0)
     const [rating, setRating] = useState(0)
@@ -26,8 +31,11 @@ export default function ReviewForm({
         rating: 0,
         comment: "",
         images: [],
+        userName,
+        userPhotoURL,
         ...defaultValues,
     }
+
 
     const form = useForm<z.infer<typeof reviewSchema>>({
         resolver: zodResolver(reviewSchema),
@@ -36,9 +44,45 @@ export default function ReviewForm({
     return <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmitAction)}>
             <fieldset
-                className="flex flex-col gap-4"
+                className="flex flex-col gap-4 my-4 "
                 disabled={form.formState.isSubmitting}
             >
+                <FormField
+                    control={form.control}
+                    name="userPhotoURL"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormControl>
+                                <div className="flex flex-col justify-center items-center">
+                                    {userPhotoURL ? (
+                                        <img src={userPhotoURL} alt="User photo" className="w-24 h-24 rounded-full mb-2 object-cover" />
+                                    ) : (
+                                        <div className="w-24 h-24 rounded-full bg-gray-300 mb-2 flex items-center justify-center text-gray-600">
+                                            No Image
+                                        </div>
+                                    )}
+                                </div>
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="userName"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>User Name</FormLabel>
+                            <FormControl>
+                                <Input
+                                    value={userName}
+                                    readOnly
+                                />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
                 <FormField
                     control={form.control}
                     name="rating"
@@ -84,7 +128,6 @@ export default function ReviewForm({
                         </FormItem>
                     )}
                 />
-
                 <FormField
                     control={form.control}
                     name="images"
@@ -110,10 +153,13 @@ export default function ReviewForm({
                         </FormItem>
                     )}
                 />
+
             </fieldset>
+
             <Button
                 type="submit"
                 disabled={form.formState.isSubmitting}
+                className="w-full"
             >
                 Save Review
             </Button>

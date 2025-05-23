@@ -13,7 +13,6 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Image from "next/image";
 import { useRouter } from 'next/navigation'
 import { CircleUserRound } from "lucide-react";
-import { Button } from "../ui/button";
 
 
 export default function AuthButtons() {

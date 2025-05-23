@@ -1,9 +1,9 @@
 "use server"
 import { auth, firestore } from "@/firebase/server"
-import { FieldValue } from "firebase-admin/firestore"
+import admin from "firebase-admin";
 import { collection, addDoc, getFirestore } from "firebase/firestore";
 import { z } from "zod"
-
+import { Timestamp } from 'firebase/firestore';
 
 export const createReview = async (
     propertyId: string,
@@ -11,9 +11,10 @@ export const createReview = async (
     reviewData: {
         rating: number;
         comment: string;
-    }
-
-) => {
+        userId: string;
+        userName: string;
+        userPhotoURL?: string;
+    }) => {
     const verifiedToken = await auth.verifyIdToken(authToken)
     if (!verifiedToken) {
         return {
@@ -22,12 +23,16 @@ export const createReview = async (
         }
     }
     const userId = verifiedToken.uid
+
     const reviewDoc = {
         userId,
         propertyId,
-        ...reviewData,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        rating: reviewData.rating,
+        comment: reviewData.comment,
+        userName: reviewData.userName,
+        userPhotoURL: reviewData.userPhotoURL ?? "", // 안전하게 처리
+        createdAt: admin.firestore.Timestamp.now(),
+        updatedAt: admin.firestore.Timestamp.now(),
     }
 
     const review = await firestore

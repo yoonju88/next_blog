@@ -3,6 +3,8 @@ import z from 'zod'
 export const reviewDataSchema = z.object({
     rating: z.coerce.number().int().min(1).max(5),
     comment: z.string().min(5).max(1000),
+    userName: z.string().min(2),
+    userPhotoURL: z.string().optional(),
 })
 
 export const reviewImageSchema = z.object({

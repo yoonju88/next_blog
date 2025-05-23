@@ -14,20 +14,33 @@ export function NewReviewForm({ propertyId }: { propertyId: string }) {
     const auth = useAuth();
     const router = useRouter()
 
+    const user = auth?.currentUser
+    const userName = auth?.currentUser?.displayName || ""
+    const userPhotoURL = auth?.currentUser?.photoURL || ""
+
     const handleSubmit = async (data: z.infer<typeof reviewSchema>) => {
         const token = await auth?.currentUser?.getIdToken()
 
-        if (!token) {
-            return (
-                router.push('/login')
-            )
+        if (!token || !user) {
+            return router.push('/login')
         }
+
         const { images, ...rest } = data
+
+        const userId = user.uid
+
         const validatedData = reviewDataSchema.parse(rest) as {
             rating: number;
             comment: string;
         }
-        const response = await createReview(propertyId, token, validatedData)
+
+        const response = await createReview(propertyId, token, {
+            ...validatedData,
+            userName,
+            userId,
+            userPhotoURL,
+        }
+        )
 
         if (!!response.error || !response.reviewId) {
             toast.error("Error!", {
@@ -60,6 +73,8 @@ export function NewReviewForm({ propertyId }: { propertyId: string }) {
     return (
         <ReviewForm
             handleSubmitAction={handleSubmit}
+            userName={userName}
+            userPhotoURL={userPhotoURL}
         />
     )
 }

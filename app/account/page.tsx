@@ -7,6 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Label } from '@/components/ui/label';
 import UpdatePasswordForm from './update-password-form';
 import DeleteAccountButton from './delete-account-button';
+import { Input } from '@/components/ui/input';
 
 export default async function Account() {
 
@@ -28,27 +29,34 @@ export default async function Account() {
     )
 
     return (
-        <div className='max-w-md mx-auto '>
-            <Card className='mt-10'>
-                <CardHeader>
-                    <CardTitle className="text-3xl font-bold">
-                        My Account
-                    </CardTitle>
-                </CardHeader>
-                <CardContent>
+        <Card className='py-10 px-4 w-[450px] sm:w-[500px]'>
+            <CardHeader>
+                <CardTitle className="text-3xl font-bold">
+                    My Account
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2">
+                <div className="space-y-2">
                     <Label>Email</Label>
-                    <div>{decodedToken.email}</div>
+                    <Input type="email" placeholder={decodedToken.email} disabled />
+                </div>
+                <div>
                     {!!isPasswordProvider && (
                         <UpdatePasswordForm />
                     )}
-                </CardContent>
-                {!decodedToken.admin && (
-                    <CardFooter className='flex flex-col items-start'>
-                        <h2 className='text-red-500 text-2xl font-bold mb-2'>Danger Zone</h2>
-                        <DeleteAccountButton />
-                    </CardFooter>
-                )}
-            </Card>
-        </div>
+                </div>
+                <div className="space-y-2">
+                    <Label>UserName</Label>
+                    <Input type="text" placeholder={decodedToken.name} disabled />
+                </div>
+            </CardContent>
+            {!decodedToken.admin && (
+                <CardFooter className='flex flex-col items-start'>
+                    <h2 className='text-red-500 text-xl font-semibold mb-2'>Would you like to delete your account? </h2>
+                    <DeleteAccountButton />
+                </CardFooter>
+            )}
+
+        </Card>
     )
 }

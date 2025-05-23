@@ -1,9 +1,7 @@
 "use server"
 import { auth, firestore } from "@/firebase/server"
 import admin from "firebase-admin";
-import { collection, addDoc, getFirestore } from "firebase/firestore";
 import { z } from "zod"
-import { Timestamp } from 'firebase/firestore';
 
 export const createReview = async (
     propertyId: string,
@@ -80,4 +78,19 @@ export const saveReviewImages = async ({
             images,
             updatedAt: new Date(),
         })
+}
+
+export const deleteReview = async (reviewId: string, authToken: string) => {
+    const verifiedToken = await auth.verifyIdToken(authToken)
+
+    if (!verifiedToken) {
+        return {
+            error: true,
+            message: "Unauthorized"
+        }
+    }
+    await firestore
+        .collection("reviews")
+        .doc(reviewId)
+        .delete()
 }

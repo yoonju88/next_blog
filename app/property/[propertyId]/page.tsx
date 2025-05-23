@@ -52,7 +52,7 @@ export default async function Property({ params }: { params: Promise<{ propertyI
         verifiedToken = await auth.verifyIdToken(token)
     }
     return (
-        <section className='w-[100%]'>
+        <section className='w-[100%] p-10 '>
             <div className="container px-5 py-24 mx-auto">
                 <div className="flex flex-wrap lg:flex-nowrap">
                     <div className="lg:basis-1/2 lg:min-w-0 lg:max-w-1/2 w-full">

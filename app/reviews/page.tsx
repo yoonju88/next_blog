@@ -2,7 +2,6 @@ import React from 'react'
 import EmptyList from '@/components/home/EmptyList'
 import { getUserReviews } from '@/data/reviews'
 import { redirect } from 'next/navigation';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image';
 import imageUrlFormatter from '@/lib/imageUrlFormatter';
 import { formatDistanceToNow } from 'date-fns'
@@ -15,6 +14,7 @@ import {
 } from '@/components/ui/carousel';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
+import RemoveReviewButton from './remove-review-button';
 
 export default async function ReviewsPage({
     searchParams
@@ -49,7 +49,6 @@ export default async function ReviewsPage({
         <section className="w-full mx-auto container px-10 py-10">
             <h1 className="font-title font-semibold text-3xl mb-10">Your Review list.</h1>
             <div className="grid md:grid-cols-2 grid-cols-1 items-center gap-10 ">
-
                 {paginatedReviews.map((review) => {
                     const createdAtDate = review.createdAt
                         ? new Date(review.createdAt.seconds * 1000)
@@ -60,7 +59,7 @@ export default async function ReviewsPage({
                     const images = review.images || [];
 
                     return (
-                        <div key={review.id} className="w-full flex py-4 px-4 bg-white rounded-xl group hover:shadow-lg hover:shadow-foreground/20 transition-all duration-300">
+                        <div key={review.id} className="relative w-full flex py-4 px-4 bg-white rounded-xl group hover:shadow-lg hover:shadow-foreground/20 transition-all duration-300">
                             <div className="flex flex-col w-[80%] text-gray-800 space-y-2">
                                 <div className="flex gap-4 items-center">
                                     <div className="p-4 bg-gray-300 rounded-2xl relative overflow-hidden">
@@ -103,9 +102,13 @@ export default async function ReviewsPage({
                                     </Carousel>
                                 )}
                             </div>
+                            <RemoveReviewButton
+                                reviewId={review.id}
+                                className="absolute top-4 right-4 bg-gray-300 p-1.5 rounded-md text-foreground hover:text-primary hover:bg-gray-100  hover:shadow-foreground/30 hover:shadow-sm duration-300 transition-all" />
                         </div>
                     );
                 })}
+
             </div >
             <div className="flex justify-center mt-4">
                 {Array.from({ length: totalPages }).map((_, i) => (

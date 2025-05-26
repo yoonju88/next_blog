@@ -1,7 +1,7 @@
 import { PropertyStatus } from "./propertyStatus";
 import { SkinType } from "./skinType"
 import { CategoryType } from "./categoryType"
-import { Review } from '@/types/review'
+
 
 export type Property = {
     id: string;
@@ -9,6 +9,7 @@ export type Property = {
     subTitle: string;
     price?: number;
     category?: CategoryType;
+    subCategory?: string;
     origin?: string;
     manufacturer?: string;
     volume?: number;
@@ -23,6 +24,5 @@ export type Property = {
     expireDate?: string;
     stockQuantity?: number;
     images?: string[];
-    review?: Review;
 }
 

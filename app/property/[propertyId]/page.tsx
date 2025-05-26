@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/carousel';
 import Image from "next/image";
 import imageUrlFormatter from "@/lib/imageUrlFormatter";
-import BackButton from "./back-button";
+import BackButton from "../../../components/back-button";
 import PropertyTab from "./propertyTab";
 import { Button } from "@/components/ui/button";
 import numeral from "numeral";
@@ -19,17 +19,12 @@ import { DecodedIdToken } from "firebase-admin/auth";
 import { getUserFavourites } from "@/data/favourites";
 import { getReviewsByPropertyId, getAverageRating } from '@/lib/reviews';
 import ToggleFavouriteButton from "@/components/toggle-favourite-button"
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog"
-import { NewReviewForm } from "./new-review-form";
 export const dynamic = "force-static"
 import Rating from "@/components/review/Rating";
+import Modal from "@/components/Dialog";
+import { NewReviewForm } from "./new-review-form";
+import Reviews from "@/components/review/reviewsSheet";
+import SlideImages from "@/components/carousel";
 
 export default async function Property({ params }: { params: Promise<{ propertyId: string }> }) {
     const { propertyId } = await params
@@ -38,7 +33,7 @@ export default async function Property({ params }: { params: Promise<{ propertyI
     const reviewsAverage = await getAverageRating(propertyId)
     const roundedAverage = Math.round(reviewsAverage * 10) / 10
     const allreviews = await getReviewsByPropertyId(propertyId)
-    console.log('average', reviewsAverage)
+    //console.log('average', reviewsAverage)
     const linkStyle = "flex-grow text-foreground border-b-2 border-muted-foreground py-2 text-lg px-1 transition-all duration-300 hover:border-primary hover:text-primary hover:font-bold"
     const InfoRow = ({ label, value }) => (
         <div className="flex border-t border-muted-foreground py-4 w-full">
@@ -51,7 +46,6 @@ export default async function Property({ params }: { params: Promise<{ propertyI
     const cookieStore = await cookies()
     const token = cookieStore.get("firevaseAuthToken")?.value
     let verifiedToken: DecodedIdToken | null
-
     if (token) {
         verifiedToken = await auth.verifyIdToken(token)
     }
@@ -61,28 +55,10 @@ export default async function Property({ params }: { params: Promise<{ propertyI
                 <div className="flex flex-wrap lg:flex-nowrap">
                     <div className="lg:basis-1/2 lg:min-w-0 lg:max-w-1/2 w-full">
                         {!!property?.images && (
-                            <Carousel className=" w-full h-full">
-                                <CarouselContent>
-                                    {property?.images.map((image, index) => (
-                                        <CarouselItem key={image}>
-                                            <div className="relative h-[80vh]">
-                                                <Image
-                                                    src={imageUrlFormatter(image)}
-                                                    alt={`Image ${index + 1}`}
-                                                    fill
-                                                    className="object-cover object-center rounded"
-                                                />
-                                            </div>
-                                        </CarouselItem>
-                                    ))}
-                                </CarouselContent>
-                                {property.images.length > 1 && (
-                                    <>
-                                        <CarouselPrevious className="translate-x-16 size-12" />
-                                        <CarouselNext className=" -translate-x-16 size-12" />
-                                    </>
-                                )}
-                            </Carousel>
+                            <SlideImages
+                                images={property.images}
+                                imageH="min-h-[600px]"
+                            />
                         )}
                     </div>
                     <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mb-6 lg:mb-0 relative">
@@ -97,29 +73,23 @@ export default async function Property({ params }: { params: Promise<{ propertyI
                         <h1 className="text-4xl title-font font-medium mb-2"> {property.name}</h1>
                         <h3 className="text-primary tracking-widest mb-6 font-semibold ">{property.subTitle}</h3>
                         <div className="mb-14">
-                            {!allreviews ? (
-                                <Dialog>
-                                    <DialogTrigger asChild>
-                                        <Button variant="default">
-                                            New Review
-                                        </Button>
-                                    </DialogTrigger>
-                                    <DialogContent className="sm:max-w-[425px]">
-                                        <DialogHeader>
-                                            <DialogTitle>New Review</DialogTitle>
-                                            <DialogDescription>
-                                                Create your review of this product.
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <NewReviewForm propertyId={propertyId} />
-                                    </DialogContent>
-                                </Dialog>
-                            ) : (
-                                <div className="flex items-center gap-2">
-                                    <Rating rating={roundedAverage} />
-                                    <span className="text-foreground tracking-widest"> | {roundedAverage}/5</span>
+                            {allreviews.length < 1 && (
+                                <Modal
+                                    title="New review"
+                                    description="Create your review of this product."
+                                >
+                                    <NewReviewForm propertyId={propertyId} />
+                                </Modal>
+                            )}
+                            {allreviews.length > 0 && (
+                                <div className="flex flex-col items-start">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-foreground/80 tracking-widest">{roundedAverage}/5</span>
+                                        <Rating rating={roundedAverage} />
+                                        <p>({allreviews.length})</p>
+                                    </div>
+                                    <Reviews reviews={allreviews} />
                                 </div>
-
                             )
                             }
                         </div>
@@ -143,11 +113,9 @@ export default async function Property({ params }: { params: Promise<{ propertyI
                         description={property.description}
                         ingredients={property.ingredients}
                         howToUse={property.howToUse}
-                    // review={property.review}
                     />
                 </div>
             </div>
-
         </section >
     )
 }

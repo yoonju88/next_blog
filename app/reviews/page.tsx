@@ -31,8 +31,8 @@ export default async function ReviewsPage({
     if (!reviews || reviews.length === 0) {
         return (
             <EmptyList
-                title="No review found"
-                message="You haven't written any reviews."
+                title="Be the first to leave a review!"
+                message="We’d love to hear what you think. Write a review!"
             />
         )
     }

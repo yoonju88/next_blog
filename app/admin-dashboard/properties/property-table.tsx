@@ -80,7 +80,7 @@ export default async function PropertyTable({
                                             </Link>
                                         </Button>
                                         <Button asChild variant="outline" size="sm" className="mx-1">
-                                            <Link href={`/admin-dashboard/edit-property/${property.id}`}>
+                                            <Link href={`/admin-dashboard/properties/${property.id}`}>
                                                 <PencilIcon />
                                             </Link>
                                         </Button>

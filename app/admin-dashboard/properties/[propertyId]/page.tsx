@@ -19,12 +19,19 @@ export default async function EditProperty({ params }: { params: Promise<{ prope
 
     return (
         <div>
-            <Breadcrumbs items={[{
-                href: "/admin-dashboard",
-                label: "Dashboard"
-            }, {
-                label: "Edit Property"
-            }]}
+            <Breadcrumbs items={[
+                {
+                    href: "/admin-dashboard",
+                    label: "Dashboard"
+                },
+                {
+                    href: "/admin-dashboard/properties",
+                    label: "Products"
+                },
+                {
+                    label: "Edit Property"
+                }
+            ]}
             />
             <Card className='mt-5 w-full sm:w-[100vh]'>
                 <CardHeader>

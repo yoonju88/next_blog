@@ -28,7 +28,9 @@ export default function PropertyForm({
         ...{
             name: "",
             price: 0,
+            costPrice: 0,
             category: "Make Up",
+            subCategory: "",
             origin: "",
             manufacturer: "",
             volume: 0,
@@ -61,7 +63,7 @@ export default function PropertyForm({
                         name="name"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Item name</FormLabel>
+                                <FormLabel>Product Name</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
                                 </FormControl>
@@ -101,6 +103,19 @@ export default function PropertyForm({
                         render={({ field }) => (
                             <FormItem>
                                 <FormLabel>Price/€</FormLabel>
+                                <FormControl>
+                                    <Input {...field} type="number" />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="costPrice"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Cost price/€</FormLabel>
                                 <FormControl>
                                     <Input {...field} type="number" />
                                 </FormControl>
@@ -169,6 +184,19 @@ export default function PropertyForm({
                     />
                     <FormField
                         control={form.control}
+                        name="subCategory"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Sub Category</FormLabel>
+                                <FormControl>
+                                    <Input {...field} type='text' />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
                         name="skinType"
                         render={({ field }) => (
                             <FormItem>
@@ -209,6 +237,9 @@ export default function PropertyForm({
                             </FormItem>
                         )}
                     />
+
+                </fieldset>
+                <fieldset className="flex flex-col gap-4" disabled={form.formState.isSubmitting}>
                     <FormField
                         control={form.control}
                         name="status"
@@ -255,8 +286,6 @@ export default function PropertyForm({
                             </FormItem>
                         )}
                     />
-                </fieldset>
-                <fieldset className="flex flex-col gap-4" disabled={form.formState.isSubmitting}>
                     <FormField
                         control={form.control}
                         name="description"

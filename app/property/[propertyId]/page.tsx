@@ -25,6 +25,7 @@ import Modal from "@/components/Dialog";
 import { NewReviewForm } from "./new-review-form";
 import Reviews from "@/components/review/reviewsSheet";
 import SlideImages from "@/components/carousel";
+import { Breadcrumbs } from '@/components/ui/breadcrumb'
 
 export default async function Property({ params }: { params: Promise<{ propertyId: string }> }) {
     const { propertyId } = await params
@@ -62,7 +63,15 @@ export default async function Property({ params }: { params: Promise<{ propertyI
                         )}
                     </div>
                     <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mb-6 lg:mb-0 relative">
-                        <BackButton />
+                        <div className="mb-3">
+                            <Breadcrumbs items={[{
+                                href: "/property/SkinCare",
+                                label: `${property.category}`
+                            }, {
+                                label: `${property.subCategory}`
+                            }]}
+                            />
+                        </div>
                         {(!verifiedToken || !verifiedToken.admin) && (
                             <ToggleFavouriteButton
                                 isFavourite={userFavourites.propertyIds.includes[property.id]}

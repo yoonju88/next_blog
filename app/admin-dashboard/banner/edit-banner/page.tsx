@@ -1,9 +1,9 @@
 import React from 'react'
 
-export default function BlogPage() {
+export default function EditBannerPage() {
     return (
         <div>
-            BlogPage
+            Edit Banner
         </div>
     )
 }

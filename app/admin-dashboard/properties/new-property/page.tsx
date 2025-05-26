@@ -13,8 +13,12 @@ export default function NewProduct() {
                         label: "Dashboard"
                     },
                     {
+                        href: "/admin-dashboard/properties",
+                        label: "Products"
+                    },
+                    {
                         label: "New Product"
-                    }
+                    },
                 ]}
             />
             <Card className="mt-6 bg-white/40 w-full sm:w-[100vh]">

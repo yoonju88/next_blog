@@ -3,7 +3,7 @@ import { Breadcrumbs } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { PlusCircleIcon } from 'lucide-react'
-import PropertyTable from './property-table'
+import PropertyTable from './properties/property-table'
 
 export default async function AdminDashboard({
     searchParams
@@ -21,15 +21,30 @@ export default async function AdminDashboard({
             ]}
             />
             <h1 className="text-4xl font-bold mt-6">Admin Dashboard</h1>
-            <Button
-                asChild
-                className="inline-flex pl-2 gap-2 mt-4"
-            >
-                <Link href="/admin-dashboard/new-property">
-                    <PlusCircleIcon /> New Product
-                </Link>
-            </Button>
-            <PropertyTable page={searchParamsValue?.page ? parseInt(searchParamsValue.page) : 1} />
+            <div className="flex gap-4 mt-6">
+                <Button
+                    asChild
+                >
+                    <Link href="/admin-dashboard/banner">
+                        Banner
+                    </Link>
+                </Button>
+                <Button
+                    asChild
+                >
+                    <Link href="/admin-dashboard/properties">
+                        Products
+                    </Link>
+                </Button>
+                <Button
+                    asChild
+                >
+                    <Link href="/admin-dashboard/delivery">
+                        Analyse
+                    </Link>
+                </Button>
+            </div>
+
         </div>
     )
 }

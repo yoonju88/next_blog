@@ -8,6 +8,7 @@ export type Property = {
     name?: string;
     subTitle: string;
     price?: number;
+    costPrice?: number;
     category?: CategoryType;
     subCategory?: string;
     origin?: string;

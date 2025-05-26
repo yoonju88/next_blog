@@ -53,7 +53,7 @@ export default function PropertyForm({
         resolver: zodResolver(propertySchema),
         defaultValues: combinedDefaultValues,
     })
-    console.log("Submit Button Label:", submitButtonLabel);
+    //console.log("Submit Button Label:", submitButtonLabel);
     return <Form {...form}>
         <form onSubmit={form.handleSubmit(handleSubmitAction)}>
             <div className="grid grid-cols-2 gap-8">

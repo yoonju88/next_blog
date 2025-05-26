@@ -5,7 +5,7 @@ import { useAuth } from "@/context/auth";
 import { propertyDataSchema, propertySchema } from '@/validation/propertySchema'
 import { z } from "zod"
 import { createProperty } from './action'
-import { savePropertyImages } from './action'
+import { savePropertyImages } from '../../action';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { ref, uploadBytesResumable, UploadTask } from 'firebase/storage';

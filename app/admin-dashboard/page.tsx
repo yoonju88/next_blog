@@ -25,8 +25,8 @@ export default async function AdminDashboard({
                 <Button
                     asChild
                 >
-                    <Link href="/admin-dashboard/banner">
-                        Banner
+                    <Link href="/admin-dashboard/banners">
+                        Banners
                     </Link>
                 </Button>
                 <Button

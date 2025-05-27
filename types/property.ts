@@ -6,7 +6,7 @@ import { CategoryType } from "./categoryType"
 export type Property = {
     id: string;
     name?: string;
-    subTitle: string;
+    subTitle?: string;
     price?: number;
     costPrice?: number;
     category?: CategoryType;

@@ -25,7 +25,9 @@ export default function NewPropertyForm() {
         const validatedData = propertyDataSchema.parse(rest) as {
             name: string;
             price: number;
+            costPrice: number;
             category: string;
+            subCategory: string;
             origin: string;
             manufacturer: string;
             volume: number;
@@ -66,11 +68,10 @@ export default function NewPropertyForm() {
             { propertyId: response.propertyId, images: paths },
             token
         )
-
         toast.success("Success!", {
             description: "Product added successfully",
         });
-        router.push('/admin-dashboard')
+        router.push('/admin-dashboard/properties')
 
         console.log("Auth State:", auth);
         console.log("Current User:", auth?.currentUser);

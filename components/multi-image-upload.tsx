@@ -83,7 +83,7 @@ export default function MultiImageUpload({
                         >
                             {images.map((image, index) => {
                                 const formattedUrl = urlFormatter(image);
-                                console.log("🔍 Formatted image URL:", formattedUrl); // ✅ 요기!
+                                //console.log("🔍 Formatted image URL:", formattedUrl); // ✅ 요기!
                                 return (
                                     < Draggable
                                         key={image.id}

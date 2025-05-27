@@ -21,7 +21,7 @@ import { getReviewsByPropertyId, getAverageRating } from '@/lib/reviews';
 import ToggleFavouriteButton from "@/components/toggle-favourite-button"
 export const dynamic = "force-static"
 import Rating from "@/components/review/Rating";
-import Modal from "@/components/Dialog";
+import Modal from "@/components/Modal";
 import { NewReviewForm } from "./new-review-form";
 import Reviews from "@/components/review/reviewsSheet";
 import SlideImages from "@/components/carousel";

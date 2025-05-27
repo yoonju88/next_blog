@@ -28,6 +28,7 @@ export default function PropertyForm({
         ...{
             name: "",
             price: 0,
+            subTitle: "",
             costPrice: 0,
             category: "Make Up",
             subCategory: "",
@@ -63,9 +64,9 @@ export default function PropertyForm({
                         name="name"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Product Name</FormLabel>
+                                <FormLabel>Name</FormLabel>
                                 <FormControl>
-                                    <Input {...field} />
+                                    <Input {...field} value={field.value ?? ""} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -78,7 +79,7 @@ export default function PropertyForm({
                             <FormItem>
                                 <FormLabel>Sub Title</FormLabel>
                                 <FormControl>
-                                    <Input {...field} />
+                                    <Input {...field} value={field.value ?? ""} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -104,7 +105,7 @@ export default function PropertyForm({
                             <FormItem>
                                 <FormLabel>Price/€</FormLabel>
                                 <FormControl>
-                                    <Input {...field} type="number" />
+                                    <Input {...field} type="number" value={field.value ?? 0} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -117,7 +118,7 @@ export default function PropertyForm({
                             <FormItem>
                                 <FormLabel>Cost price/€</FormLabel>
                                 <FormControl>
-                                    <Input {...field} type="number" />
+                                    <Input {...field} type="number" value={field.value ?? 0} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -189,7 +190,7 @@ export default function PropertyForm({
                             <FormItem>
                                 <FormLabel>Sub Category</FormLabel>
                                 <FormControl>
-                                    <Input {...field} type='text' />
+                                    <Input {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -280,7 +281,7 @@ export default function PropertyForm({
                             <FormItem>
                                 <FormLabel>Skin Benfit</FormLabel>
                                 <FormControl>
-                                    <Input {...field} />
+                                    <Textarea {...field} rows={10} className='resize-none h-[100px] max-h-[160px] overflow-y-auto' />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -306,7 +307,7 @@ export default function PropertyForm({
                             <FormItem>
                                 <FormLabel>Volume/ml</FormLabel>
                                 <FormControl>
-                                    <Input {...field} type="number" />
+                                    <Input {...field} type="number" value={field.value ?? 0} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -356,7 +357,7 @@ export default function PropertyForm({
                         name="stockQuantity"
                         render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Stock Qauntity</FormLabel>
+                                <FormLabel>Stock Quantity</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
                                 </FormControl>

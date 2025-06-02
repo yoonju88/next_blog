@@ -1,6 +1,7 @@
 import React from 'react'
 import { Breadcrumbs } from '@/components/ui/breadcrumb'
 import NewBannerForm from './new-banner-form'
+import BannersTable from '../banners-table'
 
 export default function EditBannerPage() {
     return (

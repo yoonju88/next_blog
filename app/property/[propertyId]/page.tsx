@@ -7,9 +7,6 @@ import {
     CarouselNext,
     CarouselPrevious
 } from '@/components/ui/carousel';
-import Image from "next/image";
-import imageUrlFormatter from "@/lib/imageUrlFormatter";
-import BackButton from "../../../components/back-button";
 import PropertyTab from "./propertyTab";
 import { Button } from "@/components/ui/button";
 import numeral from "numeral";

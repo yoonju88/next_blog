@@ -1,10 +1,10 @@
 "use client"
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { useRef } from "react";
 import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea/dnd"
 // npm i @hello-pangea/dnd
 import Image from "next/image";
-import { Badge } from "./ui/badge";
+import { Badge } from "../ui/badge";
 import { MoveIcon, XIcon } from "lucide-react";
 
 export type ImageUpload = {

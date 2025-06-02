@@ -73,9 +73,9 @@ export default function NewPropertyForm() {
         });
         router.push('/admin-dashboard/properties')
 
-        console.log("Auth State:", auth);
-        console.log("Current User:", auth?.currentUser);
-        console.log("Token:", token);
+        // console.log("Auth State:", auth);
+        //console.log("Current User:", auth?.currentUser);
+        //console.log("Token:", token);
     }
     return (
         <div>

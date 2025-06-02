@@ -1,7 +1,7 @@
 'use server'
-
 import { auth, firestore } from "@/firebase/server"
 import { bannerImageSchema } from "@/validation/bannerSchema"
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import admin from "firebase-admin"
 import { z } from "zod"
 
@@ -45,13 +45,14 @@ export const createBanner = async (
     }
 }
 
-
 export const saveBannerImages = async ({
     bannerId,
-    images,
+    webImages,
+    mobileImages
 }: {
     bannerId: string
-    images: string[]
+    webImages: z.infer<typeof bannerImageSchema>["webImages"];
+    mobileImages: z.infer<typeof bannerImageSchema>["mobileImages"]
 },
     authToken: string
 ) => {
@@ -65,11 +66,12 @@ export const saveBannerImages = async ({
     }
 
     const schema = z.object({
-        propertyId: z.string(),
-        images: z.array(z.string()),
+        bannerId: z.string(),
+        webImages: bannerImageSchema.shape.webImages,
+        mobileImages: bannerImageSchema.shape.mobileImages,
     })
 
-    const validation = schema.safeParse({ bannerId, images })
+    const validation = schema.safeParse({ bannerId, webImages, mobileImages })
     if (!validation.success) {
         return {
             error: true,
@@ -78,6 +80,68 @@ export const saveBannerImages = async ({
     }
 
     await firestore.collection("banners").doc(bannerId).update({
-        images,
-    })
+        webImages,
+        mobileImages,
+        updated: new Date(),
+    });
 }
+
+export const getWebBanners = async () => {
+    const bannersSnapshot = await firestore
+        .collection("banners")
+        .get()
+
+    if (bannersSnapshot.empty) { return [] }
+
+    const webBanners = bannersSnapshot.docs.map((doc) => {
+        const data = doc.data()
+        return {
+            id: doc.id,
+            images: data.webImages || [],
+            created: data.created,
+            updated: data.updated
+        }
+    })
+    return webBanners;
+}
+
+export const getMobileBanners = async () => {
+    const bannersSnapshot = await firestore
+        .collection("banners")
+        .get()
+
+    if (bannersSnapshot.empty) { return [] }
+
+    const mobileBanners = bannersSnapshot.docs.map((doc) => {
+        const data = doc.data()
+        return {
+            id: doc.id,
+            images: data.mobileImages || [],
+            created: data.created,
+            updated: data.updated
+        }
+    })
+    return mobileBanners;
+}
+
+/*
+export const getAllBanners = async () => {
+    const bannersSnapshot = await firestore
+        .collection("banners")
+        .get()
+
+    if (bannersSnapshot.empty) { return { webImages: [], mobileImages: [] } }
+
+    const banners = bannersSnapshot.docs.map((doc) => {
+        const data = doc.data()
+        return {
+            id: doc.id,
+            webImages: data.webImages || [],
+            mobileImages: data.mobileImages || [],
+            created: data.created,
+            updated: data.updated
+        }
+    })
+    return banners;
+}
+    */

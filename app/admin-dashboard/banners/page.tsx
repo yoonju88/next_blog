@@ -1,12 +1,11 @@
 import React from 'react'
 import { Breadcrumbs } from '@/components/ui/breadcrumb'
-import { Button } from '@/components/ui/button'
-import Link from 'next/link'
-import { PlusCircleIcon } from 'lucide-react'
+import BannersTable from './banners-table'
+
 
 export default function BannerPage() {
     return (
-        <div>
+        <>
             <Breadcrumbs items={[
                 {
                     href: "/admin-dashboard",
@@ -17,15 +16,7 @@ export default function BannerPage() {
                 },
             ]}
             />
-            <h1 className="text-4xl font-bold mt-6 mb-6">Admin Banner manage</h1>
-            <Button
-                asChild
-                className="flex-inline gap-2"
-            >
-                <Link href="/admin-dashboard/banners/edit-banner">
-                    <PlusCircleIcon />New Banner
-                </Link>
-            </Button>
-        </div>
+            <BannersTable />
+        </>
     )
 }

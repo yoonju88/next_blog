@@ -9,7 +9,6 @@ import {
 import Image from 'next/image';
 import imageUrlFormatter from '@/lib/imageUrlFormatter';
 
-
 export default function SlideImages({
     images,
     imageH,
@@ -22,7 +21,7 @@ export default function SlideImages({
             <CarouselContent>
                 {images.length > 0 &&
                     images.map((image, index) => (
-                        <CarouselItem key={image}>
+                        <CarouselItem key={image + index}>
                             <div className={`relative ${imageH} w-full`}>
                                 <Image
                                     src={imageUrlFormatter(image)}

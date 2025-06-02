@@ -4,12 +4,12 @@ import { useAuth } from "@/context/auth";
 import { z } from "zod"
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { ref, uploadBytesResumable, UploadTask, getDownloadURL, } from 'firebase/storage';
+import { ref, uploadBytesResumable, UploadTask, getDownloadURL, uploadBytes } from 'firebase/storage';
 import { storage } from '@/firebase/client';
 import { PlusCircleIcon } from "lucide-react";
 import { bannerImageSchema } from "@/validation/bannerSchema";
 import { createBanner, saveBannerImages } from "../action";
-import BannerForm from "../banner-form";
+import BannerForm from "../../../../components/home-banner/banner-form";
 
 export default function NewBannerForm() {
     const auth = useAuth();
@@ -17,53 +17,52 @@ export default function NewBannerForm() {
 
     const handleSubmit = async (data: z.infer<typeof bannerImageSchema>) => {
         const token = await auth?.currentUser?.getIdToken()
-
         if (!token) { return; }
 
-        // File 객체를 제거하고 필요한 데이터만 전달
-        const cleanData = {
-            webImages: data.webImages.map(img => ({
-                id: img.id,
-                url: img.url
-            })),
-            mobileImages: data.mobileImages.map(img => ({
-                id: img.id,
-                url: img.url
-            }))
-        };
-
-        const response = await createBanner(cleanData, token)
-        if (response.error || !response.bannerId) {
-            toast.error(response.message ?? "Error creating banner")
-            return
-        }
-        const bannerId = response.bannerId
-        const uploadedUrls: string[] = []
-
-        const uploadTasks = [...data.webImages, ...data.mobileImages].map((image, idx) => {
-            if (!image.file) return Promise.resolve();
+        const uploadImage = async (
+            image: { id: string; file?: File },
+            bannerId: string,
+            idx: number
+        ): Promise<{ id: string; url: string }> => {
+            if (!image.file) throw new Error("No file to upload");
 
             const path = `banners/${bannerId}/${Date.now()}-${idx}-${image.file.name}`;
             const storageRef = ref(storage, path);
-            const uploadTask = uploadBytesResumable(storageRef, image.file);
+            await uploadBytes(storageRef, image.file);
+            const url = await getDownloadURL(storageRef);
+            return { id: image.id, url }
+        }
 
-            return new Promise<void>((resolve, reject) => {
-                uploadTask.on(
-                    "state_changed",
-                    () => { }, // Optional progress handler
-                    reject,
-                    async () => {
-                        const url = await getDownloadURL(storageRef);
-                        uploadedUrls.push(url);
-                        resolve();
-                    }
-                );
-            });
-        });
+        // 먼저 배너 문서만 생성 (빈 상태)
+        const tempBannerResponse = await createBanner({ webImages: [], mobileImages: [] }, token);
+        if (tempBannerResponse.error || !tempBannerResponse.bannerId) {
+            toast.error(tempBannerResponse.message ?? "Error creating banner");
+            return;
+        }
+        const bannerId = tempBannerResponse.bannerId;
+        const uploadWebImages: { id: string; url: string }[] = [];
+        const uploadMobileImages: { id: string; url: string }[] = [];
 
 
-        await Promise.all(uploadTasks)
-        await saveBannerImages({ bannerId, images: uploadedUrls }, token)
+        // 이미지 업로드 후 URL 추출
+        for (let i = 0; i < data.webImages.length; i++) {
+            const uploaded = await uploadImage(data.webImages[i] as { id: string; file?: File }, bannerId, i);
+            uploadWebImages.push(uploaded);
+        }
+
+        for (let i = 0; i < data.mobileImages.length; i++) {
+            const uploaded = await uploadImage(data.mobileImages[i] as { id: string; file?: File }, bannerId, i);
+            uploadMobileImages.push(uploaded);
+        }
+
+        // URL이 포함된 상태로 배너 문서 업데이트
+        await saveBannerImages(
+            {
+                bannerId,
+                webImages: uploadWebImages,
+                mobileImages: uploadMobileImages
+            }, token
+        )
 
         toast.success("Success! Banner images uploaded.")
         router.push('/admin-dashboard/banners')

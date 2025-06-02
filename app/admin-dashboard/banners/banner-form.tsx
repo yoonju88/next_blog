@@ -1,4 +1,3 @@
-
 "use client"
 
 import React from 'react'
@@ -96,7 +95,7 @@ export default function BannerForm({
                     />
                 </fieldset>
                 <Button
-                    type="button"
+                    type="submit"
                     className="max-w-md mx-auto mt-4 w-full flex gap-2"
                     disabled={form.formState.isSubmitting}
                 >

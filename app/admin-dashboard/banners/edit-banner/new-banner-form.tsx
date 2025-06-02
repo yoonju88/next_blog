@@ -20,7 +20,19 @@ export default function NewBannerForm() {
 
         if (!token) { return; }
 
-        const response = await createBanner({}, token)
+        // File 객체를 제거하고 필요한 데이터만 전달
+        const cleanData = {
+            webImages: data.webImages.map(img => ({
+                id: img.id,
+                url: img.url
+            })),
+            mobileImages: data.mobileImages.map(img => ({
+                id: img.id,
+                url: img.url
+            }))
+        };
+
+        const response = await createBanner(cleanData, token)
         if (response.error || !response.bannerId) {
             toast.error(response.message ?? "Error creating banner")
             return

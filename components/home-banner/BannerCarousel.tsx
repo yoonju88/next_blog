@@ -7,12 +7,12 @@ import { DotButton, useDotButton } from './EmblaDotButton'
 import Image from 'next/image';
 
 type PropType = {
-    images: { id: string; url: string }[]
+    images: { id: string; url: string; }[]
     imageH: string,
     size: string,
     width: number,
     height: number,
-    options?: EmblaOptionsType
+    options?: EmblaOptionsType,
 }
 
 export default function BannerCarousel({
@@ -33,7 +33,6 @@ export default function BannerCarousel({
         } else {
             autoplay.stop()
         }
-
     }, [])
 
     const { selectedIndex, scrollSnaps, onDotButtonClick } = useDotButton(
@@ -66,7 +65,7 @@ export default function BannerCarousel({
                 </div>
             </div>
             {images.length > 1 && (
-                <div className="absolute bottom-19 left-1/2 -translate-x-1/2 z-10 flex gap-2.5">
+                <div className="absolute md:bottom-[5%] bottom-[3%] left-1/2 -translate-x-1/2 z-10 flex gap-2.5">
                     {scrollSnaps.map((_, idx) => (
                         <DotButton
                             key={idx}

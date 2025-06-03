@@ -161,20 +161,35 @@ export const getBannerById = async (bannerId: string) => {
     return { id: bannerIdSnapshot.id, ...bannerIdSnapshot.data() };
 }
 
-export const deleteBannerImages = async (bannerId: string) => {
+export const deleteBannerImages = async (
+    { bannerId }: { bannerId: string }
+    , authToken: string
+) => {
+    const verifiedToken = await auth.verifyIdToken(authToken);
+
+    if (!verifiedToken.admin) {
+        return {
+            error: true,
+            message: 'Unauthorized'
+        }
+    }
     const bannerDoc = firestore.collection("banners").doc(bannerId)
     const snapshot = await bannerDoc.get()
     const data = snapshot.data()
     const allImages = [...(data.webImages || []), ...(data.mobileImages || [])]
 
-    await Promise.all(allImages.map(async (url) => {
-        const path = extractStoragePath(url)
-        await deleteObject(ref(storage, path))
-    }))
+    await Promise.all(
+        allImages.map(async (image: any) => {
+            const url = typeof image === "string" ? image : image.url;
+            const path = extractStoragePath(url);
+            await deleteObject(ref(storage, path));
+        })
+    )
 
     await bannerDoc.update({
-        webImage: [],
+        webImages: [],
         mobileImages: [],
         updated: new Date()
     })
+    return { success: true }
 }

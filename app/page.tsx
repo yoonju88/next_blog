@@ -1,9 +1,19 @@
-import Image from "next/image";
+import { getWebBanners, getMobileBanners } from "@/app/admin-dashboard/banners/action";
+import BannersClient from '@/components/home-banner/Banners';
 
-export default function Home() {
+export default async function Home() {
+  const webImages = await getWebBanners();
+  const mobileImages = await getMobileBanners();
+
+  const allWebImages = webImages.flatMap(web => web.images ?? [])
+  const allMobileImages = mobileImages.flatMap(mobile => mobile.images ?? [])
+
   return (
-    <div>
-      Home page
+    <div className="w-full mx-auto mt-10">
+      <BannersClient
+        webImages={allWebImages}
+        mobileImages={allMobileImages}
+      />
     </div>
   );
 }

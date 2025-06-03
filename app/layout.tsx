@@ -26,7 +26,7 @@ export default function RootLayout({
         <AuthProvider>
           <Providers>
             <Nav />
-            <main className='container mx-auto min-h-screen relative flex items-center justify-center '>
+            <main className='container mx-auto max-w-[1290px] relative flex items-center justify-center '>
               {children}
               <Toaster />
             </main>

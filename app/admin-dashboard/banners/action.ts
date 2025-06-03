@@ -1,9 +1,11 @@
 'use server'
 import { auth, firestore } from "@/firebase/server"
+import { storage } from "@/firebase/client"
 import { bannerImageSchema } from "@/validation/bannerSchema"
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import admin from "firebase-admin"
 import { z } from "zod"
+import { deleteObject, ref } from "firebase/storage"
+import { extractStoragePath } from "@/utils/extractStoragePath";
 
 if (!admin.apps.length) {
     admin.initializeApp({
@@ -98,8 +100,8 @@ export const getWebBanners = async () => {
         return {
             id: doc.id,
             images: data.webImages || [],
-            created: data.created,
-            updated: data.updated
+            created: data.created?.toMillis() ?? null,
+            updated: data.updated?.toMillis() ?? null
         }
     })
     return webBanners;
@@ -117,31 +119,62 @@ export const getMobileBanners = async () => {
         return {
             id: doc.id,
             images: data.mobileImages || [],
-            created: data.created,
-            updated: data.updated
+            created: data.created?.toMillis() ?? null,
+            updated: data.updated?.toMillis() ?? null
         }
     })
     return mobileBanners;
 }
 
-/*
-export const getAllBanners = async () => {
-    const bannersSnapshot = await firestore
-        .collection("banners")
-        .get()
 
-    if (bannersSnapshot.empty) { return { webImages: [], mobileImages: [] } }
+export const getAllBanners = async (authToken: string) => {
+    const verifiedToken = await auth.verifyIdToken(authToken);
 
-    const banners = bannersSnapshot.docs.map((doc) => {
-        const data = doc.data()
+    if (!verifiedToken.admin) {
         return {
-            id: doc.id,
+            error: true,
+            message: 'Unauthorized'
+        }
+    }
+
+    const snapshot = await firestore.collection('banners').get();
+
+    if (snapshot.empty) return [];
+
+    return snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+            id: doc.id, // 👉 이게 bannerId!
             webImages: data.webImages || [],
             mobileImages: data.mobileImages || [],
-            created: data.created,
-            updated: data.updated
-        }
-    })
-    return banners;
+            createdAt: data.createdAt?.toMillis() ?? null,
+        };
+    });
+};
+
+export const getBannerById = async (bannerId: string) => {
+    const getDoc = firestore.collection("banners").doc(bannerId)
+    const bannerIdSnapshot = await getDoc.get()
+    if (!bannerIdSnapshot.exists) throw new Error("No banner")
+
+    const data = bannerIdSnapshot.data()
+    return { id: bannerIdSnapshot.id, ...bannerIdSnapshot.data() };
 }
-    */
+
+export const deleteBannerImages = async (bannerId: string) => {
+    const bannerDoc = firestore.collection("banners").doc(bannerId)
+    const snapshot = await bannerDoc.get()
+    const data = snapshot.data()
+    const allImages = [...(data.webImages || []), ...(data.mobileImages || [])]
+
+    await Promise.all(allImages.map(async (url) => {
+        const path = extractStoragePath(url)
+        await deleteObject(ref(storage, path))
+    }))
+
+    await bannerDoc.update({
+        webImage: [],
+        mobileImages: [],
+        updated: new Date()
+    })
+}

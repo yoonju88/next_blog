@@ -11,14 +11,12 @@ import Link from "next/link"
 import { useAuth } from "@/context/auth"
 import { toast } from "sonner"
 import { FirebaseError } from "firebase/app";
+import { useRouter } from "next/navigation"
 
 
-export default function LoginForm({
-    onSuccessAction
-}: {
-    onSuccessAction?: () => void
-}) {
+export default function LoginForm() {
     const auth = useAuth()
+    const router = useRouter()
 
     const form = useForm<z.infer<typeof userLoginSchema>>({
         resolver: zodResolver(userLoginSchema),
@@ -31,7 +29,7 @@ export default function LoginForm({
     const handleSubmit = async (data: z.infer<typeof userLoginSchema>) => {
         try {
             await auth?.loginWithEmail(data.email, data.password)
-            onSuccessAction?.();
+            router.refresh()
         } catch (e: unknown) {
             let errorMessage = "An error occurred";
             //To display type of error 
@@ -50,7 +48,6 @@ export default function LoginForm({
         <Form {...form} >
             <form
                 onSubmit={form.handleSubmit(handleSubmit)}
-
             >
                 <fieldset
                     disabled={form.formState.isSubmitting}

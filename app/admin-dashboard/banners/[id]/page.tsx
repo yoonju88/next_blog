@@ -2,6 +2,7 @@ import React from 'react'
 import { Breadcrumbs } from '@/components/ui/breadcrumb'
 import { getBannerById } from '../action';
 import DeleteBannerButton from './delete-banner-button';
+import BannersTab from './bannersTab';
 
 export default async function EditBanners({ params }: { params: { id: string } }) {
     const bannerId = params.id
@@ -37,7 +38,10 @@ export default async function EditBanners({ params }: { params: { id: string } }
                     id={bannerId}
                     name='Delete all images'
                 />
-
+                <BannersTab
+                    webImages={webImages}
+                    mobileImages={mobileImages}
+                />
             </div>
         </div>
     )

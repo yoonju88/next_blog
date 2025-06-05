@@ -7,7 +7,7 @@ import { DotButton, useDotButton } from './EmblaDotButton'
 import Image from 'next/image';
 
 type PropType = {
-    images: { id: string; url: string; }[]
+    images: { id: string; url: string; },
     imageH: string,
     size: string,
     width: number,

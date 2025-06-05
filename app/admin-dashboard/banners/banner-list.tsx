@@ -1,5 +1,4 @@
 import React from 'react'
-
 import BannerCarousel from '@/components/home-banner/BannerCarousel';
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'

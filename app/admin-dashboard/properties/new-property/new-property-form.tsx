@@ -72,7 +72,6 @@ export default function NewPropertyForm() {
             description: "Product added successfully",
         });
         router.push('/admin-dashboard/properties')
-
         // console.log("Auth State:", auth);
         //console.log("Current User:", auth?.currentUser);
         //console.log("Token:", token);

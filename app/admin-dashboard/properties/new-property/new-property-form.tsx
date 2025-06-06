@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { ref, uploadBytesResumable, UploadTask } from 'firebase/storage';
 import { storage } from '@/firebase/client';
 import { PlusCircleIcon } from "lucide-react";
+import { CreateProperty } from '@/types/property';
 
 export default function NewPropertyForm() {
     const auth = useAuth();
@@ -18,28 +19,10 @@ export default function NewPropertyForm() {
 
     const handleSubmit = async (data: z.infer<typeof propertySchema>) => {
         const token = await auth?.currentUser?.getIdToken()
-
         if (!token) { return; }
 
         const { images, ...rest } = data
-        const validatedData = propertyDataSchema.parse(rest) as {
-            name: string;
-            price: number;
-            costPrice: number;
-            category: string;
-            subCategory: string;
-            origin: string;
-            manufacturer: string;
-            volume: number;
-            description: string;
-            status: "Available" | "Sold Out" | "Limited edition";
-            ingredients: string;
-            keyIngredients: string;
-            skinType: "Oily Skin" | "Dry Skin" | "Combination Skin" | "Sensitive Skin" | "Normal Skin";
-            howToUse: string;
-            expireDate: string;
-            stockQuantity: number;
-        }
+        const validatedData = propertyDataSchema.parse(rest) as CreateProperty
         const response = await createProperty(validatedData, token)
 
         if (!!response.error || !response.propertyId) {
@@ -48,7 +31,6 @@ export default function NewPropertyForm() {
             });
             return;
         }
-
         const uploadTasks: UploadTask[] = [];
         const paths: string[] = [];
 
@@ -89,3 +71,4 @@ export default function NewPropertyForm() {
         </div>
     )
 }
+

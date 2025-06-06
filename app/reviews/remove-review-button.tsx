@@ -5,17 +5,22 @@ import { deleteReview } from './action';
 import { useAuth } from '@/context/auth';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { deleteObject, ref } from 'firebase/storage';
+import { storage } from '@/firebase/client';
 
 
 export default function RemoveReviewButton({
     reviewId,
-    className
+    className,
+    images
 }: {
     reviewId: string;
     className: string;
+    images: string[];
 }) {
     const auth = useAuth()
     const router = useRouter()
+    console.log('images Data', images)
 
     return (
         <Button
@@ -23,6 +28,11 @@ export default function RemoveReviewButton({
             onClick={async () => {
                 const tokenResult = await auth?.currentUser.getIdTokenResult()
                 if (!tokenResult) return;
+                const storageTasks: Promise<void>[] = [];
+                images.forEach(image => {
+                    storageTasks.push(deleteObject(ref(storage, image)))
+                })
+                await Promise.all(storageTasks)
                 await deleteReview(reviewId, tokenResult.token)
                 toast.success("success", {
                     description: "This review was removed from the review list."

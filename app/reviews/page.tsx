@@ -104,7 +104,9 @@ export default async function ReviewsPage({
                             </div>
                             <RemoveReviewButton
                                 reviewId={review.id}
-                                className="absolute top-4 right-4 bg-gray-300 p-1.5 rounded-md text-foreground hover:text-primary hover:bg-gray-100  hover:shadow-foreground/30 hover:shadow-sm duration-300 transition-all" />
+                                className="absolute top-4 right-4 bg-gray-300 p-1.5 rounded-md text-foreground hover:text-primary hover:bg-gray-100  hover:shadow-foreground/30 hover:shadow-sm duration-300 transition-all"
+                                images={images}
+                            />
                         </div>
                     );
                 })}

@@ -238,7 +238,6 @@ export default function PropertyForm({
                             </FormItem>
                         )}
                     />
-
                 </fieldset>
                 <fieldset className="flex flex-col gap-4" disabled={form.formState.isSubmitting}>
                     <FormField
@@ -385,7 +384,6 @@ export default function PropertyForm({
                                     if (image.url?.startsWith("http")) return image.url;
                                     // 혹시 상대 경로라면 firebase storage URL로 변환
                                     return `https://firebasestorage.googleapis.com/v0/b/yoonju-blog.firebasestorage.app/o/${encodeURIComponent(image.url ?? "")}?alt=media`;
-
                                 }}
                             />
                         </FormControl>

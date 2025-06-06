@@ -25,8 +25,29 @@ export default function PropertyForm({
     //defaultValues 객체를 **스프레드 연산자 (...)**로 덮어씌움
     //즉, defaultValues에 값이 있다면 기존 값이 덮어씌워짐 (우선순위: defaultValues > 기본 객체)
     const combinedDefaultValues: z.infer<typeof propertySchema> = {
-        ...propertySchema.parse({}), // 스키마의 default 값으로 채워진 객체
-        ...defaultValues, // 전달된 값으로 덮어쓰기
+        ...{
+            name: "",
+            price: 0,
+            subTitle: "",
+            costPrice: 0,
+            category: "Make Up",
+            subCategory: "",
+            origin: "",
+            manufacturer: "",
+            volume: 0,
+            description: "",
+            status: "Available",
+            brand: "",
+            images: [],
+            ingredients: "",
+            keyIngredients: "",
+            skinType: "Normal Skin",
+            howToUse: "",
+            expireDate: "",
+            stockQuantity: 0,
+            skinBenfit: "",
+        },
+        ...defaultValues,
     }
 
     const form = useForm<z.infer<typeof propertySchema>>({

@@ -23,14 +23,13 @@ export default function NewBannerForm() {
             image: { id: string; file?: File },
             bannerId: string,
             idx: number
-        ): Promise<{ id: string; url: string }> => {
+        ): Promise<{ id: string; url: string, path: string }> => {
             if (!image.file) throw new Error("No file to upload");
-
             const path = `banners/${bannerId}/${Date.now()}-${idx}-${image.file.name}`;
             const storageRef = ref(storage, path);
             await uploadBytes(storageRef, image.file);
             const url = await getDownloadURL(storageRef);
-            return { id: image.id, url }
+            return { id: image.id, url, path }
         }
 
         // 먼저 배너 문서만 생성 (빈 상태)
@@ -40,8 +39,8 @@ export default function NewBannerForm() {
             return;
         }
         const bannerId = tempBannerResponse.bannerId;
-        const uploadWebImages: { id: string; url: string }[] = [];
-        const uploadMobileImages: { id: string; url: string }[] = [];
+        const uploadWebImages: { id: string; url: string; path: string; }[] = [];
+        const uploadMobileImages: { id: string; url: string; path: string; }[] = [];
 
 
         // 이미지 업로드 후 URL 추출
@@ -54,7 +53,6 @@ export default function NewBannerForm() {
             const uploaded = await uploadImage(data.mobileImages[i] as { id: string; file?: File }, bannerId, i);
             uploadMobileImages.push(uploaded);
         }
-
         // URL이 포함된 상태로 배너 문서 업데이트
         await saveBannerImages(
             {
@@ -63,7 +61,6 @@ export default function NewBannerForm() {
                 mobileImages: uploadMobileImages
             }, token
         )
-
         toast.success("Success! Banner images uploaded.")
         router.push('/admin-dashboard/banners')
     }

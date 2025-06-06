@@ -18,7 +18,6 @@ export type Property = {
     status?: PropertyStatus;
     brand?: string;
     ingredients?: string;
-    keyIngredients?: string;
     skinType?: SkinType;
     skinBenefit?: string;
     howToUse?: string;
@@ -27,3 +26,23 @@ export type Property = {
     images?: string[];
 }
 
+export type CreateProperty = {
+    name: string;
+    subTitle: string;
+    price: number;
+    costPrice: number;
+    category: CategoryType;
+    subCategory: string;
+    origin: string;
+    manufacturer: string;
+    volume: number;
+    description: string;
+    status: PropertyStatus;
+    brand: string;
+    ingredients: string;
+    skinType: SkinType;
+    skinBenefit: string;
+    howToUse: string;
+    expireDate: string;
+    stockQuantity: number;
+}

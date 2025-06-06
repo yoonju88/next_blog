@@ -1,5 +1,5 @@
 import { firestore } from "@/firebase/server";
-import type { Property } from "../types/property"
+import type { CreateProperty, Property } from "../types/property"
 
 export const getPropertyById = async (id: string) => {
     const propertySnapshot = await firestore
@@ -35,4 +35,19 @@ export const getPropertiesById = async (propertyIds: string[]) => {
     ))
 
     return propertiesData
+}
+
+export const getRecentProperies = async (): Promise<Property[]> => {
+    const sanpshot = await firestore
+        .collection('properties')
+        .orderBy("created", "desc")
+        .limit(3)
+        .get()
+
+    const recentProperties = sanpshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+    })) as Property[]
+
+    return recentProperties;
 }

@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { deleteObject, ref } from 'firebase/storage';
 import { storage } from '@/firebase/client';
-import { extractStoragePath } from "@/utils/extractStoragePath";
 import { Button } from '@/components/ui/button';
 import { TrashIcon } from 'lucide-react';
 import { toast } from 'sonner';

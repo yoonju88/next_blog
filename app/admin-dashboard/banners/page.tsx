@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export default async function BannerPage() {
+
     const webImages = await getWebBanners();
     const allWebImages = webImages.flatMap(web => web.images ?? [])
     const mobileImages = await getMobileBanners();
@@ -27,18 +28,39 @@ export default async function BannerPage() {
                 },
             ]}
             />
-            <div className="flex items-center justify-between mt-14">
+            <div className="mt-14">
                 <h1 className="text-3xl font-black uppercase text-foreground "> Banner Images manage</h1>
-                <Button>
-                    <Link href={`/admin-dashboard/banners/${BannerId}`}>
-                        <Edit2 /> Modifier Banner Images
-                    </Link>
-                </Button>
             </div >
-            <BannersList
-                webImages={allWebImages}
-                mobileImages={allMobileImages}
-            />
+            <div className="mt-10">
+
+                {webImages.length === 0 && mobileImages.length === 0 ? (
+                    <Button>
+                        <Link
+                            href={`/admin-dashboard/banners/new-banner`}
+                            className='flex gap-2'
+                        >
+                            <Edit2 /> Add New Banner Images
+                        </Link>
+                    </Button>
+                ) : (
+                    <>
+                        <Button>
+                            <Link
+                                href={`/admin-dashboard/banners/${BannerId}`}
+                                className='flex gap-2'
+                            >
+                                <Edit2 /> Modifier Banner Images
+                            </Link>
+                        </Button>
+                        <BannersList
+                            webImages={allWebImages}
+                            mobileImages={allMobileImages}
+                        />
+                    </>
+                )}
+
+            </div>
+
         </>
     )
 }

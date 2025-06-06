@@ -1,10 +1,8 @@
 'use server'
 import { auth, firestore } from "@/firebase/server"
-import { storage } from "@/firebase/client"
 import { bannerImageSchema } from "@/validation/bannerSchema"
 import admin from "firebase-admin"
 import { z } from "zod"
-import { deleteObject, ref } from "firebase/storage"
 import { extractStoragePath } from "@/utils/extractStoragePath";
 
 if (!admin.apps.length) {
@@ -12,7 +10,6 @@ if (!admin.apps.length) {
         credential: admin.credential.applicationDefault(),
     });
 }
-
 export const createBanner = async (
     data: unknown,
     authToken: string,
@@ -162,8 +159,8 @@ export const getBannerById = async (bannerId: string) => {
 }
 
 export const deleteBannerImages = async (
-    { bannerId }: { bannerId: string }
-    , authToken: string
+    { bannerId }: { bannerId: string },
+    authToken: string
 ) => {
     const verifiedToken = await auth.verifyIdToken(authToken);
 
@@ -173,23 +170,28 @@ export const deleteBannerImages = async (
             message: 'Unauthorized'
         }
     }
-    const bannerDoc = firestore.collection("banners").doc(bannerId)
-    const snapshot = await bannerDoc.get()
-    const data = snapshot.data()
-    const allImages = [...(data.webImages || []), ...(data.mobileImages || [])]
+    // const bannerDoc = firestore.collection("banners").doc(bannerId)
+    // const snapshot = await bannerDoc.get()
+    // const data = snapshot.data()
+    // const allImages = [...(data.webImages || []), ...(data.mobileImages || [])]
 
-    await Promise.all(
-        allImages.map(async (image: any) => {
-            const url = typeof image === "string" ? image : image.url;
-            const path = extractStoragePath(url);
-            await deleteObject(ref(storage, path));
-        })
-    )
+    // await Promise.all(
+    //     allImages.map(async (image: any) => {
+    //         const url = typeof image === "string" ? image : image.url;
+    //         const path = extractStoragePath(url);
+    //         //await deleteObject(ref(storage, path));
+    //     })
+    // )
 
-    await bannerDoc.update({
-        webImages: [],
-        mobileImages: [],
-        updated: new Date()
-    })
-    return { success: true }
+    // await bannerDoc.update({
+    //     webImages: [],
+    //     mobileImages: [],
+    //     updated: new Date()
+    // })
+    // return { success: true }
+
+    await firestore
+        .collection('banners')
+        .doc(bannerId)
+        .delete()
 }

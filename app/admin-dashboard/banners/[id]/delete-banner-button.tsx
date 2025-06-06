@@ -13,16 +13,24 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { deleteObject, ref } from 'firebase/storage';
+import { storage } from '@/firebase/client';
+import { extractStoragePath } from "@/utils/extractStoragePath";
 import { Button } from '@/components/ui/button';
 import { TrashIcon } from 'lucide-react';
-
+import { toast } from 'sonner';
 
 export default function DeleteBannerButton({
-    id,
+    bannerId,
     name,
+    webImages = [],
+    mobileImages = [],
 }: {
-    id: string;
+    bannerId: string;
     name: string;
+    webImages: string[];
+    mobileImages: string[];
+
 }) {
     const router = useRouter()
     const auth = useAuth();
@@ -32,10 +40,24 @@ export default function DeleteBannerButton({
         const token = await auth?.currentUser?.getIdToken()
         if (!token) { return }
         setIsDeleting(true)
+        const storageTasks: Promise<void>[] = [];
 
-        await deleteBannerImages(id, token)
+        webImages.forEach(image => {
+            const path = typeof image === "string" ? image : image.path
+            storageTasks.push(deleteObject(ref(storage, path)))
+        })
+        mobileImages.forEach(image => {
+            const path = typeof image === "string" ? image : image.path
+            storageTasks.push(deleteObject(ref(storage, path)))
+        })
+
+        await Promise.all(storageTasks)
+        await deleteBannerImages({ bannerId }, token)
         setIsDeleting(false)
-        router.push('/admin-dashboard')
+        toast.success("Success", {
+            description: "All Banner images deleted successfully 👏🏼"
+        })
+        router.push('/admin-dashboard/banners/new-banner')
     }
 
     return (

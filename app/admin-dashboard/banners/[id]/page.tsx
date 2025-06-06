@@ -35,8 +35,10 @@ export default async function EditBanners({ params }: { params: { id: string } }
             />
             <div className='mt-14'>
                 <DeleteBannerButton
-                    id={bannerId}
+                    bannerId={bannerId}
                     name='Delete all images'
+                    webImages={webImages}
+                    mobileImages={mobileImages}
                 />
                 <BannersTab
                     webImages={webImages}

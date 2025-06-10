@@ -7,6 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Label } from '@/components/ui/label';
 import UpdatePasswordForm from './update-password-form';
 import DeleteAccountButton from './delete-account-button';
+import UpdateProfileForm from './update-profile-form';
 import { Input } from '@/components/ui/input';
 
 export default async function Account() {
@@ -35,20 +36,30 @@ export default async function Account() {
                     My Account
                 </CardTitle>
             </CardHeader>
-            <CardContent className="flex flex-col gap-2">
+            <CardContent className="flex flex-col gap-4">
                 <div className="space-y-2">
                     <Label>Email</Label>
-                    <Input type="email" placeholder={decodedToken.email} disabled />
+                    <Input type="email" value={decodedToken.email} disabled />
                 </div>
                 <div>
                     {!!isPasswordProvider && (
                         <UpdatePasswordForm />
                     )}
                 </div>
-                <div className="space-y-2">
-                    <Label>UserName</Label>
-                    <Input type="text" placeholder={decodedToken.name} disabled />
-                </div>
+                <UpdateProfileForm 
+                    initialData={{
+                        displayName: decodedToken.name || '',
+                        address: decodedToken.address || {
+                            street: '',
+                            city: '',
+                            state: '',
+                            zipCode: '',
+                            country: ''
+                        },
+                        phoneNumber: decodedToken.phone_number || '',
+                        birthDate: decodedToken.birth_date || ''
+                    }}
+                />
             </CardContent>
             {!decodedToken.admin && (
                 <CardFooter className='flex flex-col items-start'>

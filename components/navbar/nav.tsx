@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { DarkModeSwatch } from './DarkModeSwatch'
 import AuthButtons from './auth-buttons'
-import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { HeartIcon, ShoppingCartIcon } from 'lucide-react'
 

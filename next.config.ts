@@ -12,6 +12,19 @@ const nextConfig: NextConfig = {
         hostname: "firebasestorage.googleapis.com"
       }
     ]
+  },
+  async headers() {
+    return [
+      {
+        source: '/(admin-dashboard|account|checkout)/:path*',
+        headers: [
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin-allow-popups'
+          }
+        ]
+      }
+    ]
   }
 };
 

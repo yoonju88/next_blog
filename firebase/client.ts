@@ -1,6 +1,7 @@
 
-import { initializeApp, getApps } from "firebase/app";
+import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
+import { getFirestore, Firestore } from "firebase/firestore";
 import { FirebaseStorage, getStorage } from "firebase/storage"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -17,19 +18,16 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-// Initialize Firebase
 const currentApps = getApps()
 let auth: Auth;
 let storage: FirebaseStorage;
+let db: Firestore
 
-if (!currentApps.length) {
-    const app = initializeApp(firebaseConfig)
-    auth = getAuth(app);
-    storage = getStorage(app);
-} else {
-    const app = currentApps[0]; // first element
-    auth = getAuth(app);
-    storage = getStorage(app);
-};
 
-export { auth, storage }
+const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+auth = getAuth(app);
+storage = getStorage(app);
+db = getFirestore(app)
+
+
+export { app, auth, storage, db }

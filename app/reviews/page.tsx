@@ -32,7 +32,7 @@ export default async function ReviewsPage({
         return (
             <EmptyList
                 title="Be the first to leave a review!"
-                message="We’d love to hear what you think. Write a review!"
+                message="We'd love to hear what you think. Write a review!"
             />
         )
     }
@@ -87,6 +87,7 @@ export default async function ReviewsPage({
                                                                 src={imageUrlFormatter(image)}
                                                                 alt={`Image ${index + 1}`}
                                                                 fill
+                                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                                 className="object-cover object-center rounded group-hover:scale-105 transition-all duration-300"
                                                             />
                                                         </div>

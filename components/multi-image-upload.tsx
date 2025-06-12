@@ -103,6 +103,7 @@ export default function MultiImageUpload({
                                                             src={urlFormatter ? urlFormatter(image) : image.url}
                                                             alt={`item image${index}`}
                                                             fill
+                                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                             className='object-cover'
                                                         />
                                                     </div>

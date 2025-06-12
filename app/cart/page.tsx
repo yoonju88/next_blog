@@ -1,9 +1,10 @@
 import React from 'react'
+import { CartList } from './CartList'
 
-export default function Cart() {
+export default function CartPage() {
     return (
         <div>
-            See items lists
+            <CartList />
         </div>
     )
 }

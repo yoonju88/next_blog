@@ -22,6 +22,12 @@ export default function BannersClient({
     }, []);
     if (isMobile === null) return null; // 로딩 중 처리
 
+    const formatImages = (images: string[]) => {
+        return images.map((url, index) => ({
+            id: `image-${index}`,
+            url
+        }));
+    };
 
     return (
         <>

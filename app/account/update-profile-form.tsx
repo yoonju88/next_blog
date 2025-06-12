@@ -12,6 +12,8 @@ import { db } from "@/firebase/client"
 interface UpdateProfileFormProps {
     initialData: {
         displayName: string;
+        lastName: string;
+        firstName: string;
         address: {
             street: string;
             city: string;
@@ -28,6 +30,8 @@ interface UpdateProfileFormProps {
 
 const defaultFormData = {
     displayName: '',
+    lastName: '',
+    firstName: '',
     address: {
         street: '',
         city: '',
@@ -50,11 +54,11 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
     useEffect(() => {
         const fetchUserData = async () => {
             if (!auth?.currentUser) return;
-            
+
             try {
                 const userRef = doc(db, 'users', auth.currentUser.uid);
                 const docSnap = await getDoc(userRef);
-                
+
                 if (docSnap.exists()) {
                     const data = docSnap.data();
                     setUserData(data);
@@ -62,6 +66,8 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
                     setFormData(prev => ({
                         ...prev,
                         displayName: data.displayName || prev.displayName,
+                        lastName: data.lastName || prev.lastName,
+                        firstName: data.firstName || prev.firstName,
                         address: data.address || prev.address,
                         phoneNumber: data.phoneNumber || prev.phoneNumber,
                         birthDate: data.birthDate || prev.birthDate,
@@ -115,76 +121,113 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-                <Label htmlFor="displayName">이름</Label>
+                <Label htmlFor="displayName">Name</Label>
                 <Input
                     id="displayName"
                     name="displayName"
                     value={formData.displayName}
                     onChange={handleChange}
-                    placeholder="이름을 입력하세요"
+                    placeholder=""
                 />
             </div>
-
-            <div className="space-y-2">
-                <Label>주소</Label>
-                <div className="grid gap-2">
+            <div className="grid grid-cols-2 gap-2">
+                <div className="space-y-2">
+                    <Label htmlFor="lastName">Last Name</Label>
+                    <Input
+                        id="lastName"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        placeholder=""
+                    />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="lastName">First Name</Label>
+                    <Input
+                        id="firstName"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        placeholder=""
+                    />
+                </div>
+            </div>
+            <div className="space-y-2 mt-6">
+                <Label>Adress</Label>
+                <div className="space-y-2 mt-4">
+                    <Label>Street</Label>
                     <Input
                         name="address.street"
                         value={formData.address.street}
                         onChange={handleChange}
                         placeholder="거리 주소"
                     />
-                    <div className="grid grid-cols-2 gap-2">
-                        <Input
-                            name="address.city"
-                            value={formData.address.city}
-                            onChange={handleChange}
-                            placeholder="도시"
-                        />
-                        <Input
-                            name="address.state"
-                            value={formData.address.state}
-                            onChange={handleChange}
-                            placeholder="주/도"
-                        />
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                        <div className="space-y-2">
+                            <Label>City</Label>
+                            <Input
+                                name="address.city"
+                                value={formData.address.city}
+                                onChange={handleChange}
+                                placeholder="도시"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>State</Label>
+                            <Input
+                                name="address.state"
+                                value={formData.address.state}
+                                onChange={handleChange}
+                                placeholder="주/도"
+                            />
+                        </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2">
-                        <Input
-                            name="address.zipCode"
-                            value={formData.address.zipCode}
-                            onChange={handleChange}
-                            placeholder="우편번호"
-                        />
-                        <Input
-                            name="address.country"
-                            value={formData.address.country}
-                            onChange={handleChange}
-                            placeholder="국가"
-                        />
+                        <div className="space-y-2">
+                            <Label>
+                                Zip Code
+                            </Label>
+                            <Input
+                                name="address.zipCode"
+                                value={formData.address.zipCode}
+                                onChange={handleChange}
+                                placeholder="우편번호"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <Label>Country</Label>
+                            <Input
+                                name="address.country"
+                                value={formData.address.country}
+                                onChange={handleChange}
+                                placeholder="국가"
+                            />
+                        </div>
+
                     </div>
                 </div>
             </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="phoneNumber">전화번호</Label>
-                <Input
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
-                    onChange={handleChange}
-                    placeholder="전화번호를 입력하세요"
-                />
-            </div>
-
-            <div className="space-y-2">
-                <Label htmlFor="birthDate">생년월일</Label>
-                <Input
-                    id="birthDate"
-                    name="birthDate"
-                    type="date"
-                    value={formData.birthDate}
-                    onChange={handleChange}
-                />
+            <div className="grid grid-cols-2 gap-2 mt-6">
+                <div className="space-y-2">
+                    <Label htmlFor="phoneNumber">전화번호</Label>
+                    <Input
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        value={formData.phoneNumber}
+                        onChange={handleChange}
+                        placeholder="전화번호를 입력하세요"
+                    />
+                </div>
+                <div className="space-y-2">
+                    <Label htmlFor="birthDate">생년월일</Label>
+                    <Input
+                        id="birthDate"
+                        name="birthDate"
+                        type="date"
+                        value={formData.birthDate}
+                        onChange={handleChange}
+                    />
+                </div>
             </div>
             <div className="space-y-2">
                 <Label htmlFor="userPoint">포인트</Label>

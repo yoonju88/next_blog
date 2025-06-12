@@ -6,6 +6,7 @@ import Nav from "@/components/navbar/nav";
 import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from "@/context/auth";
 import Footer from "@/components/home/footer";
+import { CartProvider } from "@/context/cart-context";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,14 +26,16 @@ export default function RootLayout({
         className={`${inter.className} antialiased bg-background`}
       >
         <AuthProvider>
-          <Providers>
-            <Nav />
-            <main className='container mx-auto max-w-[1290px] relative flex items-center justify-center '>
-              {children}
-              <Toaster />
-            </main>
-            <Footer />
-          </Providers>
+          <CartProvider>
+            <Providers>
+              <Nav />
+              <main className='container mx-auto max-w-[1290px] relative flex items-center justify-center '>
+                {children}
+                <Toaster />
+              </main>
+              <Footer />
+            </Providers>
+          </CartProvider>
         </AuthProvider>
       </body>
     </html>

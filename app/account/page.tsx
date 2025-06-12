@@ -30,7 +30,7 @@ export default async function Account() {
     )
 
     return (
-        <Card className='py-10 px-4 w-[450px] sm:w-[500px]'>
+        <Card className='py-10 px-4 w-[450px] sm:w-[600px] border-foreground/20'>
             <CardHeader>
                 <CardTitle className="text-3xl font-bold">
                     My Account
@@ -46,9 +46,12 @@ export default async function Account() {
                         <UpdatePasswordForm />
                     )}
                 </div>
-                <UpdateProfileForm 
+
+                <UpdateProfileForm
                     initialData={{
                         displayName: decodedToken.name || '',
+                        lastName: decodedToken.lastName || '',
+                        firstName: decodedToken.fistName || '',
                         address: decodedToken.address || {
                             street: '',
                             city: '',
@@ -61,6 +64,7 @@ export default async function Account() {
                     }}
                 />
             </CardContent>
+            <div className="border-foreground/20 border-t-1" />
             {!decodedToken.admin && (
                 <CardFooter className='flex flex-col items-start'>
                     <h2 className='text-red-500 text-xl font-semibold mb-2'>Would you like to delete your account? </h2>

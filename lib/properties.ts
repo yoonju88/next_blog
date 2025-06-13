@@ -41,7 +41,7 @@ export const getRecentProperies = async (): Promise<Property[]> => {
     const sanpshot = await firestore
         .collection('properties')
         .orderBy("created", "desc")
-        .limit(3)
+        .limit(4)
         .get()
 
     const recentProperties = sanpshot.docs.map(doc => {

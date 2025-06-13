@@ -8,6 +8,7 @@ import { useState, useEffect } from "react"
 import { toast } from "sonner"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/firebase/client"
+import PickCalenderDate from '@/components/account/pickCalenderDate'
 
 interface UpdateProfileFormProps {
     initialData: {
@@ -53,10 +54,10 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
 
     useEffect(() => {
         const fetchUserData = async () => {
-            if (!auth?.currentUser) return;
+            if (!auth?.user) return;
 
             try {
-                const userRef = doc(db, 'users', auth.currentUser.uid);
+                const userRef = doc(db, 'users', auth.user.uid);
                 const docSnap = await getDoc(userRef);
 
                 if (docSnap.exists()) {
@@ -81,7 +82,7 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
         };
 
         fetchUserData();
-    }, [auth?.currentUser]);
+    }, [auth?.user]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -138,7 +139,7 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
                         name="lastName"
                         value={formData.lastName}
                         onChange={handleChange}
-                        placeholder=""
+                        placeholder="Last Name"
                     />
                 </div>
                 <div className="space-y-2">
@@ -148,7 +149,7 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
                         name="firstName"
                         value={formData.firstName}
                         onChange={handleChange}
-                        placeholder=""
+                        placeholder="First Name"
                     />
                 </div>
             </div>
@@ -160,7 +161,7 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
                         name="address.street"
                         value={formData.address.street}
                         onChange={handleChange}
-                        placeholder="거리 주소"
+                        placeholder="Street Address"
                     />
                     <div className="grid grid-cols-2 gap-2 mt-2">
                         <div className="space-y-2">
@@ -169,7 +170,7 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
                                 name="address.city"
                                 value={formData.address.city}
                                 onChange={handleChange}
-                                placeholder="도시"
+                                placeholder="City"
                             />
                         </div>
                         <div className="space-y-2">
@@ -178,7 +179,7 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
                                 name="address.state"
                                 value={formData.address.state}
                                 onChange={handleChange}
-                                placeholder="주/도"
+                                placeholder="State"
                             />
                         </div>
                     </div>
@@ -191,7 +192,7 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
                                 name="address.zipCode"
                                 value={formData.address.zipCode}
                                 onChange={handleChange}
-                                placeholder="우편번호"
+                                placeholder="Zip Code"
                             />
                         </div>
                         <div className="space-y-2">
@@ -200,7 +201,7 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
                                 name="address.country"
                                 value={formData.address.country}
                                 onChange={handleChange}
-                                placeholder="국가"
+                                placeholder="Country"
                             />
                         </div>
 
@@ -209,28 +210,28 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
             </div>
             <div className="grid grid-cols-2 gap-2 mt-6">
                 <div className="space-y-2">
-                    <Label htmlFor="phoneNumber">전화번호</Label>
+                    <Label htmlFor="phoneNumber">Phone Number</Label>
                     <Input
                         id="phoneNumber"
                         name="phoneNumber"
                         value={formData.phoneNumber}
                         onChange={handleChange}
-                        placeholder="전화번호를 입력하세요"
+                        placeholder="Phone Number"
                     />
                 </div>
                 <div className="space-y-2">
-                    <Label htmlFor="birthDate">생년월일</Label>
-                    <Input
-                        id="birthDate"
-                        name="birthDate"
-                        type="date"
-                        value={formData.birthDate}
-                        onChange={handleChange}
+                    <PickCalenderDate
+                        onDateSelect={(date) => {
+                            setFormData(prev => ({
+                                ...prev,
+                                birthDate: date.toISOString().split('T')[0]
+                            }))
+                        }}
                     />
                 </div>
             </div>
             <div className="space-y-2">
-                <Label htmlFor="userPoint">포인트</Label>
+                <Label htmlFor="userPoint">Point</Label>
                 <Input
                     id="userPoint"
                     name="userPoint"
@@ -239,7 +240,7 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
                 />
             </div>
             <Button type="submit" disabled={isLoading}>
-                {isLoading ? "저장 중..." : "프로필 업데이트"}
+                {isLoading ? "Saving..." : "Update Profile"}
             </Button>
         </form>
     )

@@ -67,7 +67,7 @@ export default function AuthButtons() {
                             </Link>
                         </DropdownMenuItem>
 
-                        {!!auth.customClaims?.admin && (
+                        {!!auth.customClaims?.isAdmin && (
                             <DropdownMenuItem asChild>
                                 <Link href="/admin-dashboard" >
                                     Admin Dashboard

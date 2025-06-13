@@ -1,4 +1,3 @@
-
 import { getUserFavourites } from '@/data/favourites'
 import { getPropertiesById } from '@/lib/properties'
 import { Button } from '@/components/ui/button'
@@ -10,6 +9,8 @@ import imageUrlFormatter from '@/lib/imageUrlFormatter';
 import RemoveFavouriteButton from './remove-favourite'
 import { Input } from '@/components/ui/input'
 import ProductStatusBadge from '@/components/Product-status-badge'
+import Link from 'next/link'
+import EmptyList from '@/components/home/EmptyList'
 
 export default async function MyFavourites({
     searchParams
@@ -21,7 +22,7 @@ export default async function MyFavourites({
 
     const pageSize = 2;
     const favourites = await getUserFavourites();
-    const allFavourites = Object.keys(favourites)
+    const allFavourites = favourites.propertyIds || []
     const totalPages = Math.ceil(allFavourites.length / pageSize)
     const paginatedFavourites = allFavourites.slice(
         (page - 1) * pageSize,
@@ -32,39 +33,38 @@ export default async function MyFavourites({
         redirect(`/account/my-favourites?page=${totalPages}`)
     }
     const properties = await getPropertiesById(paginatedFavourites)
-    //console.log({ properties })
+
     return (
         <div className='text-center'>
-            <h1 className="text-3xl font-semibold">My Favourites lists.</h1>
-            {!paginatedFavourites.length && (
-                <h2 className="mt-4 text-2xl font-semibold text-primary">You have no favourited list...</h2>
-            )}
-            <div className="flex gap-6">
-                {!!paginatedFavourites.length && (
-                    paginatedFavourites.map((favourite) => {
+            <h1 className="text-3xl font-semibold">My Favourites</h1>
+            {!paginatedFavourites.length ? (
+                <EmptyList
+                    title="Your favorites list is empty"
+                    message="Start adding items to your favorites to see them here."
+                />
+            ) : (
+                <div className="flex gap-6">
+                    {paginatedFavourites.map((favourite) => {
                         const property = properties.find(
                             (property) => property.id === favourite
                         )
+                        if (!property) return null
+
+                        const mainImage = Array.isArray(property.images) && property.images.length > 0 
+                            ? imageUrlFormatter(property.images[0])
+                            : '/fallback.jpg';
+
                         return (
                             <Card key={favourite} className="flex flex-col-2 overflow-hidden mt-10 w-[350px] border-none pt-0">
                                 <CardHeader className="px-0">
                                     <CardTitle >
                                         <div className="relative flex flex-col justify-center items-center w-full h-[220px] overflow-hidden">
-                                            {property.images && property.images.length > 0 ? (
-                                                <Image
-                                                    src={imageUrlFormatter(property.images[0])}
-                                                    alt="main image"
-                                                    fill
-                                                    className="object-cover hover:scale-105 transition-all duration-300"
-                                                />
-                                            ) : (
-                                                <Image
-                                                    src="/fallback.jpg"
-                                                    alt="No image"
-                                                    fill
-                                                    className="bject-cover"
-                                                />
-                                            )}
+                                            <Image
+                                                src={mainImage}
+                                                alt={property.name || "Product image"}
+                                                fill
+                                                className="object-cover hover:scale-105 transition-all duration-300"
+                                            />
                                             <RemoveFavouriteButton
                                                 propertyId={property.id}
                                                 className="absolute top-4 right-4  bg-gray-300 p-1.5 rounded-md text-foreground hover:text-primary hover:bg-gray-100  hover:shadow-foreground/30 hover:shadow-sm duration-300 transition-all"
@@ -105,10 +105,9 @@ export default async function MyFavourites({
                                 </CardContent>
                             </Card>
                         )
-                    })
-                )
-                }
-            </div>
+                    })}
+                </div>
+            )}
         </div>
     )
 }

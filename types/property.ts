@@ -2,6 +2,7 @@ import { PropertyStatus } from "./propertyStatus";
 import { SkinType } from "./skinType"
 import { CategoryType } from "./categoryType"
 
+export type PropertyStatus = 'available' | 'sold' | 'reserved'
 
 export type Property = {
     id: string;
@@ -15,7 +16,7 @@ export type Property = {
     manufacturer: string;
     volume: number;
     description: string;
-    status: string;
+    status: PropertyStatus;
     brand: string;
     ingredients: string;
     skinType: string;

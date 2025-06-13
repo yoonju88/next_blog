@@ -21,7 +21,7 @@ export default function RemoveFavouriteButton({
         <button
             className={className}
             onClick={async () => {
-                const tokenResult = await auth?.currentUser?.getIdTokenResult()
+                const tokenResult = await auth?.user?.getIdTokenResult()
                 if (!tokenResult) { return }
                 await removefavourite(propertyId, tokenResult.token)
                 toast.success("success", {

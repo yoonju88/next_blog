@@ -32,15 +32,15 @@ export default function DeleteAccountButton() {
     const [password, setPassword] = useState("");
 
     const handleDeleteClick = async () => {
-        if (auth?.currentUser?.email) {
+        if (auth?.user?.email) {
             setIsDeleting(true)
             try {
                 await reauthenticateWithCredential(
-                    auth.currentUser,
-                    EmailAuthProvider.credential(auth.currentUser.email, password)
+                    auth.user,
+                    EmailAuthProvider.credential(auth.user.email, password)
                 )
                 await deleteUserFavourites()
-                await deleteUser(auth.currentUser)
+                await deleteUser(auth.user)
                 await removeToken()
                 toast.success('', { description: "Your current was deleted successfully." });
             } catch (e: unknown) {

@@ -18,7 +18,7 @@ export default function NewPropertyForm() {
     const router = useRouter()
 
     const handleSubmit = async (data: z.infer<typeof propertySchema>) => {
-        const token = await auth?.currentUser?.getIdToken()
+        const token = await auth?.user?.getIdToken()
         if (!token) { return; }
 
         const { images, ...rest } = data
@@ -55,7 +55,7 @@ export default function NewPropertyForm() {
         });
         router.push('/admin-dashboard/properties')
         // console.log("Auth State:", auth);
-        //console.log("Current User:", auth?.currentUser);
+        //console.log("Current User:", auth?.user);
         //console.log("Token:", token);
     }
     return (

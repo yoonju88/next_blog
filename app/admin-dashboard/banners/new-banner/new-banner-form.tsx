@@ -16,7 +16,7 @@ export default function NewBannerForm() {
     const router = useRouter()
 
     const handleSubmit = async (data: z.infer<typeof bannerImageSchema>) => {
-        const token = await auth?.currentUser?.getIdToken()
+        const token = await auth?.user?.getIdToken()
         if (!token) { return; }
 
         const uploadImage = async (

@@ -26,7 +26,7 @@ export default function RemoveReviewButton({
         <Button
             className={className}
             onClick={async () => {
-                const tokenResult = await auth?.currentUser.getIdTokenResult()
+                const tokenResult = await auth?.user.getIdTokenResult()
                 if (!tokenResult) return;
                 const storageTasks: Promise<void>[] = [];
                 images.forEach(image => {

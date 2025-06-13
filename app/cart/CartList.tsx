@@ -13,7 +13,7 @@ export const CartList = () => {
         return (
             <div className="p-10">
                 <h2 className="text-2xl font-semibold mb-4">The cart is empty 🛒</h2>
-                <Link href="/">
+                <Link href="/property">
                     <button className="mt-4 px-6 py-2 bg-primary text-white rounded-lg">Go to Products</button>
                 </Link>
             </div>

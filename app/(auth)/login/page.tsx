@@ -10,7 +10,6 @@ import LoginForm from '@/components/login/login-form'
 
 export default function LoginPage() {
 
-
     return (
         <Card className="w-[450px] sm:w-[500px]">
             <CardHeader>

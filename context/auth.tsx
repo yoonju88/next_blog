@@ -33,8 +33,8 @@ interface UserProfile {
         categories?: string[];
         notifications?: boolean;
     };
-    userPoint? :number;
-    userEmail?:string;
+    userPoint?: number;
+    userEmail?: string;
 
 }
 
@@ -52,7 +52,7 @@ export type AuthContextType = {
 //인증 관련 데이터를 저장할 Context
 // 초기값은 null로 설정되어 있으며, AuthContext.Provider를 사용해 데이터를 전달
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
-// currentUser: null,
+// user: null,
 // logout: async () => { },
 // loginWithGoogle: async () => { },
 // customClaims: null,
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [loading, setLoading] = useState(true)
     const [customClaims, setCustomClaims] = useState<ParsedToken | null>(null)
 
-    // Firebase 인증 상태 변화를 감지하고, currentUser를 업데이트
+    // Firebase 인증 상태 변화를 감지하고, user를 업데이트
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
             setUser(user ?? null)
@@ -156,7 +156,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         try {
             const userRef = doc(db, 'users', user.uid);
-            
+
             // Firestore 문서 업데이트
             await setDoc(userRef, {
                 ...data,

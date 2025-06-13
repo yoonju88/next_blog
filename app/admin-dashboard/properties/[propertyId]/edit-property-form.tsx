@@ -41,7 +41,7 @@ export default function EditPropertyForm({
     const router = useRouter();
 
     const handleSubmit = async (data: z.infer<typeof propertySchema>) => {
-        const token = await auth?.currentUser?.getIdToken();
+        const token = await auth?.user?.getIdToken();
         if (!token) { return; }
 
         const { images: newImages, ...rest } = data;

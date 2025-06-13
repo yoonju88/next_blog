@@ -36,7 +36,7 @@ export default function DeleteBannerButton({
     const [isDeleting, setIsDeleting] = useState(false);
 
     const handleDeleteClick = async () => {
-        const token = await auth?.currentUser?.getIdToken()
+        const token = await auth?.user?.getIdToken()
         if (!token) { return }
         setIsDeleting(true)
         const storageTasks: Promise<void>[] = [];

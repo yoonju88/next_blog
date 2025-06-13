@@ -14,12 +14,12 @@ export function NewReviewForm({ propertyId }: { propertyId: string }) {
     const auth = useAuth();
     const router = useRouter()
 
-    const user = auth?.currentUser
-    const userName = auth?.currentUser?.displayName || ""
-    const userPhotoURL = auth?.currentUser?.photoURL || ""
+    const user = auth?.user
+    const userName = auth?.user?.displayName || ""
+    const userPhotoURL = auth?.user?.photoURL || ""
 
     const handleSubmit = async (data: z.infer<typeof reviewSchema>) => {
-        const token = await auth?.currentUser?.getIdToken()
+        const token = await auth?.user?.getIdToken()
 
         if (!token || !user) {
             return router.push('/login')

@@ -61,11 +61,15 @@ export const getProperties = async (options?: GetPropetyOptions) => {
         return { data: properties, totalPages: fallbackTotalPages };
     }
 
-    const properties = propertiesSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-    } as Property)
-    )
+    const properties = propertiesSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            ...data,
+            created: data.created?.toDate?.()?.toISOString() || new Date().toISOString(),
+            updated: data.updated?.toDate?.()?.toISOString() || new Date().toISOString()
+        } as Property;
+    });
     return { data: properties, totalPages }
 }
 

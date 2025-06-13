@@ -44,10 +44,15 @@ export const getRecentProperies = async (): Promise<Property[]> => {
         .limit(3)
         .get()
 
-    const recentProperties = sanpshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-    })) as Property[]
+    const recentProperties = sanpshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            ...data,
+            created: data.created?.toDate?.()?.toISOString() || new Date().toISOString(),
+            updated: data.updated?.toDate?.()?.toISOString() || new Date().toISOString()
+        } as Property;
+    });
 
     return recentProperties;
 }

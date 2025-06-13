@@ -9,15 +9,13 @@ export default function SearchButtonWithModal() {
 
     return (
         <>
-            <Button
-                variant="ghost"
-                size="icon"
-                className="text-foreground hover:text-primary"
+            <button
+                type="button"
+                className="text-foreground hover:text-primary p-0 bg-none"
                 onClick={() => setOpen(true)}
             >
                 <Search className="w-5 h-5" />
-            </Button>
-
+            </button>
             <SearchModal open={open} onCloseAction={() => setOpen(false)} />
         </>
     )

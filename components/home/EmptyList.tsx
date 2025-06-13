@@ -13,7 +13,7 @@ export default function EmptyList({ title, message
 }) {
     const router = useRouter()
     return (
-        <div className='mt-4 text-center flex flex-col gap-6'>
+        <div className='mt-20 mb-20 text-center flex flex-col gap-6 '>
             <h2 className='text-4xl font-bold text-primary'>{title}</h2>
             <p className="text-xl">{message}</p>
             <Button

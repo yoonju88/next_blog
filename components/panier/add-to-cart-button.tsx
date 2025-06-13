@@ -11,9 +11,10 @@ import { useRouter } from "next/navigation"
 type Props = {
     property: Property
     children: React.ReactNode;
+    onAddedToCartAction?: () => void
 }
 
-export default function AddToCartButton({ property, children }: Props) {
+export default function AddToCartButton({ property, children, onAddedToCartAction }: Props) {
     const { addToCart } = useCart()
     const { user } = useAuth()
     const router = useRouter()
@@ -28,9 +29,11 @@ export default function AddToCartButton({ property, children }: Props) {
         }
 
         addToCart(property)
+        onAddedToCartAction?.()
         toast.success("Added to Cart", {
             description: "The item has been added to your cart."
         })
+
     }
 
     return (

@@ -3,7 +3,7 @@ import { ShoppingBagIcon } from 'lucide-react'
 import imageUrlFormatter from '@/lib/imageUrlFormatter';
 import BrandFilter from '@/components/property/brand-filter'
 import PropertyCard from '@/components/property/PropertyCard';
-import AddToCartButton from '@/components/property/add-to-cart-button';
+import AddToCartButton from '@/components/panier/add-to-cart-button';
 
 export default async function PropertyPage({
     searchParams

@@ -10,9 +10,10 @@ import { NewReviewForm } from "./new-review-form"
 import Reviews from "@/components/review/reviewsSheet"
 import SlideImages from "@/components/carousel"
 import { Breadcrumbs } from '@/components/ui/breadcrumb'
-import PropertyActions from "@/components/property/add-to-cart-button"
 import numeral from "numeral"
-import AddToCartButton from "@/components/property/add-to-cart-button"
+import AddToCartButton from "@/components/panier/add-to-cart-button"
+import { useState } from "react"
+import CartSheet from "@/components/panier/cart-sheet"
 
 type Props = {
     property: Property
@@ -38,6 +39,7 @@ export default function PropertyContent({
     userFavourites,
     verifiedToken
 }: Props) {
+    const [open, setOpen] = useState(false)
     return (
         <section className='w-[100%] p-10'>
             <div className="container px-5 py-24 mx-auto">
@@ -100,7 +102,9 @@ export default function PropertyContent({
                                 € {numeral(property?.price).format("0,0")}
                             </span>
                             <div className="flex space-x-4 ml-auto">
-                                <AddToCartButton property={property} >
+                                <AddToCartButton property={property}
+                                    onAddedToCartAction={() => setOpen(true)}
+                                >
                                     Add to Cart
                                 </AddToCartButton>
                             </div>

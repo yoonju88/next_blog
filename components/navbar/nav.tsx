@@ -13,10 +13,13 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { cn } from '@/lib/utils'
 import SearchButtonWithModal from './searchButtonWithModal'
+import CartSheet from '../panier/cart-sheet'
+import { useState } from 'react'
 
 export default function Nav() {
     const pathname = usePathname()
     const searchParams = useSearchParams()
+    const [open, setOpen] = useState(false)
 
     const isActive = (href: string, query?: { key: string; value: string }): boolean => {
         if (href === '/') {
@@ -100,12 +103,7 @@ export default function Nav() {
                     >
                         <HeartIcon className="w-5 h-5" />
                     </Link>
-                    <Link
-                        href='/cart'
-                        className="text-foreground hover:text-primary transition-all duration-300"
-                    >
-                        <ShoppingCartIcon className="w-5 h-5" />
-                    </Link>
+                    <CartSheet open={open} onOpenChangeAction={setOpen} />
                     <span className="border-x-1 px-4 border-muted-foreground/30">
                         <DarkModeSwatch />
                     </span>

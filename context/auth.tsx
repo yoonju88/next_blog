@@ -14,7 +14,7 @@ import { doc, setDoc, getDoc } from "firebase/firestore"
 
 interface ParsedToken {
     isAdmin?: boolean;
-    // ... 기타 클레임
+    [key: string]: any;
 }
 
 interface UserProfile {
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
             setUser(user ?? null)
             setLoading(false)
             if (user) {
-                const tokenResult = await user.getIdTokenResult()
+                const tokenResult = await user.getIdTokenResult(true)
                 const token = tokenResult.token;
                 const refreshToken = user.refreshToken;
                 const claims = tokenResult.claims as ParsedToken

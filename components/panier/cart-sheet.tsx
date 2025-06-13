@@ -15,14 +15,36 @@ import { Minus, Plus, Trash2 } from "lucide-react"
 import numeral from "numeral"
 import Link from "next/link"
 import imageUrlFormatter from '@/lib/imageUrlFormatter';
+import { useState } from "react"
+import { Input } from "@/components/ui/input"
 
 type Props = {
     open: boolean;
     onOpenChangeAction: (open: boolean) => void;
 }
 
+// 임시 쿠폰 예시
+const validCoupons = {
+    "SAVE10": 10, // 10€ 할인
+    "SAVE20": 20,
+};
+
 export default function CartSheet({ open, onOpenChangeAction }: Props) {
     const { cartItems, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
+    const [couponCode, setCouponCode] = useState("");
+    const [discount, setDiscount] = useState(0);
+
+
+    const handleApplyCoupon = () => {
+        const found = validCoupons[couponCode.toUpperCase()];
+        if (found) {
+            setDiscount(found);
+        } else {
+            setDiscount(0);
+        }
+    };
+
+    const finalPrice = Math.max(totalPrice - discount, 0);
 
     return (
         <Sheet open={open} onOpenChange={onOpenChangeAction}>
@@ -41,7 +63,7 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                     <SheetTitle className="text-lg">Shopping Cart</SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col h-full">
-                    <div className="flex-1 overflow-y-auto py-4 max-h-[calc(90vh-100px)]">
+                    <div className="flex-1 overflow-y-auto py-4 max-h-[calc(65vh-100px)]">
                         {cartItems.length === 0 ? (
                             <div className="text-center py-8">
                                 <p className="text-muted-foreground">Your cart is empty</p>
@@ -100,11 +122,41 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                         )}
                     </div>
                     {cartItems.length > 0 && (
-                        <div className="border-t border-gray-300 pt-4 ">
-                            <div className="flex justify-between mb-4">
-                                <span className="font-medium">Total</span>
+                        <div className="border-t border-gray-300 pt-4 space-y-4 mb-10">
+                            <div className="space-y-2">
+                                <label htmlFor="coupon" className="block text-sm font-medium">
+                                    Discount Coupon
+                                </label>
+                                <div className="flex gap-2 border-b border-gray-200 pb-4">
+                                    <Input
+                                        id="coupon"
+                                        type="text"
+                                        className="flex-1"
+                                        value={couponCode}
+                                        onChange={(e) => setCouponCode(e.target.value)}
+                                        placeholder="Enter coupon code"
+                                    />
+                                    <Button onClick={handleApplyCoupon}>Apply</Button>
+                                </div>
+                            </div>
+
+                            <div className="flex justify-between">
+                                <span className="font-medium">Subtotal</span>
                                 <span className="font-medium">€{numeral(totalPrice).format("0,0")}</span>
                             </div>
+
+                            {discount > 0 && (
+                                <div className="flex justify-between text-green-600">
+                                    <span className="font-medium">Discount</span>
+                                    <span className="font-medium">-€{numeral(discount).format("0,0")}</span>
+                                </div>
+                            )}
+
+                            <div className="flex justify-between text-lg font-bold">
+                                <span>Total</span>
+                                <span>€{numeral(finalPrice).format("0,0")}</span>
+                            </div>
+
                             <Button asChild className="w-full">
                                 <Link href="/checkout">Checkout</Link>
                             </Button>

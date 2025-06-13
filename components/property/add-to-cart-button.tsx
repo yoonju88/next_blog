@@ -4,15 +4,16 @@ import { Button } from "@/components/ui/button"
 import { useCart } from "@/context/cart-context"
 import { Property } from "@/types/property"
 import { toast } from "sonner"
-import numeral from "numeral"
+
 import { useAuth } from "@/context/auth"
 import { useRouter } from "next/navigation"
 
 type Props = {
     property: Property
+    children: React.ReactNode;
 }
 
-export default function PropertyActions({ property }: Props) {
+export default function AddToCartButton({ property, children }: Props) {
     const { addToCart } = useCart()
     const { user } = useAuth()
     const router = useRouter()
@@ -33,18 +34,8 @@ export default function PropertyActions({ property }: Props) {
     }
 
     return (
-        <div className="flex mt-10 mb-14">
-            <span className="title-font font-medium text-2xl text-foreground hover:text-primary transition-all duration-300">
-                € {numeral(property?.price).format("0,0")}
-            </span>
-            <div className="flex space-x-4 ml-auto">
-                <Button variant="outline" className="bg-white">
-                    Add to Wish List
-                </Button>
-                <Button onClick={handleAddToCart}>
-                    Add to Cart
-                </Button>
-            </div>
-        </div>
+        <Button onClick={handleAddToCart}>
+            {children}
+        </Button>
     )
 } 

@@ -10,7 +10,9 @@ import { NewReviewForm } from "./new-review-form"
 import Reviews from "@/components/review/reviewsSheet"
 import SlideImages from "@/components/carousel"
 import { Breadcrumbs } from '@/components/ui/breadcrumb'
-import PropertyActions from "@/components/property/property-actions"
+import PropertyActions from "@/components/property/add-to-cart-button"
+import numeral from "numeral"
+import AddToCartButton from "@/components/property/add-to-cart-button"
 
 type Props = {
     property: Property
@@ -93,7 +95,16 @@ export default function PropertyContent({
                             <span className="text-muted-foreground">Volume</span>
                             <span className="ml-auto text-muted-foreground">{property.volume} ml</span>
                         </div>
-                        <PropertyActions property={property} />
+                        <div className="flex mt-10 mb-14">
+                            <span className="title-font font-medium text-2xl text-foreground hover:text-primary transition-all duration-300">
+                                € {numeral(property?.price).format("0,0")}
+                            </span>
+                            <div className="flex space-x-4 ml-auto">
+                                <AddToCartButton property={property} >
+                                    Add to Cart
+                                </AddToCartButton>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div className="min-w-full mt-20">

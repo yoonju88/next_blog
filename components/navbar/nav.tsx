@@ -27,18 +27,17 @@ export default function Nav() {
                 </Link>
             </h1>
             <nav className="flex space-x-6">
-                <div className="flex gap-6 text-md items-center">
+                <div className="flex gap-3 text-md items-center">
                     <Link
                         href='/my-favourites'
                     >
-                        <HeartIcon />
+                        <HeartIcon className="w-5 h-5" />
                     </Link>
                     <Link
                         href='/cart'
                     >
-                        <ShoppingCartIcon />
+                        <ShoppingCartIcon className="w-5 h-5" />
                     </Link>
-
                 </div>
                 <div className="flex space-x-6 items-center">
                     <span className="border-x-1 px-4 border-muted-foreground/30">

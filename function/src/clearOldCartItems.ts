@@ -9,15 +9,20 @@ export const clearOldCartItems = onSchedule("every 1 hours", async () => {
     const now = Timestamp.now();
     const expiredTime = Timestamp.fromMillis(now.toMillis() - 24 * 60 * 60 * 1000); // 24시간 전
 
-    const snapshot = await db.collectionGroup("cart")
-        .where("createdAt", "<", expiredTime)
-        .get();
+    const usersSnapshot = await db.collection('users').get();
 
-    const batch = db.batch();
-    snapshot.docs.forEach(doc => {
-        console.log(`Deleting cart item: ${doc.ref.path}`);
-        batch.delete(doc.ref);
-    });
+    for (const userDoc of usersSnapshot.docs) {
+        const userData = userDoc.data();
+        if (userData.cart && Array.isArray(userData.cart)) {
+            const updatedCart = userData.cart.filter((item: any) => {
+                const createdAt = new Date(item.createdAt).getTime();
+                return createdAt > expiredTime.toMillis();
+            });
 
-    await batch.commit();
+            if (updatedCart.length !== userData.cart.length) {
+                await userDoc.ref.update({ cart: updatedCart });
+                console.log(`Updated cart for user ${userDoc.id}: removed ${userData.cart.length - updatedCart.length} expired items`);
+            }
+        }
+    }
 });

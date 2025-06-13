@@ -6,9 +6,10 @@ import {
     GoogleAuthProvider,
     signInWithEmailAndPassword,
     type User,
-    updateProfile
+    updateProfile,
+    signOut as firebaseSignOut
 } from "firebase/auth"
-import { createContext, useState, useEffect, useContext } from "react"
+import { createContext, useState, useEffect, useContext, ReactNode } from "react"
 import { doc, setDoc, getDoc } from "firebase/firestore"
 
 interface ParsedToken {
@@ -38,30 +39,34 @@ interface UserProfile {
 }
 
 // Context에서 관리할 데이터의 구조를 정의
-type AuthContextType = {
-    currentUser: User | null;
-    logout: () => Promise<void>;
-    loginWithGoogle: () => Promise<void>;
-    customClaims: ParsedToken | null;
-    loginWithEmail: (email: string, password: string) => Promise<void>;
-    updateUserProfile: (data: Partial<UserProfile>) => Promise<void>;
+export type AuthContextType = {
+    user: User | null
+    loading: boolean
+    logout: () => Promise<void>
+    loginWithGoogle: () => Promise<void>
+    customClaims: ParsedToken | null
+    loginWithEmail: (email: string, password: string) => Promise<void>
+    updateUserProfile: (data: Partial<UserProfile>) => Promise<void>
+    signOut: () => Promise<void>
 }
 //인증 관련 데이터를 저장할 Context
 // 초기값은 null로 설정되어 있으며, AuthContext.Provider를 사용해 데이터를 전달
-const AuthContext = createContext<AuthContextType | null>(null)
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 // currentUser: null,
 // logout: async () => { },
 // loginWithGoogle: async () => { },
 // customClaims: null,
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [currentUser, setCurrentUser] = useState<User | null>(null)
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+    const [user, setUser] = useState<User | null>(null)
+    const [loading, setLoading] = useState(true)
     const [customClaims, setCustomClaims] = useState<ParsedToken | null>(null)
 
     // Firebase 인증 상태 변화를 감지하고, currentUser를 업데이트
     useEffect(() => {
-        const unsuscribe = auth.onAuthStateChanged(async (user) => {
-            setCurrentUser(user ?? null)
+        const unsubscribe = auth.onAuthStateChanged(async (user) => {
+            setUser(user ?? null)
+            setLoading(false)
             if (user) {
                 const tokenResult = await user.getIdTokenResult()
                 const token = tokenResult.token;
@@ -78,7 +83,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 await removeToken()
             }
         })
-        return () => unsuscribe()
+        return () => unsubscribe()
     }, [])
 
     const logout = async () => {
@@ -145,12 +150,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     const updateUserProfile = async (data: Partial<UserProfile>) => {
-        if (!currentUser) {
+        if (!user) {
             throw new Error('No user is currently logged in');
         }
 
         try {
-            const userRef = doc(db, 'users', currentUser.uid);
+            const userRef = doc(db, 'users', user.uid);
             
             // Firestore 문서 업데이트
             await setDoc(userRef, {
@@ -160,7 +165,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
             // Firebase Auth 프로필 업데이트 (displayName과 photoURL만 가능)
             if (data.displayName || data.photoURL) {
-                await updateProfile(currentUser, {
+                await updateProfile(user, {
                     displayName: data.displayName,
                     photoURL: data.photoURL
                 });
@@ -173,25 +178,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
+    const signOut = async () => {
+        try {
+            await firebaseSignOut(auth)
+        } catch (error) {
+            console.error('Error signing out:', error)
+            throw error
+        }
+    }
+
+    const value = {
+        user,
+        loading,
+        logout,
+        loginWithGoogle,
+        customClaims,
+        loginWithEmail,
+        updateUserProfile,
+        signOut,
+    }
+
     return (
-        <AuthContext.Provider
-            value={{
-                currentUser,
-                logout,
-                loginWithGoogle,
-                customClaims,
-                loginWithEmail,
-                updateUserProfile,
-            }}
-        >
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     )
 }
-export const useAuth = (): AuthContextType => {
+
+export function useAuth() {
     const context = useContext(AuthContext)
-    if (!context) {
-        throw new Error('useAuth must be used with au AuthProvider')
+    if (context === undefined) {
+        throw new Error('useAuth must be used within an AuthProvider')
     }
-    return context;
+    return context
 }

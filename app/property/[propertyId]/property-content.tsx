@@ -62,7 +62,7 @@ export default function PropertyContent({
                         </div>
                         {(!verifiedToken || !verifiedToken.admin) && (
                             <ToggleFavouriteButton
-                                isFavourite={userFavourites.propertyIds.includes(property.id)}
+                                isFavourite={userFavourites?.propertyIds?.includes(property.id) ?? false}
                                 propertyId={property.id}
                             />
                         )}

@@ -20,7 +20,7 @@ export default function AuthButtons() {
     const auth = useAuth();
     //두 번의 부정(!)을 통해 값을 명시적으로 boolean으로 변환
     //값이 존재한다면 true, 값이 없으면 false.
-    const user = auth.currentUser
+    const user = auth.user;
     return (
         <>
             {user ? (

@@ -12,7 +12,6 @@ export const GET = async (request: NextRequest) => {
     if (!refreshToken) {
         return NextResponse.redirect(new URL("/", request.url));
     }
-
     try {
         // Secure Token API 호출 → 새 ID Token 발급
         const resp = await fetch(

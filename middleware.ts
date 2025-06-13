@@ -16,20 +16,24 @@ export async function middleware(request: NextRequest) {
 
     //token이 없을 때 (즉, 로그인 안 되어 있을 때), 요청한 경로(pathname)가 아래 중 하나라면 그때는 NextResponse.next()를 호출해서, 요청을 그냥 통과
     if (
-        !token && (
+        !token &&
+        (
             pathname.startsWith("/login") ||
             pathname.startsWith("/register") ||
-            pathname.startsWith("/forgot-password")
+            pathname.startsWith("/forgot-password") ||
+            pathname.startsWith("/property")
         )
     ) {
         return NextResponse.next()
     }
     //로그인한 사용자가 로그인/회원가입 페이지로 가려는 걸 막는 로직
-    if (token && (
-        pathname.startsWith("/login") ||
-        pathname.startsWith("/register") ||
-        pathname.startsWith("/forgot-password")
-    )
+    if (
+        token &&
+        (
+            pathname.startsWith("/login") ||
+            pathname.startsWith("/register") ||
+            pathname.startsWith("/forgot-password")
+        )
     ) {
         return NextResponse.redirect(new URL("/", request.url))
     }
@@ -46,14 +50,13 @@ export async function middleware(request: NextRequest) {
     ) {
         return NextResponse.redirect(
             new URL(
-                `/api/refresh-token?redrect=${encodeURIComponent(
+                `/api/refresh-token?redirect=${encodeURIComponent(
                     request.nextUrl.pathname
                 )}`,
                 request.url
             )
         )
     }
-
 
     //관리자가 아닌데, /admin-dashboard 페이지에 접근하려고 한다면 (홈페이지)로 리다이렉트
     if (!decodedToken.admin && pathname.startsWith("/admin-dashboard")) {
@@ -77,5 +80,7 @@ export const config = {
         "/register",
         "/account",
         "/account/:path*", // "/account/my-favorites"
+        "/property",
+        "/property/:path*",
     ],
 }

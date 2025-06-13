@@ -1,7 +1,7 @@
 import { firestore, getTotalPages } from "@/firebase/server";
 import { Property } from "@/types/property";
 import { PropertyStatus } from "@/types/propertyStatus";
-import "server-only"
+
 
 type GetPropetyOptions = {
     filters?: {
@@ -10,6 +10,7 @@ type GetPropetyOptions = {
         category?: string | null;
         brand?: string | null;
         search?: string;
+        date?: string;
     }
     pagination?: {
         pageSize?: number;
@@ -20,7 +21,7 @@ type GetPropetyOptions = {
 export const getProperties = async (options?: GetPropetyOptions) => {
     const page = options?.pagination?.page || 1;
     const pageSize = options?.pagination?.pageSize || 10
-    const { minPrice, maxPrice, category, brand, search } = options?.filters || {};
+    const { minPrice, maxPrice, category, brand } = options?.filters || {};
 
     let propertiesQuery = firestore.collection("properties").orderBy("updated", "desc")
     if (minPrice !== null && minPrice !== undefined) {
@@ -43,9 +44,7 @@ export const getProperties = async (options?: GetPropetyOptions) => {
         .offset((page - 1) * pageSize)
         .get()
 
-    //console.log(propertiesSnapshot.empty)
     if (propertiesSnapshot.empty) {
-        // fallback: no filters
         const fallbackQuery = firestore.collection("properties").orderBy("updated", "desc");
         const fallbackSnapshot = await fallbackQuery
             .limit(pageSize)
@@ -71,18 +70,6 @@ export const getProperties = async (options?: GetPropetyOptions) => {
             updated: data.updated?.toDate?.()?.toISOString() || new Date().toISOString()
         } as Property;
     });
-
-    // 검색어 필터링
-    if (search) {
-        const searchTerm = search.toLowerCase()
-        const filteredProperties = properties.filter(property => 
-            property.name.toLowerCase().includes(searchTerm) ||
-            property.description?.toLowerCase().includes(searchTerm) ||
-            property.brand?.toLowerCase().includes(searchTerm) ||
-            property.category?.toLowerCase().includes(searchTerm)
-        )
-        return { data: filteredProperties, totalPages }
-    }
 
     return { data: properties, totalPages }
 }

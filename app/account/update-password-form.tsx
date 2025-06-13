@@ -49,7 +49,7 @@ export default function UpdatePasswordForm() {
     })
 
     const handleSubmit = async (data: z.infer<typeof formSchema>) => {
-        const user = auth?.currentUser;
+        const user = auth?.user;
         if (!user?.email) { return }
 
         try {

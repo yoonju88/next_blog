@@ -16,12 +16,12 @@ export default async function Home() {
   const hoverEffect = "transition-all duration-300"
 
   return (
-    <div className="w-full mx-auto mt-10 flex flex-col gap-20">
+    <div className="w-full flex flex-col gap-20">
       <BannersClient
         webImages={allWebImages}
         mobileImages={allMobileImages}
       />
-      <section>
+      <section className="w-full">
         <h1 className="text-foreground text-4xl text-center font-bold">New Arrivals</h1>
         <div className='flex flex-col sm:flex-row gap-6 mt-14'>
           {recentItems.map((item) => (
@@ -43,7 +43,6 @@ export default async function Home() {
           }
         </div >
       </section>
-      <div></div>
     </div>
   );
 }

@@ -30,22 +30,24 @@ export default function BannersClient({
     };
 
     return (
-        <>
-            {!isMobile &&
-                <BannerCarousel
-                    images={webImages}
-                    size="(max - width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    width={1290}
-                    height={600}
-                />
-            }
-            {isMobile &&
-                <BannerCarousel
-                    images={mobileImages}
-                    size="(max - width: 768px) 100vw, 50vw, 33vw"
-                    width={800}
-                    height={600}
-                />}
-        </>
+        <div className='w-full max-w-[100vw] overflow-hidden m-0 p-0'>
+            <div className='w-full flex justify-center m-0 p-0'>
+                {!isMobile &&
+                    <BannerCarousel
+                        images={webImages}
+                        size="100vw"
+                        width={1920}
+                        height={600}
+                    />
+                }
+                {isMobile &&
+                    <BannerCarousel
+                        images={mobileImages}
+                        size="100vw"
+                        width={800}
+                        height={600}
+                    />}
+            </div>
+        </div>
     )
 }

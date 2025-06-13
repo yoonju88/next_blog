@@ -29,7 +29,7 @@ export default function RootLayout({
           <CartProvider>
             <Providers>
               <Nav />
-              <main className='container mx-auto max-w-[1290px] relative flex items-center justify-center '>
+              <main className='w-full relative flex items-center justify-center'>
                 {children}
                 <Toaster />
               </main>

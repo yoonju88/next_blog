@@ -41,13 +41,13 @@ export default function BannerCarousel({
     )
 
     return (
-        <div className="relative">
-            <div className="overflow-hidden" ref={emblaRef}>
+        <div className="relative w-full">
+            <div className="overflow-hidden w-full" ref={emblaRef}>
                 <div className="flex">
                     {images.map((image, index) => (
                         <div
                             key={image.id}
-                            className="flex-[0_0_100%] relative"
+                            className="flex-[0_0_100%] relative w-full"
                         >
                             <div className={`relative ${imageH} w-full`}>
                                 <Image

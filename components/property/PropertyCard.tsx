@@ -1,7 +1,6 @@
 'use client'
 import Image from "next/image"
 import Link from "next/link"
-import { ShoppingBagIcon } from "lucide-react"
 import imageUrlFormatter from '@/lib/imageUrlFormatter';
 
 type Property = {
@@ -27,18 +26,22 @@ export default function PropertyCard({ property, actionButton }: Props) {
     return (
         <div className="w-full sm:min-w-[300px]" key={property.id}>
             <div className="relative w-full h-[400px] group overflow-hidden">
-                <Link href={`/property/${property.id}`}>
-                    <Image
-                        src={mainImage}
-                        alt={property.name || "Product image"}
-                        fill
-                        className={`object-cover object-center group-hover:scale-105 ${hoverEffect}`}
-                    />
-                    <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <span className="text-gray-700 text-lg font-medium px-4 py-2 rounded">
-                            Learn More
-                        </span>
+                <Link href={`/property/${property.id}`} className="block w-full h-full">
+                    <div className='relative w-full h-full'>
+                        <Image
+                            src={mainImage}
+                            alt={property.name || "Product image"}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                            className={`object-cover object-center group-hover:scale-105 ${hoverEffect}`}
+                        />
+                        <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <span className="text-gray-700 text-lg font-medium px-4 py-2 rounded">
+                                Learn More
+                            </span>
+                        </div>
                     </div>
+
                 </Link>
             </div>
 

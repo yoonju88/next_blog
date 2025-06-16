@@ -6,6 +6,8 @@ import { getUserFavourites } from "@/data/favourites";
 import { getReviewsByPropertyId, getAverageRating } from '@/lib/reviews';
 import PropertyContent from "./property-content";
 import { Property } from "@/types/property";
+import { Breadcrumbs } from '@/components/ui/breadcrumb'
+import BackButton from "@/components/back-button"
 
 function serializeProperty(property: any): Property {
     const parseTimestamp = (ts: any): string => {
@@ -65,13 +67,29 @@ export default async function PropertyPage({ params }: { params: { propertyId: s
     }
 
     return (
-        <PropertyContent
-            property={property}
-            propertyId={propertyId}
-            reviewsAverage={roundedAverage}
-            allreviews={allreviews}
-            userFavourites={userFavourites}
-            verifiedToken={verifiedToken}
-        />
+        <div className="w-full py-24">
+            <div className="w-full mb-4">
+                <div className="flex items-center pl-12  min-w-[200px]">
+                    <BackButton />
+                    <div className="border-r h-3 border-gray-400 mr-3" />
+                    <Breadcrumbs items={[{
+                        href: "/property/SkinCare",
+                        label: `${property.category}`
+                    }, {
+                        label: `${property.subCategory}`
+                    }]}
+                    />
+                </div>
+            </div>
+            <PropertyContent
+                property={property}
+                propertyId={propertyId}
+                reviewsAverage={roundedAverage}
+                allreviews={allreviews}
+                userFavourites={userFavourites}
+                verifiedToken={verifiedToken}
+            />
+        </div>
+
     )
 }

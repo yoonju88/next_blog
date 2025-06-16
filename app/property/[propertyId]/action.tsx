@@ -5,7 +5,7 @@ import { collection, addDoc, getFirestore } from "firebase/firestore";
 import { z } from "zod"
 
 
-export const addFavourite = async (proeprtyId: string, authToken: string) => {
+export const addFavourite = async (propertyId: string, authToken: string) => {
     const verifiedToken = await auth.verifyIdToken(authToken)
 
     if (!verifiedToken) {
@@ -20,7 +20,7 @@ export const addFavourite = async (proeprtyId: string, authToken: string) => {
         .doc(verifiedToken.uid)
         .set(
             {
-                [proeprtyId]: true
+                [propertyId]: true
             },
             {
                 merge: true

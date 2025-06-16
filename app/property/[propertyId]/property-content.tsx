@@ -54,6 +54,7 @@ export default function PropertyContent({
                     </div>
                     <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mb-6 lg:mb-0 relative">
                         <div className="mb-3">
+
                             <Breadcrumbs items={[{
                                 href: "/property/SkinCare",
                                 label: `${property.category}`
@@ -62,12 +63,6 @@ export default function PropertyContent({
                             }]}
                             />
                         </div>
-                        {(!verifiedToken || !verifiedToken.admin) && (
-                            <ToggleFavouriteButton
-                                isFavourite={userFavourites?.propertyIds?.includes(property.id) ?? false}
-                                propertyId={property.id}
-                            />
-                        )}
                         <h2 className="text-muted-foreground title-font tracking-widest uppercase mb-2">{property.brand}</h2>
                         <h1 className="text-4xl title-font font-medium mb-2">{property.name}</h1>
                         <h3 className="text-primary tracking-widest mb-6 font-semibold">{property.subTitle}</h3>
@@ -102,6 +97,12 @@ export default function PropertyContent({
                                 € {numeral(property?.price).format("0,0")}
                             </span>
                             <div className="flex space-x-4 ml-auto">
+                                {(!verifiedToken || !verifiedToken.admin) && (
+                                    <ToggleFavouriteButton
+                                        isFavourite={userFavourites?.propertyIds?.includes(property.id) ?? false}
+                                        propertyId={property.id}
+                                    />
+                                )}
                                 <AddToCartButton property={property}
                                     onAddedToCartAction={() => setOpen(true)}
                                 >

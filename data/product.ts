@@ -5,12 +5,13 @@ import { PropertyStatus } from "@/types/propertyStatus";
 
 type GetPropetyOptions = {
     filters?: {
-        minPrice?: number | null;
-        maxPrice?: number | null;
+        // minPrice?: number | null;
+        // maxPrice?: number | null;
         category?: string | null;
         brand?: string | null;
         search?: string;
         date?: string;
+        skinType?: string | null;
     }
     pagination?: {
         pageSize?: number;
@@ -21,20 +22,23 @@ type GetPropetyOptions = {
 export const getProperties = async (options?: GetPropetyOptions) => {
     const page = options?.pagination?.page || 1;
     const pageSize = options?.pagination?.pageSize || 10
-    const { minPrice, maxPrice, category, brand } = options?.filters || {};
+    const { /*minPrice, maxPrice,*/ category, brand, skinType } = options?.filters || {};
 
     let propertiesQuery = firestore.collection("properties").orderBy("updated", "desc")
-    if (minPrice !== null && minPrice !== undefined) {
+    /*if (minPrice !== null && minPrice !== undefined) {
         propertiesQuery = propertiesQuery.where("price", ">=", minPrice);
     }
     if (maxPrice !== null && maxPrice !== undefined) {
         propertiesQuery = propertiesQuery.where("price", "<=", maxPrice);
-    }
+    }*/
     if (category) {
-        propertiesQuery = propertiesQuery.where("category", "in", category);
+        propertiesQuery = propertiesQuery.where("category", "==", category);
     }
     if (brand) {
-        propertiesQuery = propertiesQuery.where("brand", "in", brand);
+        propertiesQuery = propertiesQuery.where("brand", "==", brand);
+    }
+    if (skinType) {
+        propertiesQuery = propertiesQuery.where("skinType", "==", skinType);
     }
 
     const totalPages = await getTotalPages(propertiesQuery, pageSize)

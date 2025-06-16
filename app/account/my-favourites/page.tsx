@@ -50,7 +50,7 @@ export default async function MyFavourites({
                         )
                         if (!property) return null
 
-                        const mainImage = Array.isArray(property.images) && property.images.length > 0 
+                        const mainImage = Array.isArray(property.images) && property.images.length > 0
                             ? imageUrlFormatter(property.images[0])
                             : '/fallback.jpg';
 
@@ -63,6 +63,7 @@ export default async function MyFavourites({
                                                 src={mainImage}
                                                 alt={property.name || "Product image"}
                                                 fill
+                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                 className="object-cover hover:scale-105 transition-all duration-300"
                                             />
                                             <RemoveFavouriteButton

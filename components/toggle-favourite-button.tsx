@@ -37,11 +37,11 @@ export default function ToggleFavouriteButton({ propertyId, isFavourite: initial
 
     return (
         <button
-            className="absolute top-25 right-0 p-2 z-10 bg-none rounded-bl-lg hover:scale-105 transition-all duration-300"
+            className={`bg-none hover:scale-105 transition-all duration-300`}
             onClick={toggleFavourite}
         >
             <HeartIcon
-                className={`text-muted-foreground w-8 h-8 ${isFavourite ? 'fill-primary' : 'fill-white'}`}
+                className={`text-muted-foreground w-7 h-7 ${isFavourite ? 'fill-pink-400 text-pink-400' : 'fill-white'}`}
             />
         </button>
     )

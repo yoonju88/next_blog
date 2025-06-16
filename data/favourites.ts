@@ -27,6 +27,8 @@ export const getUserFavourites = async () => {
         }
     }
 
-    const favouritesData = favouritesSnapshot.data() || { propertyIds: [] }
-    return favouritesData
+    const favouritesData = favouritesSnapshot.data() || {}
+    // Convert the object of property IDs to an array
+    const propertyIds = Object.keys(favouritesData)
+    return { propertyIds }
 }

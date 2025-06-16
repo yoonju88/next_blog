@@ -9,7 +9,7 @@ export type CartItem = {
 
 export type CartContextType = {
     cartItems: CartItem[]
-    addToCart: (property: Property) => void
+    addToCart: (property: Property, quantity: number) => void
     removeFromCart: (propertyId: string) => void
     updateQuantity: (propertyId: string, quantity: number) => void
     clearCart: () => void

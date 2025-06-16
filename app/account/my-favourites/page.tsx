@@ -1,16 +1,15 @@
 import { getUserFavourites } from '@/data/favourites'
 import { getPropertiesById } from '@/lib/properties'
-import { Button } from '@/components/ui/button'
-import { ShoppingBagIcon } from 'lucide-react'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image'
 import imageUrlFormatter from '@/lib/imageUrlFormatter';
 import RemoveFavouriteButton from './remove-favourite'
-import { Input } from '@/components/ui/input'
 import ProductStatusBadge from '@/components/Product-status-badge'
 import Link from 'next/link'
-import EmptyList from '@/components/home/EmptyList'
+import SelectedQuantity from '../../../components/panier/selectedQuantityToCart'
+import EmptyList from '@/components/EmptyList'
+
 
 export default async function MyFavourites({
     searchParams
@@ -54,18 +53,21 @@ export default async function MyFavourites({
                             ? imageUrlFormatter(property.images[0])
                             : '/fallback.jpg';
 
+                        const PropertyId = property.id
                         return (
                             <Card key={favourite} className="flex flex-col-2 overflow-hidden mt-10 w-[350px] border-none pt-0">
                                 <CardHeader className="px-0">
                                     <CardTitle >
                                         <div className="relative flex flex-col justify-center items-center w-full h-[220px] overflow-hidden">
-                                            <Image
-                                                src={mainImage}
-                                                alt={property.name || "Product image"}
-                                                fill
-                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                                className="object-cover hover:scale-105 transition-all duration-300"
-                                            />
+                                            <Link href={`/property/${PropertyId}`} >
+                                                <Image
+                                                    src={mainImage}
+                                                    alt={property.name || "Product image"}
+                                                    fill
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                    className="object-cover hover:scale-105 transition-all duration-300"
+                                                />
+                                            </Link>
                                             <RemoveFavouriteButton
                                                 propertyId={property.id}
                                                 className="absolute top-4 right-4  bg-gray-300 p-1.5 rounded-md text-foreground hover:text-primary hover:bg-gray-100  hover:shadow-foreground/30 hover:shadow-sm duration-300 transition-all"
@@ -83,7 +85,7 @@ export default async function MyFavourites({
                                                     €{property.price}
                                                 </span>
                                                 <span className=" text-white px-2 py-1 bg-primary rounded-lg text-sm ">
-                                                    club -5%
+                                                    Club -5%
                                                 </span>
                                                 <span className="text-primary font-bold text-lg pl-2">
                                                     €{property.price * 0.95}
@@ -93,16 +95,10 @@ export default async function MyFavourites({
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent className="px-4 space-y-6">
-                                    <div>
-                                        <Input
-                                            type="number"
-                                            min="1"
-                                            max="10"
-                                            className=""
-                                            placeholder='Choose your order quantity'
-                                        />
+                                    <div className='flex flex-col gap-6'>
+                                        <SelectedQuantity item={property} />
                                     </div>
-                                    <Button variant="default" className='w-full' ><ShoppingBagIcon />Cart</Button>
+
                                 </CardContent>
                             </Card>
                         )

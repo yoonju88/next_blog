@@ -11,9 +11,12 @@ export const getPropertyById = async (id: string) => {
         return null
     }
 
+    const data = propertySnapshot.data();
     const propertyData = {
         id: propertySnapshot.id,
-        ...propertySnapshot.data(),
+        ...data,
+        created: data?.created?.toDate?.()?.toISOString() || new Date().toISOString(),
+        updated: data?.updated?.toDate?.()?.toISOString() || new Date().toISOString()
     } as Property
 
     return propertyData
@@ -28,11 +31,15 @@ export const getPropertiesById = async (propertyIds: string[]) => {
         .where("__name__", "in", propertyIds)
         .get();
 
-    const propertiesData = propertiesSnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-    } as Property
-    ))
+    const propertiesData = propertiesSnapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            ...data,
+            created: data?.created?.toDate?.()?.toISOString() || new Date().toISOString(),
+            updated: data?.updated?.toDate?.()?.toISOString() || new Date().toISOString()
+        } as Property
+    });
 
     return propertiesData
 }

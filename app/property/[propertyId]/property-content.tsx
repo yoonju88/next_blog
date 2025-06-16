@@ -9,11 +9,12 @@ import Modal from "@/components/Modal"
 import { NewReviewForm } from "./new-review-form"
 import Reviews from "@/components/review/reviewsSheet"
 import SlideImages from "@/components/carousel"
-import { Breadcrumbs } from '@/components/ui/breadcrumb'
 import numeral from "numeral"
+import { Label } from '@radix-ui/react-dropdown-menu'
+import { Input } from "@/components/ui/input"
+import React, { useState } from 'react'
 import AddToCartButton from "@/components/panier/add-to-cart-button"
-import { useState } from "react"
-import CartSheet from "@/components/panier/cart-sheet"
+
 
 type Props = {
     property: Property
@@ -39,10 +40,12 @@ export default function PropertyContent({
     userFavourites,
     verifiedToken
 }: Props) {
+    const [quantity, setQuantity] = useState(1)
     const [open, setOpen] = useState(false)
+
     return (
-        <section className='w-[100%] p-10'>
-            <div className="container px-5 py-24 mx-auto">
+        <section className='w-[100%] px-10'>
+            <div className="container mx-auto">
                 <div className="flex flex-wrap lg:flex-nowrap">
                     <div className="lg:basis-1/2 lg:min-w-0 lg:max-w-1/2 w-full">
                         {!!property?.images && (
@@ -53,16 +56,6 @@ export default function PropertyContent({
                         )}
                     </div>
                     <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mb-6 lg:mb-0 relative">
-                        <div className="mb-3">
-
-                            <Breadcrumbs items={[{
-                                href: "/property/SkinCare",
-                                label: `${property.category}`
-                            }, {
-                                label: `${property.subCategory}`
-                            }]}
-                            />
-                        </div>
                         <h2 className="text-muted-foreground title-font tracking-widest uppercase mb-2">{property.brand}</h2>
                         <h1 className="text-4xl title-font font-medium mb-2">{property.name}</h1>
                         <h3 className="text-primary tracking-widest mb-6 font-semibold">{property.subTitle}</h3>
@@ -92,18 +85,36 @@ export default function PropertyContent({
                             <span className="text-muted-foreground">Volume</span>
                             <span className="ml-auto text-muted-foreground">{property.volume} ml</span>
                         </div>
-                        <div className="flex mt-10 mb-14">
+                        <div className="flex mt-10 mb-10 justify-between">
                             <span className="title-font font-medium text-2xl text-foreground hover:text-primary transition-all duration-300">
                                 € {numeral(property?.price).format("0,0")}
                             </span>
-                            <div className="flex space-x-4 ml-auto">
+                            <div className="flex gap-4 items-center flex-nowrap">
+                                <Label className='whitespace-nowrap text-foreground/80'>
+                                    Order Quantity
+                                </Label>
+                                <Input
+                                    type="number"
+                                    min="1"
+                                    max="10"
+                                    value={quantity}
+                                    onChange={(e) => setQuantity(Number(e.target.value))}
+                                    placeholder='Choose your order quantity'
+                                    className="w-[150px]"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex  justify-end">
+                            <div className="flex space-x-4">
                                 {(!verifiedToken || !verifiedToken.admin) && (
                                     <ToggleFavouriteButton
                                         isFavourite={userFavourites?.propertyIds?.includes(property.id) ?? false}
                                         propertyId={property.id}
                                     />
                                 )}
-                                <AddToCartButton property={property}
+                                <AddToCartButton
+                                    property={property}
+                                    quantity={quantity}
                                     onAddedToCartAction={() => setOpen(true)}
                                 >
                                     Add to Cart

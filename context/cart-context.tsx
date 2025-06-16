@@ -9,6 +9,7 @@ import { doc, setDoc, getDoc, arrayUnion, arrayRemove, updateDoc } from 'firebas
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
+
 export function CartProvider({ children }: { children: ReactNode }) {
     const [cartItems, setCartItems] = useState<CartItem[]>([])
     const { user } = useAuth()
@@ -27,11 +28,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
         loadCartItems()
     }, [user])
 
-    const addToCart = async (property: Property) => {
-        const newItem = { 
-            id: property.id, 
-            property, 
-            quantity: 1,
+    const addToCart = async (property: Property, quantity: number) => {
+        const newItem = {
+            id: property.id,
+            property,
+            quantity,
             createdAt: new Date().toISOString()
         }
 
@@ -40,7 +41,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
             if (existing) {
                 return prev.map(item =>
                     item.property.id === property.id
-                        ? { ...item, quantity: item.quantity + 1 }
+                        ? { ...item, quantity: item.quantity + quantity }
                         : item
                 )
             }
@@ -49,9 +50,24 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
         if (user) {
             const userRef = doc(db, 'users', user.uid)
-            await updateDoc(userRef, {
-                cart: arrayUnion(newItem)
-            })
+            const userDoc = await getDoc(userRef)
+            if (userDoc.exists()) {
+                const userData = userDoc.data()
+                const existingItem = userData.cart?.find((item: CartItem) => item.property.id === property.id)
+                
+                if (existingItem) {
+                    const updatedCart = userData.cart.map((item: CartItem) =>
+                        item.property.id === property.id
+                            ? { ...item, quantity: item.quantity + quantity }
+                            : item
+                    )
+                    await setDoc(userRef, { cart: updatedCart }, { merge: true })
+                } else {
+                    await updateDoc(userRef, {
+                        cart: arrayUnion(newItem)
+                    })
+                }
+            }
         }
     }
 

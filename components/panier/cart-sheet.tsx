@@ -11,40 +11,81 @@ import { Button } from "@/components/ui/button"
 import { useCart } from "@/context/cart-context"
 import { ShoppingCart } from "lucide-react"
 import Image from "next/image"
-import { Minus, Plus, Trash2 } from "lucide-react"
+import { Minus, Plus, Trash2, CheckCircle, XCircle } from "lucide-react"
 import numeral from "numeral"
 import Link from "next/link"
 import imageUrlFormatter from '@/lib/imageUrlFormatter';
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Input } from "@/components/ui/input"
+import { toast } from "sonner"
+import { getCouponByCode, validateCoupon, calculateDiscount } from '@/lib/coupons'
+import { Coupon } from '@/types/coupon'
 
 type Props = {
     open: boolean;
     onOpenChangeAction: (open: boolean) => void;
 }
 
-// 임시 쿠폰 예시
-const validCoupons = {
-    "SAVE10": 10, // 10€ 할인
-    "SAVE20": 20,
-};
-
 export default function CartSheet({ open, onOpenChangeAction }: Props) {
     const { cartItems, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
     const [couponCode, setCouponCode] = useState("");
     const [discount, setDiscount] = useState(0);
+    const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
+    const [couponStatus, setCouponStatus] = useState<"idle" | "success" | "error">("idle");
+    const [loading, setLoading] = useState(false);
 
+    const handleApplyCoupon = async () => {
+        if (!couponCode.trim()) {
+            toast.error("Please enter a coupon code");
+            return;
+        }
 
-    const handleApplyCoupon = () => {
-        const found = validCoupons[couponCode.toUpperCase()];
-        if (found) {
-            setDiscount(found);
-        } else {
-            setDiscount(0);
+        setLoading(true);
+        try {
+            const coupon = await getCouponByCode(couponCode);
+
+            if (!coupon) {
+                setDiscount(0);
+                setAppliedCoupon(null);
+                setCouponStatus("error");
+                toast.error("Invalid coupon code");
+                return;
+            }
+
+            const validation = validateCoupon(coupon, totalPrice);
+
+            if (!validation.isValid) {
+                setDiscount(0);
+                setAppliedCoupon(null);
+                setCouponStatus("error");
+                toast.error(validation.message);
+                return;
+            }
+
+            const discountAmount = calculateDiscount(coupon, totalPrice);
+            setDiscount(discountAmount);
+            setAppliedCoupon(coupon);
+            setCouponStatus("success");
+            toast.success(`${coupon.description} coupon applied!`);
+        } catch (error) {
+            console.error('Error applying coupon:', error);
+            toast.error("Failed to apply coupon");
+            setCouponStatus("error");
+        } finally {
+            setLoading(false);
         }
     };
 
+    const handleRemoveCoupon = () => {
+        setDiscount(0);
+        setAppliedCoupon(null);
+        setCouponCode("");
+        setCouponStatus("idle");
+        toast.info("Coupon removed");
+    };
+
     const finalPrice = Math.max(totalPrice - discount, 0);
+    const savingsPercentage = totalPrice > 0 ? Math.round((discount / totalPrice) * 100) : 0;
 
     return (
         <Sheet open={open} onOpenChange={onOpenChangeAction}>
@@ -123,38 +164,85 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                     </div>
                     {cartItems.length > 0 && (
                         <div className="border-t border-gray-300 pt-4 space-y-4 mb-10">
+                            {/* 쿠폰 섹션 */}
                             <div className="space-y-2">
                                 <label htmlFor="coupon" className="block text-sm font-medium">
                                     Discount Coupon
                                 </label>
-                                <div className="flex gap-2 border-b border-gray-200 pb-4">
-                                    <Input
-                                        id="coupon"
-                                        type="text"
-                                        className="flex-1"
-                                        value={couponCode}
-                                        onChange={(e) => setCouponCode(e.target.value)}
-                                        placeholder="Enter coupon code"
-                                    />
-                                    <Button onClick={handleApplyCoupon}>Apply</Button>
-                                </div>
+
+                                {/* 적용된 쿠폰 표시 */}
+                                {appliedCoupon && (
+                                    <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-md">
+                                        <div className="flex items-center gap-2">
+                                            <CheckCircle className="h-4 w-4 text-green-600" />
+                                            <span className="text-sm font-medium text-green-800">
+                                                {appliedCoupon.code} - {appliedCoupon.description}
+                                            </span>
+                                        </div>
+                                        <button
+                                            onClick={handleRemoveCoupon}
+                                            className="text-red-600 hover:text-red-500 text-sm"
+                                        >
+                                            Remove
+                                        </button>
+                                    </div>
+                                )}
+
+                                {/* 쿠폰 입력 필드 */}
+                                {!appliedCoupon && (
+                                    <div className="flex gap-2">
+                                        <div className="flex-1 relative">
+                                            <Input
+                                                id="coupon"
+                                                type="text"
+                                                className={`pr-10 ${couponStatus === "error" ? "border-red-500" : ""}`}
+                                                value={couponCode}
+                                                onChange={(e) => {
+                                                    setCouponCode(e.target.value);
+                                                    setCouponStatus("idle");
+                                                }}
+                                                placeholder="Enter coupon code"
+                                                onKeyPress={(e) => e.key === "Enter" && handleApplyCoupon()}
+                                                disabled={loading}
+                                            />
+                                            {couponStatus === "success" && (
+                                                <CheckCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-green-600" />
+                                            )}
+                                            {couponStatus === "error" && (
+                                                <XCircle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-red-500" />
+                                            )}
+                                        </div>
+                                        <Button onClick={handleApplyCoupon} disabled={!couponCode.trim() || loading}>
+                                            {loading ? "Applying..." : "Apply"}
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
 
-                            <div className="flex justify-between">
-                                <span className="font-medium">Subtotal</span>
-                                <span className="font-medium">€{numeral(totalPrice).format("0,0")}</span>
-                            </div>
-
-                            {discount > 0 && (
-                                <div className="flex justify-between text-green-600">
-                                    <span className="font-medium">Discount</span>
-                                    <span className="font-medium">-€{numeral(discount).format("0,0")}</span>
+                            {/* 가격 요약 */}
+                            <div className="space-y-2 pt-2 border-t border-gray-200">
+                                <div className="flex justify-between">
+                                    <span className="text-sm text-muted-foreground">Subtotal</span>
+                                    <span className="font-medium">€{numeral(totalPrice).format("0,0")}</span>
                                 </div>
-                            )}
 
-                            <div className="flex justify-between text-lg font-bold">
-                                <span>Total</span>
-                                <span>€{numeral(finalPrice).format("0,0")}</span>
+                                {discount > 0 && (
+                                    <>
+                                        <div className="flex justify-between text-green-600">
+                                            <span className="text-sm">Discount</span>
+                                            <span className="font-medium">-€{numeral(discount).format("0,0")}</span>
+                                        </div>
+                                        <div className="flex justify-between text-xs text-green-600">
+                                            <span>Discount Rate</span>
+                                            <span>{savingsPercentage}% Discount</span>
+                                        </div>
+                                    </>
+                                )}
+
+                                <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
+                                    <span>Total</span>
+                                    <span>€{numeral(finalPrice).format("0,0")}</span>
+                                </div>
                             </div>
 
                             <Button asChild className="w-full">

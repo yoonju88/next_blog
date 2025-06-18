@@ -2,7 +2,7 @@ import React from 'react'
 import { Breadcrumbs } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { PlusCircleIcon } from 'lucide-react'
+import { PlusCircleIcon, Tag } from 'lucide-react'
 import PropertyTable from './properties/property-table'
 
 export default async function AdminDashboard({
@@ -34,6 +34,14 @@ export default async function AdminDashboard({
                 >
                     <Link href="/admin-dashboard/properties">
                         Products
+                    </Link>
+                </Button>
+                <Button
+                    asChild
+                >
+                    <Link href="/admin-dashboard/coupons">
+                        <Tag className="h-4 w-4 mr-2" />
+                        Coupons
                     </Link>
                 </Button>
                 <Button

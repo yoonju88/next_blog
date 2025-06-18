@@ -24,8 +24,8 @@ export type Property = {
     howToUse: string;
     expireDate: string;
     stockQuantity: number;
-    created: string;
-    updated: string;
+    created?: string;
+    updated?: string;
     images: string[];
 }
 
@@ -48,4 +48,6 @@ export type CreateProperty = {
     howToUse: string;
     expireDate: string;
     stockQuantity: number;
+    created: string;
+    updated: string;
 }

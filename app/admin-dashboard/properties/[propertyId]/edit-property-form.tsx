@@ -13,8 +13,6 @@ import { storage } from "@/firebase/client"
 import { savePropertyImages } from "../../action"
 import { SaveIcon } from "lucide-react"
 
-type Props = Property;
-
 export default function EditPropertyForm({
     id,
     name,
@@ -29,13 +27,15 @@ export default function EditPropertyForm({
     status,
     brand,
     ingredients,
-    keyIngredients,
     skinType,
+    skinBenefit,
     howToUse,
     expireDate,
     stockQuantity,
+    updated,
+    created,
     images = [],
-}: Props) {
+}: Property) {
 
     const auth = useAuth();
     const router = useRouter();
@@ -84,6 +84,7 @@ export default function EditPropertyForm({
         })
         router.push('/admin-dashboard')
     }
+
     return (
         <div className="w-full">
             <PropertyForm
@@ -95,7 +96,7 @@ export default function EditPropertyForm({
                     name,
                     price,
                     costPrice,
-                    category,
+                    category: Array.isArray(category) ? category[0] : category ?? undefined,
                     subCategory,
                     origin,
                     manufacturer,
@@ -104,11 +105,13 @@ export default function EditPropertyForm({
                     status,
                     brand,
                     ingredients,
-                    keyIngredients,
-                    skinType,
+                    skinType: Array.isArray(skinType) ? skinType[0] : skinType ?? undefined,
+                    skinBenefit,
                     howToUse,
                     expireDate,
                     stockQuantity,
+                    updated,
+                    created,
                     images: images.map(image => ({
                         id: image,
                         url: image,

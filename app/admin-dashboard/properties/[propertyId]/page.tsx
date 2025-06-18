@@ -46,7 +46,9 @@ export default async function EditProperty({ params }: { params: Promise<{ prope
                         name={property.name}
                         subTitle={property.subTitle}
                         price={property.price}
+                        costPrice={property.costPrice}
                         category={property.category}
+                        subCategory={property.subCategory}
                         origin={property.origin}
                         manufacturer={property.manufacturer}
                         volume={property.volume}
@@ -54,11 +56,13 @@ export default async function EditProperty({ params }: { params: Promise<{ prope
                         status={property.status}
                         brand={property.brand}
                         ingredients={property.ingredients}
-                        keyIngredients={property.keyIngredients}
                         skinType={property.skinType}
+                        skinBenefit={property.skinBenefit}
                         howToUse={property.howToUse}
                         expireDate={property.expireDate}
                         stockQuantity={property.stockQuantity}
+                        created={property.created}
+                        updated={property.updated}
                         images={property.images || []}
                     />
                 </CardContent>

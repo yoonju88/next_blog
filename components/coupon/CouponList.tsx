@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Coupon, CreateCouponData } from "@/types/coupon"
 import { getAllCoupons } from "@/lib/coupons"
-import { createCoupon, updateCoupon, deleteCoupon } from './action'
+import { createCoupon, updateCoupon, deleteCoupon } from '@/app/admin-dashboard/coupons/action'
 import CouponCard from "./CouponCard"
 import CouponFormDialog from "./CouponDialog"
 import { toast } from "sonner"
@@ -23,23 +23,28 @@ export default function CouponList({ initialCoupons }: CouponListProps) {
     const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null)
     const [isDialogOpen, setIsDialogOpen] = useState(false)
 
+    const refresh = async () => {
+        const updated = await getAllCoupons()
+        setCoupons(updated)
+    }
+
     const handleDelete = async (id: string) => {
         const token = await auth?.user?.getIdToken()
         if (!token) return
         try {
             await deleteCoupon(id, token)
             toast.success("Deleted successfully")
-            router.refresh()
         } catch {
             toast.error("Delete failed")
         }
+        refresh()
     }
     const handleCreate = async (data: CreateCouponData) => {
         const token = await auth?.user?.getIdToken()
         if (!token) return
         await createCoupon(data, token)
         toast.success("Coupon created")
-        router.refresh()
+        refresh()
     }
 
     const handleUpdate = async (id: string, data: Partial<CreateCouponData>) => {
@@ -50,7 +55,7 @@ export default function CouponList({ initialCoupons }: CouponListProps) {
         )
         await updateCoupon(id, cleanedData, token)
         toast.success("Coupon updated")
-        router.refresh()
+        refresh()
     }
 
     return (

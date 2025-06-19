@@ -151,24 +151,24 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                     )}
                 </Button>
             </SheetTrigger>
-            <SheetContent className="px-4">
+            <SheetContent className="px-4 flex flex-col overflow-y-auto ">
                 <SheetHeader>
                     <SheetTitle className="text-lg">Shopping Cart</SheetTitle>
                 </SheetHeader>
                 <div className="flex flex-col h-full">
-                    <div className="flex-1 overflow-y-auto py-4 max-h-[calc(65vh-100px)]">
+                    <div className="flex-1 overflow-y-auto py-4">
                         {cartItems.length === 0 ? (
                             <div className="text-center py-8">
                                 <p className="text-muted-foreground">Your cart is empty</p>
                             </div>
                         ) : (
-                            <div className="space-y-4">
+                            <div className="space-y-3 flex flex-col h-full">
                                 {cartItems.map((item, i) => {
                                     const isOnSale = item.property.onSale && !isNaN(item.property.salePrice)
                                     const unitPrice = isOnSale ? item.property.salePrice : item.property.price
                                     const totalPriceForItem = unitPrice * item.quantity
                                     return (
-                                        <div key={`${item.id} + ${i}`} className="flex gap-4 py-4 border-b border-gray-300">
+                                        <div key={`${item.id} + ${i}`} className="flex gap-4 py-4 border-gray-300">
                                             <div className="relative w-20 h-20">
                                                 <Image
                                                     src={imageUrlFormatter(item.property.images[0])}
@@ -232,7 +232,7 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                         )}
                     </div>
                     {cartItems.length > 0 && (
-                        <div className="border-t border-gray-300 pt-4 space-y-4 mb-10">
+                        <div className="border-t border-gray-300 pt-6 space-y-4  mb-10">
                             {/* 쿠폰 섹션 */}
                             <div className="space-y-2">
                                 <label htmlFor="coupon" className="block text-sm font-medium">
@@ -290,7 +290,7 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                             {/* 포인트 입력 UI */}
                             <div className="space-y-2">
                                 <label htmlFor="points" className="block text-sm font-medium">Use Points</label>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center justify-between gap-2">
                                     <span className="text-sm text-muted-foreground">Current Points: {userPoints}</span>
                                     {userPoints >= 1 ? (
                                         <Input
@@ -312,31 +312,27 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                                     )}
                                 </div>
                             </div>
-                            <div className="flex justify-between">
-                                <span className="text-sm text-muted-foreground">Shipping Fee</span>
+                            {/* 배송비 */}
+                            <div className="flex justify-between text-sm text-muted-foreground">
+                                <span className="">Shipping Fee</span>
                                 <span className="font-medium">€{numeral(shippingFee).format("0,0")}</span>
                             </div>
                             {/* 가격 요약 */}
                             <div className="space-y-2 pt-2 border-t border-gray-200">
-                                <div className="flex justify-between">
-                                    <span className="text-sm text-muted-foreground">Subtotal</span>
-                                    <span className="font-medium">€{numeral(subtotal).format("0,0")}</span>
-                                </div>
-
                                 {discount > 0 && (
                                     <>
                                         <div className="flex justify-between text-green-600">
-                                            <span className="text-sm">Discount</span>
-                                            <span className="font-medium">-€{numeral(discount).format("0,0")}</span>
+                                            <span className="text-sm">Discount Coupon</span>
+                                            <span className="text-sm">-€{numeral(discount).format("0,0")}</span>
                                         </div>
-                                        <div className="flex justify-between text-xs text-green-600">
+                                        <div className="flex justify-between text-xs text-muted-foreground">
                                             <span>Discount Rate</span>
-                                            <span>{savingsPercentage}% Discount</span>
+                                            <span>{savingsPercentage}%</span>
                                         </div>
                                     </>
                                 )}
                                 {totalDiscount > 0 && (
-                                    <div className="flex justify-between text-sm text-blue-600 pt-2 border-t border-blue-100">
+                                    <div className="flex justify-between text-sm text-green-600 ">
                                         <span>Total Savings</span>
                                         <span>-€{numeral(totalDiscount).format("0,0")}</span>
                                     </div>
@@ -352,16 +348,16 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                                         </div>
                                     );
                                 })()}
-
                                 <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
                                     <span>Total</span>
                                     <span>€{numeral(totalPriceWithShipping).format("0,0")}</span>
                                 </div>
                             </div>
-
-                            <Button asChild className="w-full">
-                                <Link href="/checkout">Checkout</Link>
-                            </Button>
+                            <div className="pt-6 space-y-4">
+                                <Button asChild className="w-full ">
+                                    <Link href="/checkout">Checkout</Link>
+                                </Button>
+                            </div>
                         </div>
                     )}
                 </div>

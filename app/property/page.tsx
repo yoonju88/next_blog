@@ -8,15 +8,52 @@ import { cookies } from 'next/headers'
 interface PropertyPageProps {
     searchParams: Record<string, string | string[] | undefined>
 }
+function serializeTimestamps(obj: any) {
+    if (Array.isArray(obj)) {
+        return obj.map(serializeTimestamps);
+    } else if (obj && typeof obj === 'object') {
+        const newObj: any = {};
+        for (const key in obj) {
+            const value = obj[key];
+            if (value?.toDate instanceof Function) {
+                newObj[key] = value.toDate().toISOString();
+            } else if (value?._seconds) {
+                newObj[key] = new Date(value._seconds * 1000).toISOString();
+            } else {
+                newObj[key] = serializeTimestamps(value);
+            }
+        }
+        return newObj;
+    } else {
+        return obj;
+    }
+}
+
+function normalizeCategory(input: string | null): "Skin Care" | "Make Up" | "Sun Care" | null {
+    switch (input?.toLowerCase()) {
+        case "skincare":
+            return "Skin Care";
+        case "makeup":
+            return "Make Up";
+        case "suncare":
+            return "Sun Care";
+        default:
+            return null;
+    }
+}
+
+
 
 export default async function PropertyPage({ searchParams }: PropertyPageProps) {
     const resolvedParams = await searchParams
     const brand = typeof resolvedParams.brand === 'string' ? resolvedParams.brand : null
-    const category = typeof resolvedParams.category === 'string' ? resolvedParams.category : null
+    const categoryParam = typeof resolvedParams.category === 'string' ? resolvedParams.category : null
     const skinType = typeof resolvedParams.skinType === 'string' ? resolvedParams.skinType : null
     const sale = resolvedParams.sale === 'true'
+    const sort = resolvedParams.sort === 'best'
+    const category = normalizeCategory(categoryParam)
 
-    const { data: properties } = await getProperties({
+    const { data: rawProperties } = await getProperties({
         filters: {
             brand,
             category,
@@ -26,15 +63,19 @@ export default async function PropertyPage({ searchParams }: PropertyPageProps) 
             pageSize: 8
         }
     })
+    const properties = rawProperties.map(p => serializeTimestamps(p));
 
     const brands = [...new Set(properties.map(property => property.brand))].filter(Boolean)
     const categories = [...new Set(properties.map(property => property.category))].filter(Boolean)
     const skinTypes = [...new Set(properties.map(property => property.skinType))].filter(Boolean)
 
-    // onSale 필터링
-    const filteredProperties = sale
-        ? properties.filter((property) => property.onSale)
-        : properties
+    let filteredProperties = properties
+    if (sale) {
+        filteredProperties = filteredProperties.filter((property) => property.onSale)
+    }
+    if (sort) {
+        filteredProperties = [...filteredProperties].sort((a, b) => (b.soldQuantity || 0) - (a.soldQuantity || 0))
+    }
 
     return (
         <div className='container w-full'>
@@ -48,23 +89,26 @@ export default async function PropertyPage({ searchParams }: PropertyPageProps) 
                     selectedSkinType={skinType}
                 />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 px-4">
-                {filteredProperties.map((property) => {
-                    return (
-                        <PropertyCard
-                            property={property}
-                            key={property.id}
-                            actionButton={
-                                <AddToCartButton
-                                    key={property.id}
-                                    property={property}
-                                >
-                                    <ShoppingBagIcon />
-                                </AddToCartButton>
-                            }
-                        />
-                    )
-                })}
+            <div className="px-4">
+                {filteredProperties.length === 0 ? (
+                    <div className="text-center text-muted-foreground py-10">
+                        The Product
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+                        {filteredProperties.map((property) => (
+                            <PropertyCard
+                                key={property.id}
+                                property={property}
+                                actionButton={
+                                    <AddToCartButton property={property} key={property.id}>
+                                        <ShoppingBagIcon />
+                                    </AddToCartButton>
+                                }
+                            />
+                        ))}
+                    </div>
+                )}
             </div>
         </div>
     )

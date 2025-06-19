@@ -65,13 +65,17 @@ export default function Nav() {
                                     <Link href="/property">All Products</Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
-                                    <Link href="/property?category=skincare">Skincare</Link>
+                                    <Link href={{ pathname: "/property", query: { category: "skincare" } }}>
+                                        Skin Care
+                                    </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
-                                    <Link href="/property?category=makeup">Makeup</Link>
+                                    <Link href={{ pathname: "/property", query: { category: "makeup" } }}>
+                                        Make Up
+                                    </Link>
                                 </DropdownMenuItem>
                                 <DropdownMenuItem asChild>
-                                    <Link href="/property?category=haircare">Haircare</Link>
+                                    <Link href={{ pathname: "/property", query: { category: "suncare" } }}>Sun Care</Link>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>

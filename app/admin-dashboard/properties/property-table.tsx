@@ -84,6 +84,7 @@ export default function PropertyTable({
                             <TableHead>Brand</TableHead>
                             <TableHead>Status</TableHead>
                             <TableHead>Stock Qty</TableHead>
+                            <TableHead>Sales Qty</TableHead>
                             <TableHead className='text-center'>Option</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -139,6 +140,9 @@ export default function PropertyTable({
                                     </TableCell>
                                     <TableCell>
                                         {property.stockQuantity}
+                                    </TableCell>
+                                    <TableCell>
+                                        {property.soldQuantity ?? 0}
                                     </TableCell>
                                     <TableCell >
                                         <div className='inline-flex space-x-2'>

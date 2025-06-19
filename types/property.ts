@@ -4,6 +4,7 @@ import { CategoryType } from "./categoryType"
 export type PropertyStatus = 'available' | 'sold' | 'reserved'
 
 export type Property = {
+    soldQuantity: number;
     id: string;
     name: string;
     subTitle: string;

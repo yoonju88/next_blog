@@ -7,6 +7,7 @@ import { updateSaleAction, removeSaleAction } from '@/app/admin-dashboard/action
 import { Label } from '../ui/label'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
+import { useAuth } from '@/context/auth'
 
 export default function AddSaleDialog({ open, onClose, selectedIds, defaultSalePrice, defaultSaleRate, defaultSaleStartDate, defaultSaleEndDate }: {
     open: boolean,
@@ -17,6 +18,7 @@ export default function AddSaleDialog({ open, onClose, selectedIds, defaultSaleP
     defaultSaleStartDate: string,
     defaultSaleEndDate: string
 }) {
+    const auth = useAuth()
     const router = useRouter()
     const [salePrice, setSalePrice] = useState(
         defaultSalePrice !== undefined && defaultSalePrice !== null
@@ -32,6 +34,9 @@ export default function AddSaleDialog({ open, onClose, selectedIds, defaultSaleP
     const [saleEndDate, setSaleEndDate] = useState(defaultSaleEndDate || '')
 
     const handleSubmit = async () => {
+        const token = await auth?.user?.getIdToken()
+        if (!token) return
+
         try {
             await updateSaleAction({
                 selectedIds,
@@ -39,7 +44,8 @@ export default function AddSaleDialog({ open, onClose, selectedIds, defaultSaleP
                 saleRate: Number(saleRate),
                 saleStartDate: saleStartDate ? new Date(saleStartDate).toISOString() : undefined,
                 saleEndDate: saleEndDate ? new Date(saleEndDate).toISOString() : undefined,
-            })
+
+            }, token)
             toast.success('Sale applied to selected products ✅')
         } catch {
             toast.error('Failed to apply sale ❌')

@@ -40,53 +40,87 @@ export const savePropertyImages = async ({
     })
 }
 
-export async function updateSaleAction({ selectedIds, salePrice, saleRate }: {
+export async function updateSaleAction({
+    selectedIds,
+    salePrice,
+    saleRate,
+    saleStartDate,
+    saleEndDate
+}: {
     selectedIds: string[]
     salePrice?: number
     saleRate?: number
-}) {
+    saleStartDate?: string
+    saleEndDate?: string
+},
+    authToken: string
+) {
+    const verifiedToken = await auth.verifyIdToken(authToken);
+
+    if (!verifiedToken.admin) {
+        return {
+            error: true,
+            message: 'Unauthorized'
+        }
+    }
     const batch = firestore.batch();
 
     for (const id of selectedIds) {
-    const ref = firestore.doc(`properties/${id}`)
-    const docSnap = await ref.get()
-    const data = docSnap.data()
-    const originalPrice = data?.price
+        const ref = firestore.doc(`properties/${id}`)
+        const docSnap = await ref.get()
+        const data = docSnap.data()
+        const originalPrice = data?.price
 
-    if (!originalPrice || isNaN(Number(originalPrice))) continue
+        if (!originalPrice || isNaN(Number(originalPrice))) continue
 
-    // 🔽 타입 강제 변환
-    const numericSalePrice = Number(salePrice)
-    const numericSaleRate = Number(saleRate)
+        // 🔽 타입 강제 변환
+        const numericSalePrice = Number(salePrice)
+        const numericSaleRate = Number(saleRate)
 
-    let calculatedSalePrice: number | undefined = undefined
+        let calculatedSalePrice: number | undefined = undefined
 
-    if (!isNaN(numericSalePrice) && numericSalePrice > 0) {
-      // 고정 금액 할인: 예) 30000 - 5000 = 25000
-      calculatedSalePrice = originalPrice - numericSalePrice
-    } else if (!isNaN(numericSaleRate) && numericSaleRate > 0 && numericSaleRate < 100) {
-      // 퍼센트 할인: 예) 30000 * 0.8 = 24000
-      calculatedSalePrice = Math.round(originalPrice * (1 - numericSaleRate / 100))
+        if (!isNaN(numericSalePrice) && numericSalePrice > 0) {
+            // 고정 금액 할인: 예) 30000 - 5000 = 25000
+            calculatedSalePrice = originalPrice - numericSalePrice
+        } else if (!isNaN(numericSaleRate) && numericSaleRate > 0 && numericSaleRate < 100) {
+            // 퍼센트 할인: 예) 30000 * 0.8 = 24000
+            calculatedSalePrice = Math.round(originalPrice * (1 - numericSaleRate / 100))
+        }
+
+        if (!calculatedSalePrice || isNaN(calculatedSalePrice)) continue
+
+        const updateData: any = {
+            onSale: true,
+            salePrice: calculatedSalePrice,
+        }
+
+        if (!isNaN(numericSaleRate) && numericSaleRate > 0 && numericSaleRate < 100) {
+            updateData.saleRate = numericSaleRate
+        }
+
+        // ✅ 날짜 필드 추가
+        if (saleStartDate) {
+            updateData.saleStartDate = new Date(saleStartDate)
+        }
+        if (saleEndDate) {
+            updateData.saleEndDate = new Date(saleEndDate)
+        }
+
+        batch.update(ref, updateData)
     }
-
-    if (!calculatedSalePrice || isNaN(calculatedSalePrice)) continue
-
-    const updateData: any = {
-      onSale: true,
-      salePrice: calculatedSalePrice,
-    }
-
-    if (!isNaN(numericSaleRate) && numericSaleRate > 0 && numericSaleRate < 100) {
-      updateData.saleRate = numericSaleRate
-    }
-
-    batch.update(ref, updateData)
-  }
 
     await batch.commit();
 }
 
-export async function removeSaleAction(selectedIds: string[]) {
+export async function removeSaleAction(selectedIds: string[], authToken: string) {
+    const verifiedToken = await auth.verifyIdToken(authToken);
+
+    if (!verifiedToken.admin) {
+        return {
+            error: true,
+            message: 'Unauthorized'
+        }
+    }
     const batch = firestore.batch()
     selectedIds.forEach(id => {
         const ref = firestore.doc(`properties/${id}`)

@@ -7,6 +7,7 @@ import { toast } from "sonner"
 
 import { useAuth } from "@/context/auth"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 type Props = {
     property: Property
@@ -15,10 +16,11 @@ type Props = {
     onAddedToCartAction?: () => void
 }
 
-export default function AddToCartButton({ property, children, onAddedToCartAction, quantity }: Props) {
+export default function AddToCartButton({ property, children, onAddedToCartAction, quantity: initialQuantity = 1 }: Props) {
     const { addToCart } = useCart()
     const { user } = useAuth()
     const router = useRouter()
+    const [quantity, setQuantity] = useState(initialQuantity);
 
     const handleAddToCart = () => {
         if (!user) {
@@ -34,7 +36,6 @@ export default function AddToCartButton({ property, children, onAddedToCartActio
         toast.success("Added to Cart", {
             description: "The item has been added to your cart."
         })
-
     }
 
     return (

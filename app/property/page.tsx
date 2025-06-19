@@ -14,6 +14,7 @@ export default async function PropertyPage({ searchParams }: PropertyPageProps) 
     const brand = typeof resolvedParams.brand === 'string' ? resolvedParams.brand : null
     const category = typeof resolvedParams.category === 'string' ? resolvedParams.category : null
     const skinType = typeof resolvedParams.skinType === 'string' ? resolvedParams.skinType : null
+    const sale = resolvedParams.sale === 'true'
 
     const { data: properties } = await getProperties({
         filters: {
@@ -30,6 +31,11 @@ export default async function PropertyPage({ searchParams }: PropertyPageProps) 
     const categories = [...new Set(properties.map(property => property.category))].filter(Boolean)
     const skinTypes = [...new Set(properties.map(property => property.skinType))].filter(Boolean)
 
+    // onSale 필터링
+    const filteredProperties = sale
+        ? properties.filter((property) => property.onSale)
+        : properties
+
     return (
         <div className='container w-full'>
             <div className="mb-10 mt-10 overflow-x-auto max-w-full">
@@ -43,7 +49,7 @@ export default async function PropertyPage({ searchParams }: PropertyPageProps) 
                 />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 px-4">
-                {properties.map((property) => {
+                {filteredProperties.map((property) => {
                     return (
                         <PropertyCard
                             property={property}

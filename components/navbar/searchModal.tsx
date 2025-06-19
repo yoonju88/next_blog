@@ -18,7 +18,7 @@ export default function SearchModal({ open, onCloseAction }: { open: boolean; on
 
     return (
         <Dialog open={open} onOpenChange={onCloseAction}>
-            <DialogContent className="sm:max-w-lg">
+            <DialogContent className="sm:max-w-lg border-none">
                 <DialogHeader>
                     <DialogTitle>Search Products</DialogTitle>
                 </DialogHeader>

@@ -91,7 +91,7 @@ export default function Nav() {
                             href='/property?sale=true'
                             className={navLinkClass("/property", { key: "sale", value: "true" })}
                         >
-                            Sale
+                            On Sale
                         </Link>
                     </div>
                 </nav>

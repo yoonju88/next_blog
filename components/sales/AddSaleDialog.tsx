@@ -56,8 +56,10 @@ export default function AddSaleDialog({ open, onClose, selectedIds, defaultSaleP
     }
 
     const handleRemove = async () => {
+        const token = await auth?.user?.getIdToken()
+        if (!token) return
         try {
-            await removeSaleAction(selectedIds)
+            await removeSaleAction(selectedIds, token)
             toast.success('Sale removed successfully ✅')
         } catch {
             toast.error('Failed to remove sale ❌')

@@ -1,4 +1,3 @@
-import { PropertyStatus } from "./propertyStatus";
 import { SkinType } from "./skinType"
 import { CategoryType } from "./categoryType"
 
@@ -27,6 +26,9 @@ export type Property = {
     created?: string;
     updated?: string;
     images: string[];
+    salePrice?: number;
+    saleRate?: number;
+    onSale?: boolean;
 }
 
 export type CreateProperty = {

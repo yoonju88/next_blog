@@ -10,6 +10,8 @@ type Property = {
     brand?: string
     price: number
     images: string[]
+    salePrice?: number
+    onSale?: boolean
 }
 
 type Props = {
@@ -55,7 +57,15 @@ export default function PropertyCard({ property, actionButton }: Props) {
                     <p className="font-light text-sm capitalize text-foreground/80">
                         {property.subTitle || property.brand}
                     </p>
-                    <span className="text-foreground/80">€ {property.price}</span>
+                    <span className="text-foreground/80">
+                        {property.onSale && property.salePrice
+                            ? (<>
+                                <span className="line-through text-gray-400 mr-1">€ {property.price}</span>
+                                <span className="text-foreground/80 font-bold">€ {property.salePrice}</span>
+                              </>)
+                            : <>€ {property.price}</>
+                        }
+                    </span>
                 </div>
                 {actionButton}
             </div>

@@ -4,6 +4,7 @@ import { Breadcrumbs } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { PlusCircleIcon } from 'lucide-react'
+import { getProperties } from '@/data/product'
 
 export default async function PropertiesPage({
     searchParams
@@ -11,6 +12,16 @@ export default async function PropertiesPage({
     searchParams?: Promise<Record<string, string | undefined>>
 }) {
     const searchParamsValue = await searchParams
+    const rawPage = searchParamsValue?.page ?? '1'
+    const page = Number(rawPage)
+
+    const { data, totalPages } = await getProperties({
+        pagination: {
+            page,
+            pageSize: 6,
+        }
+    })
+
     return (
         <div>
             <Breadcrumbs items={[
@@ -33,7 +44,7 @@ export default async function PropertiesPage({
                     <PlusCircleIcon /> New Product
                 </Link>
             </Button>
-            <PropertyTable page={searchParamsValue?.page ? parseInt(searchParamsValue.page) : 1} />
+            <PropertyTable totalPages={totalPages} data={data} currentPage={page} />
         </div>
     )
 }

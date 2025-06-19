@@ -85,11 +85,21 @@ export default function PropertyContent({
                             <span className="text-muted-foreground">Volume</span>
                             <span className="ml-auto text-muted-foreground">{property.volume} ml</span>
                         </div>
-                        <div className="flex mt-10 mb-10 justify-between">
-                            <span className="title-font font-medium text-2xl text-foreground hover:text-primary transition-all duration-300">
-                                € {numeral(property?.price).format("0,0")}
-                            </span>
-                            <div className="flex gap-4 items-center flex-nowrap">
+                        <span className="flex justify-end mt-6">
+                            {property.onSale && property.salePrice
+                                ? (<div className="flex items-center gap-1">
+                                    <span className="line-through text-gray-400 mr-1 text-md">€ {property.price}</span>
+                                    <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
+                                        -{property.saleRate}%
+                                    </span>
+                                    <span className="text-foreground/80 font-bold text-lg">€ {property.salePrice}</span>
+                                </div>)
+                                : <span className="text-foreground/80 font-bold text-lg">€ {property.price}</span>
+                            }
+                        </span>
+
+                        <div className="flex justify-between mt-8">
+                            <div className="flex flex-col gap-4 items-letf flex-nowrap">
                                 <Label className='whitespace-nowrap text-foreground/80'>
                                     Order Quantity
                                 </Label>
@@ -103,22 +113,22 @@ export default function PropertyContent({
                                     className="w-[150px]"
                                 />
                             </div>
-                        </div>
-                        <div className="flex  justify-end">
-                            <div className="flex space-x-4">
-                                {(!verifiedToken || !verifiedToken.admin) && (
-                                    <ToggleFavouriteButton
-                                        isFavourite={userFavourites?.propertyIds?.includes(property.id) ?? false}
-                                        propertyId={property.id}
-                                    />
-                                )}
-                                <AddToCartButton
-                                    property={property}
-                                    quantity={quantity}
-                                    onAddedToCartAction={() => setOpen(true)}
-                                >
-                                    Add to Cart
-                                </AddToCartButton>
+                            <div className="flex  items-center justify-end">
+                                <div className="flex space-x-4">
+                                    {(!verifiedToken || !verifiedToken.admin) && (
+                                        <ToggleFavouriteButton
+                                            isFavourite={userFavourites?.propertyIds?.includes(property.id) ?? false}
+                                            propertyId={property.id}
+                                        />
+                                    )}
+                                    <AddToCartButton
+                                        property={property}
+                                        quantity={quantity}
+                                        onAddedToCartAction={() => setOpen(true)}
+                                    >
+                                        Add to Cart
+                                    </AddToCartButton>
+                                </div>
                             </div>
                         </div>
                     </div>

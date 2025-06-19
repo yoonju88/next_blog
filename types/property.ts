@@ -29,6 +29,7 @@ export type Property = {
     salePrice?: number;
     saleRate?: number;
     onSale?: boolean;
+    weight?: number;
 }
 
 export type CreateProperty = {
@@ -52,4 +53,5 @@ export type CreateProperty = {
     stockQuantity: number;
     created: string;
     updated: string;
+    weight?: number;
 }

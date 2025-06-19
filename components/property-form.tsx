@@ -10,6 +10,7 @@ import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
 import { Button } from './ui/button'
 import MultiImageUpload, { ImageUpload } from './multi-image-upload'
+import { Label } from './ui/label'
 
 type Props = {
     submitButtonLabel: React.ReactNode;
@@ -46,6 +47,7 @@ export default function PropertyForm({
             expireDate: "",
             stockQuantity: 0,
             skinBenfit: "",
+            weight: 0,
         },
         ...defaultValues,
     }
@@ -359,6 +361,19 @@ export default function PropertyForm({
                                 <FormLabel>Stock Quantity</FormLabel>
                                 <FormControl>
                                     <Input {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="weight"
+                        render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Weight(g)</FormLabel>
+                                <FormControl>
+                                    <Input {...field} type="number" step="0.01" min="0" value={field.value ?? 0} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>

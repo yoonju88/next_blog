@@ -1,5 +1,4 @@
 'use client'
-
 import {
     Sheet,
     SheetContent,
@@ -9,6 +8,7 @@ import {
 } from "@/components/ui/sheet"
 import { Button } from "@/components/ui/button"
 import { useCart } from "@/context/cart-context"
+import { useAuth } from "@/context/auth"
 import { ShoppingCart } from "lucide-react"
 import Image from "next/image"
 import { Minus, Plus, Trash2, CheckCircle, XCircle } from "lucide-react"
@@ -20,19 +20,47 @@ import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
 import { getCouponByCode, validateCoupon, calculateDiscount } from '@/lib/coupons'
 import { Coupon } from '@/types/coupon'
+import { doc, getDoc } from "firebase/firestore"
+import { db } from "@/firebase/client"
 
 type Props = {
     open: boolean;
     onOpenChangeAction: (open: boolean) => void;
 }
 
+export function useUserPoints(userId?: string) {
+    const [points, setPoints] = useState<number>(0)
+
+    useEffect(() => {
+        if (!userId) {
+            setPoints(0)
+            return
+        }
+        const fetchPoints = async () => {
+            const userRef = doc(db, "users", userId)
+            const userSnap = await getDoc(userRef)
+            if (userSnap.exists()) {
+                const data = userSnap.data()
+                setPoints(typeof data.points === "number" ? data.points : 0)
+            } else {
+                setPoints(0)
+            }
+        }
+        fetchPoints()
+    }, [userId])
+
+    return points
+}
+
 export default function CartSheet({ open, onOpenChangeAction }: Props) {
+    const { user } = useAuth()
     const { cartItems, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
     const [couponCode, setCouponCode] = useState("");
     const [discount, setDiscount] = useState(0);
     const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
     const [couponStatus, setCouponStatus] = useState<"idle" | "success" | "error">("idle");
     const [loading, setLoading] = useState(false);
+    const [usedPoints, setUsedPoints] = useState(0);
 
     const handleApplyCoupon = async () => {
         if (!couponCode.trim()) {
@@ -95,6 +123,8 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
 
     const finalPrice = Math.max(totalPrice - discount, 0);
     const savingsPercentage = totalPrice > 0 ? Math.round((discount / totalPrice) * 100) : 0;
+
+    const userPoints = useUserPoints(user?.uid);
 
     return (
         <Sheet open={open} onOpenChange={onOpenChangeAction}>
@@ -195,7 +225,7 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                                 <label htmlFor="coupon" className="block text-sm font-medium">
                                     Discount Coupon
                                 </label>
-
+                               
                                 {/* 적용된 쿠폰 표시 */}
                                 {appliedCoupon && (
                                     <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-md">
@@ -244,7 +274,31 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                                     </div>
                                 )}
                             </div>
-
+                             {/* 포인트 입력 UI */}
+                             <div className="space-y-2">
+                                    <label htmlFor="points" className="block text-sm font-medium">Use Points</label>
+                                    <div className="flex items-center gap-2">
+<span className="text-sm text-muted-foreground">Current Points: {userPoints}</span>
+                                    </div>
+                                    {userPoints >= 1 ? (
+                                        <Input
+                                            id="points"
+                                            type="number"
+                                            min={0}
+                                            max={userPoints}
+                                            value={usedPoints}
+                                            onChange={(e) => {
+                                                let value = Math.floor(Number(e.target.value));
+                                                if (isNaN(value) || value < 0) value = 0;
+                                                if (value > userPoints) value = userPoints;
+                                                setUsedPoints(value);
+                                            }}
+                                            placeholder={`Max ${userPoints}`}
+                                        />
+                                    ) : (
+                                        <span className="text-sm text-red-400">You don't have any points</span>
+                                    )}
+                                </div>
                             {/* 가격 요약 */}
                             <div className="space-y-2 pt-2 border-t border-gray-200">
                                 <div className="flex justify-between">
@@ -297,4 +351,5 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
             </SheetContent>
         </Sheet>
     )
-} 
+}
+

@@ -31,8 +31,8 @@ export default async function PropertyPage({ searchParams }: PropertyPageProps) 
     const skinTypes = [...new Set(properties.map(property => property.skinType))].filter(Boolean)
 
     return (
-        <div className='text-center'>
-            <div className="mb-8 mt-10">
+        <div className='container w-full'>
+            <div className="mb-10 mt-10 overflow-x-auto max-w-full">
                 <BrandFilter
                     brands={brands}
                     categories={categories}
@@ -42,7 +42,7 @@ export default async function PropertyPage({ searchParams }: PropertyPageProps) 
                     selectedSkinType={skinType}
                 />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2 px-4">
                 {properties.map((property) => {
                     return (
                         <PropertyCard

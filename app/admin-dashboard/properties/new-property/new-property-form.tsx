@@ -22,7 +22,16 @@ export default function NewPropertyForm() {
         if (!token) { return; }
 
         const { images, ...rest } = data
-        const validatedData = propertyDataSchema.parse(rest) as CreateProperty
+        const now = new Date().toISOString();
+        const validatedData = {
+            ...propertyDataSchema.parse({
+                ...rest,
+                created: now,
+                updated: now,
+            }),
+            created: now,
+            updated: now,
+        } as unknown as CreateProperty;
         const response = await createProperty(validatedData, token)
 
         if (!!response.error || !response.propertyId) {

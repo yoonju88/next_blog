@@ -34,6 +34,7 @@ export default function EditPropertyForm({
     stockQuantity,
     updated,
     created,
+    weight,
     images = [],
 }: Property) {
 
@@ -102,7 +103,6 @@ export default function EditPropertyForm({
                     manufacturer,
                     volume,
                     description,
-                    status,
                     brand,
                     ingredients,
                     skinType: Array.isArray(skinType) ? skinType[0] : skinType ?? undefined,
@@ -110,8 +110,7 @@ export default function EditPropertyForm({
                     howToUse,
                     expireDate,
                     stockQuantity,
-                    updated,
-                    created,
+                    weight,
                     images: images.map(image => ({
                         id: image,
                         url: image,

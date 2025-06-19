@@ -11,31 +11,11 @@ import {
 } from "firebase/auth"
 import { createContext, useState, useEffect, useContext, ReactNode } from "react"
 import { doc, setDoc, getDoc } from "firebase/firestore"
+import { UserProfile } from "@/types/user"
 
 interface ParsedToken {
     isAdmin?: boolean;
     [key: string]: any;
-}
-
-interface UserProfile {
-    displayName?: string;
-    photoURL?: string;
-    address?: {
-        street: string;
-        city: string;
-        state: string;
-        zipCode: string;
-        country: string;
-    };
-    phoneNumber?: string;
-    birthDate?: string;
-    preferences?: {
-        categories?: string[];
-        notifications?: boolean;
-    };
-    userPoint?: number;
-    userEmail?: string;
-
 }
 
 // Context에서 관리할 데이터의 구조를 정의
@@ -156,12 +136,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         try {
             const userRef = doc(db, 'users', user.uid);
-
-            // Firestore 문서 업데이트
-            await setDoc(userRef, {
+            const updatedData = {
                 ...data,
                 updatedAt: new Date()
-            }, { merge: true });
+            }
+
+            if (typeof data.userPoint === 'number') {
+                updatedData.userPoint = data.userPoint
+            }
+
+            // Firestore 문서 업데이트
+            await setDoc(userRef, updatedData, { merge: true });
 
             // Firebase Auth 프로필 업데이트 (displayName과 photoURL만 가능)
             if (data.displayName || data.photoURL) {

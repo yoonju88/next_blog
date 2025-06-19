@@ -20,7 +20,8 @@ export const propertyDataSchema = z.object({
     expireDate: z.string().min(2, "expire date must contain a value"),
     stockQuantity: z.coerce.number().int()
         .min(0, "stock quantity must greater than 0")
-        .max(200, "stock quantity must less than 200")
+        .max(200, "stock quantity must less than 200"),
+    weight: z.coerce.number().min(0, 'Weight must be greater than 0'),
 })
 
 export const propertyImageSchema = z.object({

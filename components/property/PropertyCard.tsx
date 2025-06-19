@@ -2,17 +2,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import imageUrlFormatter from '@/lib/imageUrlFormatter';
-
-type Property = {
-    id: string
-    name: string
-    subTitle?: string
-    brand?: string
-    price: number
-    images: string[]
-    salePrice?: number
-    onSale?: boolean
-}
+import { Property } from "@/types/property";
 
 type Props = {
     property: Property
@@ -37,6 +27,11 @@ export default function PropertyCard({ property, actionButton }: Props) {
                             sizes="(max-width: 768px) 100vw, 50vw"
                             className={`object-cover object-center group-hover:scale-105 ${hoverEffect}`}
                         />
+                        {property.onSale && typeof property.saleRate === 'number' && property.saleRate > 0 && (
+                            <div className="absolute top-4 left-4 bg-green-700/70 text-white text-xs font-semibold px-2 py-1 rounded shadow-md z-10">
+                                Sale -{property.saleRate}%
+                            </div>
+                        )}
                         <div className="absolute inset-0 bg-black/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                             <span className="text-gray-700 text-lg font-medium px-4 py-2 rounded">
                                 Learn More
@@ -62,7 +57,7 @@ export default function PropertyCard({ property, actionButton }: Props) {
                             ? (<>
                                 <span className="line-through text-gray-400 mr-1">€ {property.price}</span>
                                 <span className="text-foreground/80 font-bold">€ {property.salePrice}</span>
-                              </>)
+                            </>)
                             : <>€ {property.price}</>
                         }
                     </span>

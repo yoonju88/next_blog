@@ -39,7 +39,6 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
             toast.error("Please enter a coupon code");
             return;
         }
-
         setLoading(true);
         try {
             const coupon = await getCouponByCode(couponCode);
@@ -51,7 +50,6 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                 toast.error("Invalid coupon code");
                 return;
             }
-
             const validation = validateCoupon(coupon, totalPrice);
 
             if (!validation.isValid) {
@@ -61,12 +59,10 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                 toast.error(validation.message);
                 return;
             }
-
             const discountAmount = calculateDiscount(coupon, totalPrice);
             setDiscount(discountAmount);
             setAppliedCoupon(coupon);
             setCouponStatus("success");
-            toast.success(`${coupon.description} coupon applied!`);
         } catch (error) {
             console.error('Error applying coupon:', error);
             toast.error("Failed to apply coupon");
@@ -81,8 +77,21 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
         setAppliedCoupon(null);
         setCouponCode("");
         setCouponStatus("idle");
-        toast.info("Coupon removed");
     };
+
+    // 세일 가격이 있을 경우 우선 적용해서 소계 계산
+    const subtotal = cartItems.reduce((sum, item) => {
+        const price = !isNaN(item.property.salePrice) ? item.property.salePrice : item.property.price
+        return sum + price * item.quantity
+    }, 0)
+    const totalSaleDiscount = cartItems.reduce((sum, item) => {
+        const regular = item.property.price;
+        const sale = !isNaN(item.property.salePrice) ? item.property.salePrice : regular;
+        const diff = Math.max(regular - sale, 0);
+        return sum + diff * item.quantity;
+    }, 0);
+
+    const totalDiscount = totalSaleDiscount + discount;
 
     const finalPrice = Math.max(totalPrice - discount, 0);
     const savingsPercentage = totalPrice > 0 ? Math.round((discount / totalPrice) * 100) : 0;
@@ -111,54 +120,71 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                             </div>
                         ) : (
                             <div className="space-y-4">
-                                {cartItems.map((item, i) => (
-                                    <div key={`${item.id} + ${i}`} className="flex gap-4 py-4 border-b border-gray-300">
-                                        <div className="relative w-20 h-20">
-                                            <Image
-                                                src={imageUrlFormatter(item.property.images[0])}
-                                                alt={item.property.name}
-                                                fill
-                                                className="object-cover rounded-md"
-                                                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                            />
-                                        </div>
-                                        <div className="flex-1 flex justify-center items-center gap-4">
-                                            <div>
-                                                <h3 className="font-medium">{item.property.name}</h3>
-                                                <p className="text-sm text-muted-foreground">
-                                                    €{numeral(item.property.price).format("0,0")}
-                                                </p>
+                                {cartItems.map((item, i) => {
+                                    const isOnSale = item.property.onSale && !isNaN(item.property.salePrice)
+                                    const unitPrice = isOnSale ? item.property.salePrice : item.property.price
+                                    const totalPriceForItem = unitPrice * item.quantity
+                                    return (
+                                        <div key={`${item.id} + ${i}`} className="flex gap-4 py-4 border-b border-gray-300">
+                                            <div className="relative w-20 h-20">
+                                                <Image
+                                                    src={imageUrlFormatter(item.property.images[0])}
+                                                    alt={item.property.name}
+                                                    fill
+                                                    className="object-cover rounded-md"
+                                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                                />
                                             </div>
-                                            <div className="flex items-center gap-1 mt-2">
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-6 w-6"
-                                                    onClick={() => updateQuantity(item.property.id, item.quantity - 1)}
-                                                >
-                                                    <Minus className="h-4 w-4" />
-                                                </Button>
-                                                <span>{item.quantity}</span>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-6 w-6"
-                                                    onClick={() => updateQuantity(item.property.id, item.quantity + 1)}
-                                                >
-                                                    <Plus className="h-4 w-4" />
-                                                </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-8 w-8 text-destructive"
-                                                    onClick={() => removeFromCart(item.property.id)}
-                                                >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
+                                            <div className="flex-1 flex justify-center items-center gap-4">
+                                                <div>
+                                                    <h3 className="font-medium">{item.property.name}</h3>
+                                                    <div className="flex items-center gap-2">
+                                                        {isOnSale && (
+                                                            <span className="text-sm line-through text-muted-foreground">
+                                                                €{item.property.price.toLocaleString()}
+                                                            </span>
+                                                        )}
+                                                        <span className="text-sm font-semibold text-foreground">
+                                                            €{unitPrice.toLocaleString()}
+                                                        </span>
+                                                    </div>
+                                                    <p className="text-xs text-muted-foreground">
+                                                        x {item.quantity} = €{totalPriceForItem.toLocaleString()}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center gap-1 mt-2">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-6 w-6"
+                                                        onClick={() => updateQuantity(item.property.id, item.quantity - 1)}
+                                                    >
+                                                        <Minus className="h-4 w-4" />
+                                                    </Button>
+                                                    <span>
+                                                        {isNaN(item.quantity) ? 0 : item.quantity}
+                                                    </span>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-6 w-6"
+                                                        onClick={() => updateQuantity(item.property.id, item.quantity + 1)}
+                                                    >
+                                                        <Plus className="h-4 w-4" />
+                                                    </Button>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-8 w-8 text-destructive"
+                                                        onClick={() => removeFromCart(item.property.id)}
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                ))}
+                                    )
+                                })}
                             </div>
                         )}
                     </div>
@@ -223,7 +249,7 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                             <div className="space-y-2 pt-2 border-t border-gray-200">
                                 <div className="flex justify-between">
                                     <span className="text-sm text-muted-foreground">Subtotal</span>
-                                    <span className="font-medium">€{numeral(totalPrice).format("0,0")}</span>
+                                    <span className="font-medium">€{numeral(subtotal).format("0,0")}</span>
                                 </div>
 
                                 {discount > 0 && (
@@ -238,6 +264,23 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                                         </div>
                                     </>
                                 )}
+                                {totalDiscount > 0 && (
+                                    <div className="flex justify-between text-sm text-blue-600 pt-2 border-t border-blue-100">
+                                        <span>Total Savings</span>
+                                        <span>-€{numeral(totalDiscount).format("0,0")}</span>
+                                    </div>
+                                )}
+                                {/* VAT 계산 */}
+                                {(() => {
+                                    const vatRate = 0.2;
+                                    const vatAmount = finalPrice - finalPrice / (1 + vatRate);
+                                    return (
+                                        <div className="flex justify-between text-sm text-muted-foreground">
+                                            <span>Included VAT (20%)</span>
+                                            <span>€{numeral(vatAmount).format("0,0.00")}</span>
+                                        </div>
+                                    );
+                                })()}
 
                                 <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
                                     <span>Total</span>

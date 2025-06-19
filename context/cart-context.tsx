@@ -28,14 +28,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
         loadCartItems()
     }, [user])
 
-    const addToCart = async (property: Property, quantity: number) => {
+    const addToCart = async (property: Property, quantityInput?: number) => {
+        const quantity = !quantityInput || isNaN(quantityInput) || quantityInput < 1 ? 1 : quantityInput;
+
         const newItem = {
             id: property.id,
             property,
             quantity,
             createdAt: new Date().toISOString()
         }
-
+        // 1. 로컬 상태에 추가
         setCartItems(prev => {
             const existing = prev.find(item => item.property.id === property.id)
             if (existing) {
@@ -47,14 +49,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
             }
             return [...prev, newItem]
         })
-
+        // 2. 파이어스토어 유저 데이터에 저장
         if (user) {
             const userRef = doc(db, 'users', user.uid)
             const userDoc = await getDoc(userRef)
             if (userDoc.exists()) {
                 const userData = userDoc.data()
                 const existingItem = userData.cart?.find((item: CartItem) => item.property.id === property.id)
-                
+
                 if (existingItem) {
                     const updatedCart = userData.cart.map((item: CartItem) =>
                         item.property.id === property.id
@@ -130,7 +132,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const totalPrice = useMemo(
         () =>
             cartItems.reduce((sum, item) => {
-                const price = item.property.price || 0
+                const price = (item.property.onSale && item.property.salePrice)
+                    ? item.property.salePrice
+                    : item.property.price || 0
                 return sum + price * item.quantity
             }, 0),
         [cartItems]

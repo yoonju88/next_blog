@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { updateSaleAction, removeSaleAction } from '@/app/admin-dashboard/action'
@@ -8,6 +8,7 @@ import { Label } from '../ui/label'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/auth'
+import { DialogDescription } from '@radix-ui/react-dialog'
 
 export default function AddSaleDialog({ open, onClose, selectedIds, defaultSalePrice, defaultSaleRate, defaultSaleStartDate, defaultSaleEndDate }: {
     open: boolean,
@@ -67,10 +68,13 @@ export default function AddSaleDialog({ open, onClose, selectedIds, defaultSaleP
 
     return (
         <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent>
+            <DialogContent className="border-none">
                 <DialogHeader>
                     <DialogTitle>Add sale</DialogTitle>
                 </DialogHeader>
+                <DialogDescription>
+                    Please add Sale Information here.
+                </DialogDescription>
                 <div className="space-y-4 py-2">
                     <Label>Discount Price(€)</Label>
                     <Input
@@ -98,8 +102,10 @@ export default function AddSaleDialog({ open, onClose, selectedIds, defaultSaleP
                         value={saleEndDate}
                         onChange={(e) => setSaleEndDate(e.target.value)}
                     />
-                    <Button onClick={handleSubmit}>Apply</Button>
-                    <Button onClick={handleRemove}>Remove Sale</Button>
+                    <div className="flex gap-4 justify-end mt-6">
+                        <Button onClick={handleSubmit}>Apply</Button>
+                        <Button onClick={handleRemove} variant='destructive'>Remove Sale</Button>
+                    </div>
                 </div>
             </DialogContent>
         </Dialog>

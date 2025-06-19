@@ -35,7 +35,11 @@ export const CartList = () => {
                             <div className="p-2">
                                 <h3 className="text-lg font-medium">{item.property.name}</h3>
                                 <p className="text-muted-foreground text-sm">{item.property.brand}</p>
-                                <p className="mt-1">{item.property.price.toLocaleString()}€</p>
+                                <p className="mt-1">
+                                    {(item.property.onSale && item.property.salePrice)
+                                        ? `${item.property.salePrice.toLocaleString()}€`
+                                        : `${item.property.price.toLocaleString()}€`}
+                                </p>
                             </div>
                             <div className="flex items-center gap-2 mt-2">
                                 <button onClick={() => updateQuantity(item.property.id, item.quantity - 1)} className="px-2 py-1 border rounded">-</button>

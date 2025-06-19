@@ -141,8 +141,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 updatedAt: new Date()
             }
 
-            if (typeof data.userPoint === 'number') {
-                updatedData.userPoint = data.userPoint
+            if (typeof data.points === 'number') {
+                updatedData.points = data.points
             }
 
             // Firestore 문서 업데이트

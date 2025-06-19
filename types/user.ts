@@ -14,6 +14,6 @@ export interface UserProfile {
         categories?: string[];
         notifications?: boolean;
     };
-    userPoint?: number;
-    userEmail?: string;
+    points?: number;
+    email?: string;
 }

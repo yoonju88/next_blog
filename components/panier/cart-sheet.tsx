@@ -33,7 +33,7 @@ export function useUserPoints(userId?: string) {
 
     useEffect(() => {
         if (!userId) {
-            setPoints(0)
+            // setPoints(0) // 이 부분이 주석/삭제됨
             return
         }
         const fetchPoints = async () => {
@@ -53,7 +53,8 @@ export function useUserPoints(userId?: string) {
 }
 
 export default function CartSheet({ open, onOpenChangeAction }: Props) {
-    const { user } = useAuth()
+    const { user } = useAuth();
+    const userPoints = useUserPoints(user?.uid);
     const { cartItems, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
     const [couponCode, setCouponCode] = useState("");
     const [discount, setDiscount] = useState(0);
@@ -61,6 +62,13 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
     const [couponStatus, setCouponStatus] = useState<"idle" | "success" | "error">("idle");
     const [loading, setLoading] = useState(false);
     const [usedPoints, setUsedPoints] = useState(0);
+
+    if (user === undefined) {
+        return <div>Loading...</div>
+    }
+    if (!user) {
+        return <div>Please log in.</div>
+    }
 
     const handleApplyCoupon = async () => {
         if (!couponCode.trim()) {
@@ -119,13 +127,10 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
         return sum + diff * item.quantity;
     }, 0);
 
-    const totalDiscount = totalSaleDiscount + discount;
+    const totalDiscount = totalSaleDiscount + discount + usedPoints;
 
-    const finalPrice = Math.max(totalPrice - discount, 0);
+    const finalPrice = Math.max(totalPrice - discount - usedPoints, 0);
     const savingsPercentage = totalPrice > 0 ? Math.round((discount / totalPrice) * 100) : 0;
-
-    const userPoints = useUserPoints(user?.uid);
-
     return (
         <Sheet open={open} onOpenChange={onOpenChangeAction}>
             <SheetTrigger asChild>
@@ -225,10 +230,10 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                                 <label htmlFor="coupon" className="block text-sm font-medium">
                                     Discount Coupon
                                 </label>
-                               
+
                                 {/* 적용된 쿠폰 표시 */}
                                 {appliedCoupon && (
-                                    <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-md">
+                                    <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-md border-b">
                                         <div className="flex items-center gap-2">
                                             <CheckCircle className="h-4 w-4 text-green-600" />
                                             <span className="text-sm font-medium text-green-800">
@@ -274,12 +279,11 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                                     </div>
                                 )}
                             </div>
-                             {/* 포인트 입력 UI */}
-                             <div className="space-y-2">
-                                    <label htmlFor="points" className="block text-sm font-medium">Use Points</label>
-                                    <div className="flex items-center gap-2">
-<span className="text-sm text-muted-foreground">Current Points: {userPoints}</span>
-                                    </div>
+                            {/* 포인트 입력 UI */}
+                            <div className="space-y-2">
+                                <label htmlFor="points" className="block text-sm font-medium">Use Points</label>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-muted-foreground">Current Points: {userPoints}</span>
                                     {userPoints >= 1 ? (
                                         <Input
                                             id="points"
@@ -296,9 +300,11 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                                             placeholder={`Max ${userPoints}`}
                                         />
                                     ) : (
-                                        <span className="text-sm text-red-400">You don't have any points</span>
+                                        <span className="text-sm text-red-400 pl-4">You don't have any points</span>
                                     )}
                                 </div>
+
+                            </div>
                             {/* 가격 요약 */}
                             <div className="space-y-2 pt-2 border-t border-gray-200">
                                 <div className="flex justify-between">

@@ -22,6 +22,7 @@ import { getCouponByCode, validateCoupon, calculateDiscount } from '@/lib/coupon
 import { Coupon } from '@/types/coupon'
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/firebase/client"
+import { calculateShippingFee } from "@/lib/shipping"
 
 type Props = {
     open: boolean;
@@ -114,6 +115,12 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
         setCouponCode("");
         setCouponStatus("idle");
     };
+    // 배송비 계산
+    const totalWeight = cartItems.reduce((sum, item) => {
+        const weight = item.property.weight || 0;
+        return sum + weight * item.quantity;
+    }, 0);
+    const shippingFee = calculateShippingFee(totalWeight);
 
     // 세일 가격이 있을 경우 우선 적용해서 소계 계산
     const subtotal = cartItems.reduce((sum, item) => {
@@ -127,9 +134,10 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
         return sum + diff * item.quantity;
     }, 0);
 
-    const totalDiscount = totalSaleDiscount + discount + usedPoints;
+    const totalDiscount = totalSaleDiscount + discount + usedPoints + shippingFee;
 
     const finalPrice = Math.max(totalPrice - discount - usedPoints, 0);
+    const totalPriceWithShipping = finalPrice + shippingFee;
     const savingsPercentage = totalPrice > 0 ? Math.round((discount / totalPrice) * 100) : 0;
     return (
         <Sheet open={open} onOpenChange={onOpenChangeAction}>
@@ -303,7 +311,10 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                                         <span className="text-sm text-red-400 pl-4">You don't have any points</span>
                                     )}
                                 </div>
-
+                            </div>
+                            <div className="flex justify-between">
+                                <span className="text-sm text-muted-foreground">Shipping Fee</span>
+                                <span className="font-medium">€{numeral(shippingFee).format("0,0")}</span>
                             </div>
                             {/* 가격 요약 */}
                             <div className="space-y-2 pt-2 border-t border-gray-200">
@@ -344,7 +355,7 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
 
                                 <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-200">
                                     <span>Total</span>
-                                    <span>€{numeral(finalPrice).format("0,0")}</span>
+                                    <span>€{numeral(totalPriceWithShipping).format("0,0")}</span>
                                 </div>
                             </div>
 

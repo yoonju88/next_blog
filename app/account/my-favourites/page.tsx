@@ -9,6 +9,8 @@ import ProductStatusBadge from '@/components/Product-status-badge'
 import Link from 'next/link'
 import SelectedQuantity from '../../../components/panier/selectedQuantityToCart'
 import EmptyList from '@/components/EmptyList'
+import { Heart } from 'lucide-react'
+
 
 export default async function MyFavourites({
     searchParams
@@ -38,7 +40,9 @@ export default async function MyFavourites({
             {!paginatedFavourites.length ? (
                 <EmptyList
                     title="Your favorites list is empty"
-                    message="Start adding items to your favorites to see them here."
+                    description="Start adding items to your favorites to see them here."
+                    buttonText="return"
+                    buttonHref='/'
                 />
             ) : (
                 <div className="flex gap-6">

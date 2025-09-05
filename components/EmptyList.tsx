@@ -7,7 +7,7 @@ interface EmptyListProps {
     description: string
     buttonText: string
     buttonHref: string
-    icon?: React.ReactNode
+    //icon?: React.ReactNode
 }
 
 export default function EmptyList({
@@ -15,12 +15,12 @@ export default function EmptyList({
     description,
     buttonText,
     buttonHref,
-    icon = <Heart className="w-12 h-12 text-muted-foreground" />
+    //icon = <Heart className="w-12 h-12 text-muted-foreground" />
 }: EmptyListProps) {
     return (
         <div className="flex flex-col items-center justify-center py-12">
             <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center mb-6">
-                {icon}
+
             </div>
             <h2 className="text-2xl font-semibold text-muted-foreground mb-4">{title}</h2>
             <p className="text-muted-foreground mb-8">{description}</p>

@@ -1,30 +1,34 @@
-import { PropertyStatus } from "@/types/propertyStatus";
 import { Badge } from "./ui/badge";
+import { PropertyStatus } from "@/types/propertyStatus";
+import { normalizePropertyStatus } from '@/types/propertyStatus'
 
-const statusLabel: Record<PropertyStatus, string> = {
-    "Available": "Available",
-    "Sold Out": "Sold out",
-    "Limited edition": "Limited edition",
-}
 
-const variant: Record<PropertyStatus, "primary" | "success" | "secondary" | "default"> = {
-    "Available": 'primary',
-    "Sold Out": "success",
-    "Limited edition": "secondary",
-}
+const STATUS_LABEL = {
+    'Available': 'Available',
+    'Sold Out': 'Sold out',
+    'Limited edition': 'Limited edition',
+} satisfies Record<PropertyStatus, string>
+
+const VARIANT = {
+    'Available': 'primary',
+    'Sold Out': 'success',
+    'Limited edition': 'secondary',
+} satisfies Record<PropertyStatus, 'primary' | 'success' | 'secondary' | 'default'>
+
 
 export default function ProductStatusBadge({
     status,
     className,
 }: {
-    status: PropertyStatus | undefined
-    className?: string
+    status: PropertyStatus | string | undefined;
+    className?: string;
 }) {
-    if (!status) {
+    const nomalizedstatus = normalizePropertyStatus(status)
+    if (!nomalizedstatus) {
         return <Badge variant="secondary" className={className}>Unknown</Badge>
     }
-    const label = statusLabel[status]
-    const badgeVariant = variant[status]
+    const label = STATUS_LABEL[nomalizedstatus]
+    const badgeVariant = VARIANT[nomalizedstatus]
 
     return (
         <Badge

@@ -3,7 +3,6 @@ import { auth, firestore } from "@/firebase/server"
 import { bannerImageSchema } from "@/validation/bannerSchema"
 import admin from "firebase-admin"
 import { z } from "zod"
-import { extractStoragePath } from "@/utils/extractStoragePath";
 import type { HomeBannerImage } from "@/types/banner"
 
 if (!admin.apps.length) {

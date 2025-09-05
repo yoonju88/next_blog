@@ -1,0 +1,1 @@
+export type PromiseSearchParams = Promise<Record<string, string | string[] | undefined>>;

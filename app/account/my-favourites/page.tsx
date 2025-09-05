@@ -10,7 +10,6 @@ import Link from 'next/link'
 import SelectedQuantity from '../../../components/panier/selectedQuantityToCart'
 import EmptyList from '@/components/EmptyList'
 
-
 export default async function MyFavourites({
     searchParams
 }: {

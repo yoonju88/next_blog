@@ -5,14 +5,13 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { PlusCircleIcon } from 'lucide-react'
 import { getProperties } from '@/data/product'
-
-type SearchParamsShape = Record<string, string | string[] | undefined>;
+import type { PromiseSearchParams } from '@/types/routes'
 
 
 export default async function PropertiesPage({
     searchParams
 }: {
-    searchParams: Promise<SearchParamsShape>
+    searchParams: PromiseSearchParams
 }) {
     const searchParamsValue = await searchParams;
     // string | string[] → string 유틸

@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { PlusCircleIcon, Tag } from 'lucide-react'
 import PropertyTable from './properties/property-table'
+import type { PromiseSearchParams } from '@/types/routes'
 
 export default async function AdminDashboard({
     searchParams
 }: {
-    searchParams?: Promise<Record<string, string | undefined>>
+    searchParams?: PromiseSearchParams
 }) {
     const searchParamsValue = await searchParams
 

@@ -3,6 +3,8 @@ import { Breadcrumbs } from '@/components/ui/breadcrumb'
 import { getBannerById } from '../action';
 import DeleteBannerButton from './delete-banner-button';
 import BannersTab from './bannersTab';
+import { HomeBannerImage } from '@/types/banner';
+
 
 export default async function EditBanners({ params }: { params: { id: string } }) {
     const bannerId = params.id
@@ -14,8 +16,8 @@ export default async function EditBanners({ params }: { params: { id: string } }
     const webImages = bannersData.webImages ?? [];
     const mobileImages = bannersData.mobileImages ?? [];
 
-    //console.log("webImages", webImages);
-    //console.log("mobileImages", mobileImages);
+    console.log("webImages", webImages);
+    console.log("mobileImages", mobileImages);
 
     return (
         <div>

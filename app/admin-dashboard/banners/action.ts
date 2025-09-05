@@ -4,6 +4,7 @@ import { bannerImageSchema } from "@/validation/bannerSchema"
 import admin from "firebase-admin"
 import { z } from "zod"
 import { extractStoragePath } from "@/utils/extractStoragePath";
+import type { HomeBannerImage } from "@/types/banner"
 
 if (!admin.apps.length) {
     admin.initializeApp({
@@ -149,13 +150,19 @@ export const getAllBanners = async (authToken: string) => {
     });
 };
 
-export const getBannerById = async (bannerId: string) => {
+export const getBannerById = async (bannerId: string): Promise<HomeBannerImage> => {
     const getDoc = firestore.collection("banners").doc(bannerId)
     const bannerIdSnapshot = await getDoc.get()
     if (!bannerIdSnapshot.exists) throw new Error("No banner")
 
-    const data = bannerIdSnapshot.data()
-    return { id: bannerIdSnapshot.id, ...bannerIdSnapshot.data() };
+    const data = bannerIdSnapshot.data() as Omit<HomeBannerImage, "id">
+    return {
+        id: bannerIdSnapshot.id,
+        url: data.url,
+        file: data.file,
+        webImages: Array.isArray(data.webImages) ? data.webImages : [],
+        mobileImages: Array.isArray(data.mobileImages) ? data.mobileImages : [],
+    };
 }
 
 export const deleteBannerImages = async (

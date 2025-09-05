@@ -4,13 +4,15 @@ import { getBannerById } from '../action';
 import DeleteBannerButton from './delete-banner-button';
 import BannersTab from './bannersTab';
 
+type RouteParams = { id: string | string[] }
 
 export default async function EditBanners({
     params,
 }: {
-    params: { id: string | string[] }
+    params: Promise<RouteParams>
 }) {
-    const bannerId = Array.isArray(params.id) ? params.id[0] : params.id
+    const { id } = await params;
+    const bannerId = Array.isArray(id) ? id[0] : id;
     if (!bannerId) { return <div> No Data.</div> }
 
     const bannersData = await getBannerById(bannerId)

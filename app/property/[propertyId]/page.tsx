@@ -45,10 +45,21 @@ function serializeReview(review: any) {
     };
 }
 
-export default async function PropertyPage({ params }: { params: { propertyId: string } }) {
-    const resolvedParams = await params;
-    const { propertyId } = resolvedParams;
+type RouteParams = { propertyId: string | string[] }
+
+
+export default async function PropertyPage({
+    params
+}: {
+    params: Promise<RouteParams>
+}) {
+
+    const { propertyId: raw } = await params
+
+    const propertyId = Array.isArray(raw) ? raw[0] : raw
+    if (!propertyId) { return <div>No Data</div> }
     const rawProperty = await getPropertyById(propertyId);
+    if (!rawProperty) { return <div>No Data</div> }
     const property = serializeProperty(rawProperty);
     const reviewsAverage = await getAverageRating(propertyId);
     const roundedAverage = Math.round(reviewsAverage * 10) / 10;

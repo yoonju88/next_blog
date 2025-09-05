@@ -3,7 +3,7 @@ import { ShoppingBagIcon } from 'lucide-react'
 import BrandFilter from '@/components/property/brand-filter'
 import PropertyCard from '@/components/property/PropertyCard';
 import AddToCartButton from '@/components/panier/add-to-cart-button';
-import { cookies } from 'next/headers'
+import { Suspense } from 'react';
 
 type PropertyPageProps = {
     brand?: string | string[]
@@ -82,14 +82,16 @@ export default async function PropertyPage({ searchParams }: { searchParams: Pro
     return (
         <div className='container w-full'>
             <div className="mb-10 mt-10 overflow-x-auto max-w-full">
-                <BrandFilter
-                    brands={brands}
-                    categories={categories}
-                    skinTypes={skinTypes}
-                    selectedBrand={brand}
-                    selectedCategory={category}
-                    selectedSkinType={skinType}
-                />
+                <Suspense fallback={null}>
+                    <BrandFilter
+                        brands={brands}
+                        categories={categories}
+                        skinTypes={skinTypes}
+                        selectedBrand={brand}
+                        selectedCategory={category}
+                        selectedSkinType={skinType}
+                    />
+                </Suspense>
             </div>
             <div className="px-4">
                 {filteredProperties.length === 0 ? (

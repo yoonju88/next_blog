@@ -7,6 +7,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { AuthProvider } from "@/context/auth";
 import Footer from "@/components/home/footer";
 import { CartProvider } from "@/context/cart-context";
+import { Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,10 +29,14 @@ export default function RootLayout({
         <AuthProvider>
           <CartProvider>
             <Providers>
-              <Nav />
+              <Suspense fallback={null}>
+                <Nav />
+              </Suspense>
               <main className='w-full relative flex items-center justify-center'>
-                {children}
-                <Toaster />
+                <Suspense fallback={null}>
+                  {children}
+                  <Toaster />
+                </Suspense>
               </main>
               <Footer />
             </Providers>

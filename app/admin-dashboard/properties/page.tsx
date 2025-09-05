@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { PlusCircleIcon } from 'lucide-react'
 import { getProperties } from '@/data/product'
 import type { PromiseSearchParams } from '@/types/routes'
+import { Suspense } from 'react'
 
 
 export default async function PropertiesPage({
@@ -52,7 +53,9 @@ export default async function PropertiesPage({
                     <PlusCircleIcon /> New Product
                 </Link>
             </Button>
-            <PropertyTable totalPages={totalPages} data={data} currentPage={page} />
+            <Suspense fallback={null}>
+                <PropertyTable totalPages={totalPages} data={data} currentPage={page} />
+            </Suspense>
         </div>
     )
 }

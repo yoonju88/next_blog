@@ -41,14 +41,21 @@ export default function DeleteBannerButton({
         setIsDeleting(true)
         const storageTasks: Promise<void>[] = [];
 
-        webImages.forEach(image => {
-            const path = typeof image === "string" ? image : image.path
-            storageTasks.push(deleteObject(ref(storage, path)))
-        })
-        mobileImages.forEach(image => {
-            const path = typeof image === "string" ? image : image.path
-            storageTasks.push(deleteObject(ref(storage, path)))
-        })
+        webImages.forEach((pathOrUrl) => {
+            storageTasks.push(deleteObject(ref(storage, pathOrUrl)));
+        });
+        mobileImages.forEach((pathOrUrl) => {
+            storageTasks.push(deleteObject(ref(storage, pathOrUrl)));
+        });
+
+        // webImages.forEach(image => {
+        //     const path = typeof image === "string" ? image : image.path
+        //     storageTasks.push(deleteObject(ref(storage, path)))
+        // })
+        // mobileImages.forEach(image => {
+        //     const path = typeof image === "string" ? image : image.path
+        //     storageTasks.push(deleteObject(ref(storage, path)))
+        //})
 
         await Promise.all(storageTasks)
         await deleteBannerImages({ bannerId }, token)

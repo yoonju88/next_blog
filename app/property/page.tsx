@@ -5,8 +5,12 @@ import PropertyCard from '@/components/property/PropertyCard';
 import AddToCartButton from '@/components/panier/add-to-cart-button';
 import { cookies } from 'next/headers'
 
-interface PropertyPageProps {
-    searchParams: Record<string, string | string[] | undefined>
+type PropertyPageProps = {
+    brand?: string | string[]
+    category?: string | string[]
+    skinType?: string | string[]
+    sale?: string
+    sort?: string
 }
 function serializeTimestamps(obj: any) {
     if (Array.isArray(obj)) {
@@ -42,10 +46,11 @@ function normalizeCategory(input: string | null): "Skin Care" | "Make Up" | "Sun
     }
 }
 
+type MaybePromise<T> = T | Promise<T>;
 
+export default async function PropertyPage({ searchParams }: { searchParams: MaybePromise<PropertyPageProps> }) {
+    const resolvedParams = await Promise.resolve(searchParams)
 
-export default async function PropertyPage({ searchParams }: PropertyPageProps) {
-    const resolvedParams = await searchParams
     const brand = typeof resolvedParams.brand === 'string' ? resolvedParams.brand : null
     const categoryParam = typeof resolvedParams.category === 'string' ? resolvedParams.category : null
     const skinType = typeof resolvedParams.skinType === 'string' ? resolvedParams.skinType : null

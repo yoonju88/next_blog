@@ -9,6 +9,8 @@ export default function BannersClient({
     mobileImages: string[];
 }) {
     const [isMobile, setIsMobile] = useState<boolean | null>(null);
+    const webImagesObj = (webImages ?? []).map((url, i) => ({ id: String(i), url }));
+    const mobileImagesObj = (mobileImages ?? []).map((url, i) => ({ id: String(i), url }));
 
     useEffect(() => {
         const checkIsMobile = () => {
@@ -34,7 +36,8 @@ export default function BannersClient({
             <div className='w-full flex justify-center m-0 p-0'>
                 {!isMobile &&
                     <BannerCarousel
-                        images={webImages}
+                        images={webImagesObj}
+                        imageH=""
                         size="100vw"
                         width={1920}
                         height={600}
@@ -42,7 +45,8 @@ export default function BannersClient({
                 }
                 {isMobile &&
                     <BannerCarousel
-                        images={mobileImages}
+                        images={mobileImagesObj}
+                        imageH=""
                         size="100vw"
                         width={800}
                         height={600}

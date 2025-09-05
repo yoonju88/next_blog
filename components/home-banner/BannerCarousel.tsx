@@ -11,6 +11,7 @@ type ImageItem = { id: string; url: string }
 type PropType = {
     images: ImageItem[],
     size: string,
+    imageH: any,
     width: number,
     height: number,
     options?: EmblaOptionsType,
@@ -19,6 +20,7 @@ type PropType = {
 export default function BannerCarousel({
     images,
     size,
+    imageH,
     width,
     height,
     options,

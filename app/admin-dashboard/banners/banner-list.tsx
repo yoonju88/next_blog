@@ -4,13 +4,15 @@ import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { PlusCircleIcon } from 'lucide-react'
 
-export default async function BannersList({
+export default function BannersList({
     webImages,
     mobileImages,
 }: {
     webImages: string[]
     mobileImages: string[]
 }) {
+    const webImagesObj = (webImages ?? []).map((url, i) => ({ id: String(i), url }));
+    const mobileImagesObj = (mobileImages ?? []).map((url, i) => ({ id: String(i), url }));
 
     return (
         <>
@@ -18,8 +20,8 @@ export default async function BannersList({
                 <h1 className="mb-10 text-2xl text-primary font-bold uppercase">Web Banner Images</h1>
                 {!!webImages && (
                     <BannerCarousel
-                        images={webImages}
-                        size="(max - width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                        images={webImagesObj}
+                        size="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         width={1290}
                         height={600}
                     />
@@ -30,8 +32,8 @@ export default async function BannersList({
                     <div className="w-xl h-xl">
                         {!!mobileImages && (
                             <BannerCarousel
-                                images={mobileImages}
-                                size="(max - width: 768px) 100vw, 50vw, 33vw"
+                                images={mobileImagesObj}
+                                size="(max-width: 768px) 100vw, 50vw, 33vw"
                                 width={800}
                                 height={600}
                             />

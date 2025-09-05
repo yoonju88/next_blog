@@ -6,9 +6,10 @@ import useEmblaCarousel from 'embla-carousel-react'
 import { DotButton, useDotButton } from './EmblaDotButton'
 import Image from 'next/image';
 
+type ImageItem = { id: string; url: string }
+
 type PropType = {
-    images: { id: string; url: string; },
-    imageH: string,
+    images: ImageItem[],
     size: string,
     width: number,
     height: number,
@@ -17,7 +18,6 @@ type PropType = {
 
 export default function BannerCarousel({
     images,
-    imageH,
     size,
     width,
     height,

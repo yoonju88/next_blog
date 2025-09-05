@@ -46,11 +46,8 @@ function normalizeCategory(input: string | null): "Skin Care" | "Make Up" | "Sun
     }
 }
 
-type MaybePromise<T> = T | Promise<T>;
-
-export default async function PropertyPage({ searchParams }: { searchParams: MaybePromise<PropertyPageProps> }) {
-    const resolvedParams = await Promise.resolve(searchParams)
-
+export default async function PropertyPage({ searchParams }: { searchParams: Promise<PropertyPageProps> }) {
+    const resolvedParams = await searchParams
     const brand = typeof resolvedParams.brand === 'string' ? resolvedParams.brand : null
     const categoryParam = typeof resolvedParams.category === 'string' ? resolvedParams.category : null
     const skinType = typeof resolvedParams.skinType === 'string' ? resolvedParams.skinType : null

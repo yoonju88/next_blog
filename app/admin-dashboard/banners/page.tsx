@@ -9,9 +9,14 @@ import Link from 'next/link';
 export default async function BannerPage() {
 
     const webImages = await getWebBanners();
-    const allWebImages = webImages.flatMap(web => web.images ?? [])
     const mobileImages = await getMobileBanners();
-    const allMobileImages = mobileImages.flatMap(mobile => mobile.images ?? [])
+
+    const allWebImages: string[] = (webImages ?? []).flatMap((b) =>
+        (b.images ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
+    );
+    const allMobileImages: string[] = (mobileImages ?? []).flatMap((b) =>
+        (b.images ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
+    );
 
     const BannerId = webImages[0]?.id;
     // console.log("id", firstBannerId)

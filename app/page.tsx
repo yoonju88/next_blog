@@ -10,8 +10,12 @@ export default async function Home() {
   const mobileImages = await getMobileBanners();
   const recentItems = await getRecentProperies()
 
-  const allWebImages = webImages.flatMap(web => web.images ?? [])
-  const allMobileImages = mobileImages.flatMap(mobile => mobile.images ?? [])
+  const allWebImages: string[] = (webImages ?? []).flatMap((b) =>
+    (b.images ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
+  );
+  const allMobileImages: string[] = (mobileImages ?? []).flatMap((b) =>
+    (b.images ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
+  );
 
   const hoverEffect = "transition-all duration-300"
 

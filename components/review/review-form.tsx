@@ -11,6 +11,7 @@ import MultiImageUpload, { ImageUpload } from '@/components/multi-image-upload'
 import { reviewSchema } from '@/validation/reviewSchema'
 import { Star } from 'lucide-react';
 import { Input } from '../ui/input';
+import Image from 'next/image';
 
 type Props = {
     handleSubmitAction: (data: z.infer<typeof reviewSchema>) => void;
@@ -55,7 +56,7 @@ export default function ReviewForm({
                             <FormControl>
                                 <div className="flex flex-col justify-center items-center">
                                     {userPhotoURL ? (
-                                        <img src={userPhotoURL} alt="User photo" className="w-24 h-24 rounded-full mb-2 object-cover" />
+                                        <Image src={userPhotoURL} alt="User photo" className="w-24 h-24 rounded-full mb-2 object-cover" />
                                     ) : (
                                         <div className="w-24 h-24 rounded-full bg-gray-300 mb-2 flex items-center justify-center text-gray-600">
                                             No Image

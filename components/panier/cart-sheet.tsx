@@ -308,7 +308,7 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
                                             placeholder={`Max ${userPoints}`}
                                         />
                                     ) : (
-                                        <span className="text-sm text-red-400 pl-4">You don't have any points</span>
+                                        <span className="text-sm text-red-400 pl-4">You don&apost have any points</span>
                                     )}
                                 </div>
                             </div>

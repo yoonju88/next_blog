@@ -82,7 +82,7 @@ export default function SearchPage() {
     }
 
     if (loading) {
-        return <div className="text-center">로딩 중...</div>
+        return <div className="text-center">Loading...</div>
     }
 
     if (properties.length === 0) {
@@ -99,7 +99,7 @@ export default function SearchPage() {
     return (
         <div className='text-center'>
             <h1 className="text-2xl font-bold mb-8">
-                "{searchQuery}" Search Results ({properties.length} items)
+                &quot{searchQuery}&quot Search Results ({properties.length} items)
             </h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

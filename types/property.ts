@@ -4,7 +4,6 @@ import { CategoryType } from "./categoryType"
 export type PropertyStatus = 'available' | 'sold' | 'reserved'
 
 export type Property = {
-    soldQuantity: number;
     id: string;
     name: string;
     subTitle: string;
@@ -31,6 +30,7 @@ export type Property = {
     saleRate?: number;
     onSale?: boolean;
     weight?: number;
+    soldQuantity?: number;
 }
 
 export type CreateProperty = {
@@ -56,3 +56,10 @@ export type CreateProperty = {
     updated: string;
     weight?: number;
 }
+
+export type UpdatePropertyInput =
+    Partial<Omit<Property, "id" | "images" | "soldQuantity">> & {
+        id: string;
+        images?: string[];
+        soldQuantity?: number;
+    };

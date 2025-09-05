@@ -1,7 +1,7 @@
 "use client"
-
+import { useState } from "react"
 import PropertyForm from "@/components/property-form"
-import { Property } from "@/types/property"
+import { Property, UpdatePropertyInput } from "@/types/property"
 import { propertySchema } from "@/validation/propertySchema"
 import { z } from "zod"
 import { useAuth } from "@/context/auth"
@@ -35,11 +35,14 @@ export default function EditPropertyForm({
     updated,
     created,
     weight,
+    soldQuantity,
     images = [],
 }: Property) {
 
     const auth = useAuth();
     const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = useState(false)
+
 
     const handleSubmit = async (data: z.infer<typeof propertySchema>) => {
         const token = await auth?.user?.getIdToken();
@@ -47,7 +50,10 @@ export default function EditPropertyForm({
 
         const { images: newImages, ...rest } = data;
 
-        const response = await updateProperty({ ...rest, id }, token)
+        const response = await updateProperty({
+            ...rest,
+            id,
+        }, token)
         if (!!response?.error) {
             toast.error("Error", { description: response.message })
             return

@@ -4,8 +4,12 @@ import { Property } from "@/types/property"
 import { auth, firestore } from "@/firebase/server"
 import { propertyDataSchema } from "@/validation/propertySchema"
 import { revalidatePath } from "next/cache"
+import { z } from "zod"
 
-export const updateProperty = async (data: Property, authToken: string) => {
+export const updateProperty = async (
+    data: z.infer<typeof propertyDataSchema> & { id: string },
+    authToken: string
+) => {
     const { id, ...propertyData } = data;
     const verifiedToken = await auth.verifyIdToken(authToken);
 

@@ -3,24 +3,23 @@ import { Breadcrumbs } from '@/components/ui/breadcrumb'
 import { getBannerById } from '../action';
 import DeleteBannerButton from './delete-banner-button';
 import BannersTab from './bannersTab';
-import { HomeBannerImage } from '@/types/banner';
 
 
 export default async function EditBanners({
     params,
 }: {
-    params: Promise<{ id: string | string[] }>
+    params: { id: string | string[] }
 }) {
-    const { id } = await params;
-    const idStr = Array.isArray(id) ? id[0] : id
-    if (!idStr) { return <div> No Data.</div> }
+    const bannerId = Array.isArray(params.id) ? params.id[0] : params.id
+    if (!bannerId) { return <div> No Data.</div> }
 
-    const bannersData = await getBannerById(idStr)
-    if (!bannersData) return
+    const bannersData = await getBannerById(bannerId)
+    if (!bannersData) { return <div> No Data.</div> }
     //console.log("bannerdata?: ", bannersData)
     const webImages = bannersData.webImages ?? [];
     const mobileImages = bannersData.mobileImages ?? [];
-
+    const webImageUrls = (bannersData.webImages ?? []).map(img => img.url)
+    const mobileImageUrls = (bannersData.mobileImages ?? []).map(img => img.url)
     //console.log("webImages", webImages);
     //console.log("mobileImages", mobileImages);
 
@@ -42,10 +41,10 @@ export default async function EditBanners({
             />
             <div className='mt-14'>
                 <DeleteBannerButton
-                    bannerId={bannerId}
+                    bannerId={bannersData.id}
                     name='Delete all images'
-                    webImages={webImages}
-                    mobileImages={mobileImages}
+                    webImages={webImageUrls}
+                    mobileImages={mobileImageUrls}
                 />
                 <BannersTab
                     webImages={webImages}

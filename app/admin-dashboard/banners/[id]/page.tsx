@@ -6,18 +6,23 @@ import BannersTab from './bannersTab';
 import { HomeBannerImage } from '@/types/banner';
 
 
-export default async function EditBanners({ params }: { params: { id: string } }) {
-    const bannerId = params.id
-    if (!bannerId) { return <div> No Data.</div> }
+export default async function EditBanners({
+    params,
+}: {
+    params: Promise<{ id: string | string[] }>
+}) {
+    const { id } = await params;
+    const idStr = Array.isArray(id) ? id[0] : id
+    if (!idStr) { return <div> No Data.</div> }
 
-    const bannersData = await getBannerById(bannerId)
+    const bannersData = await getBannerById(idStr)
     if (!bannersData) return
     //console.log("bannerdata?: ", bannersData)
     const webImages = bannersData.webImages ?? [];
     const mobileImages = bannersData.mobileImages ?? [];
 
-    console.log("webImages", webImages);
-    console.log("mobileImages", mobileImages);
+    //console.log("webImages", webImages);
+    //console.log("mobileImages", mobileImages);
 
     return (
         <div>

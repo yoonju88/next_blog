@@ -21,6 +21,7 @@ export default function BannersList({
                 {!!webImages && (
                     <BannerCarousel
                         images={webImagesObj}
+                        imageH=""
                         size="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         width={1290}
                         height={600}
@@ -33,6 +34,7 @@ export default function BannersList({
                         {!!mobileImages && (
                             <BannerCarousel
                                 images={mobileImagesObj}
+                                imageH=""
                                 size="(max-width: 768px) 100vw, 50vw, 33vw"
                                 width={800}
                                 height={600}

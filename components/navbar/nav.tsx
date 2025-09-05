@@ -155,7 +155,7 @@ export default function Nav() {
                 <div className="flex space-x-3 items-center">
                     <SearchButtonWithModal />
                     <Link
-                        href='/my-favourites'
+                        href='/account/my-favourites'
                         className="text-foreground hover:text-primary transition-all duration-300"
                     >
                         <HeartIcon className="w-5 h-5" />

@@ -7,14 +7,14 @@ import { PlusCircleIcon } from 'lucide-react'
 import { getProperties } from '@/data/product'
 
 type SearchParamsShape = Record<string, string | string[] | undefined>;
-type MaybePromise<T> = T | Promise<T>;
+
 
 export default async function PropertiesPage({
     searchParams
 }: {
-    searchParams: MaybePromise<SearchParamsShape>
+    searchParams: Promise<SearchParamsShape>
 }) {
-    const searchParamsValue = await Promise.resolve(searchParams);
+    const searchParamsValue = await searchParams;
     // string | string[] → string 유틸
     const pick = (key: string): string | undefined => {
         const v = searchParamsValue?.[key];

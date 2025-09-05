@@ -6,14 +6,22 @@ import Link from 'next/link'
 import { PlusCircleIcon } from 'lucide-react'
 import { getProperties } from '@/data/product'
 
+type SearchParams = Record<string, string | string[] | undefined>;
+
 export default async function PropertiesPage({
     searchParams
 }: {
-    searchParams?: Promise<Record<string, string | undefined>>
+    searchParams: Promise<SearchParams>
 }) {
     const searchParamsValue = await searchParams
-    const rawPage = searchParamsValue?.page ?? '1'
-    const page = Number(rawPage)
+    // string | string[] → string 정규화 헬퍼
+    const pick = (key: string): string | undefined => {
+        const v = searchParamsValue?.[key];
+        return Array.isArray(v) ? v[0] : v;
+    };
+
+    const rawPage = pick("page") ?? '1'
+    const page = Number.isFinite(Number(rawPage)) ? Number(rawPage) : 1;
 
     const { data, totalPages } = await getProperties({
         pagination: {

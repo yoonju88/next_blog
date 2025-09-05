@@ -6,12 +6,12 @@ import Link from 'next/link'
 import { PlusCircleIcon } from 'lucide-react'
 import { getProperties } from '@/data/product'
 
-type SearchParams = Record<string, string | string[] | undefined>;
+type SearchParamsShape = Record<string, string | string[] | undefined>;
 
 export default async function PropertiesPage({
     searchParams
 }: {
-    searchParams: Promise<SearchParams>
+    searchParams: Promise<SearchParamsShape>
 }) {
     const searchParamsValue = await searchParams
     // string | string[] → string 정규화 헬퍼

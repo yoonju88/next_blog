@@ -11,6 +11,7 @@ import SelectedQuantity from '../../../components/panier/selectedQuantityToCart'
 import EmptyList from '@/components/EmptyList'
 import { Heart } from 'lucide-react'
 
+export const dynamic = 'force-dynamic'
 
 export default async function MyFavourites({
     searchParams
@@ -20,7 +21,7 @@ export default async function MyFavourites({
     const searchParamsValue = await searchParams
     const page = searchParamsValue?.page ? parseInt(searchParamsValue.page) : 1
 
-    const pageSize = 2;
+    const pageSize = 6;
     const favourites = await getUserFavourites();
     const allFavourites = favourites.propertyIds || []
     const totalPages = Math.ceil(allFavourites.length / pageSize)
@@ -36,7 +37,7 @@ export default async function MyFavourites({
 
     return (
         <div className='text-center'>
-            <h1 className="text-3xl font-semibold">My Favourites</h1>
+            <h1 className="text-4xl font-semibold mb-10 mt-10">My Favourites</h1>
             {!paginatedFavourites.length ? (
                 <EmptyList
                     title="Your favorites list is empty"
@@ -45,7 +46,7 @@ export default async function MyFavourites({
                     buttonHref='/'
                 />
             ) : (
-                <div className="flex gap-6">
+                <div className="grid gap-6 grid-cols-3">
                     {paginatedFavourites.map((favourite) => {
                         const property = properties.find(
                             (property) => property.id === favourite
@@ -101,13 +102,24 @@ export default async function MyFavourites({
                                     <div className='flex flex-col gap-6'>
                                         <SelectedQuantity item={property} />
                                     </div>
-
                                 </CardContent>
                             </Card>
                         )
                     })}
                 </div>
             )}
+            <div className="mt-8 flex justify-center gap-4">
+                {Array.from({ length: totalPages }, (_, idx) => (
+                    <Link
+                        key={idx}
+                        href={`/account/my-favourites?page=${idx + 1}`}
+                        className={`px-3 py-1 rounded ${page === idx + 1 ? "bg-primary text-white" : "bg-gray-200 text-gray-700"
+                            }`}
+                    >
+                        {idx + 1}
+                    </Link>
+                ))}
+            </div>
         </div>
     )
 }

@@ -111,7 +111,6 @@ export default async function ReviewsPage({
                         </div>
                     );
                 })}
-
             </div >
             <div className="flex justify-center mt-4">
                 {Array.from({ length: totalPages }).map((_, i) => (

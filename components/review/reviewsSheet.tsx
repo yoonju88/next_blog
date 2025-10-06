@@ -27,10 +27,11 @@ type Review = {
 };
 
 interface ReviewsProps {
-    reviews: Review[];
+    reviews?: Review[];
 }
 
 export default function Reviews({ reviews }: ReviewsProps) {
+    const safeReviews = Array.isArray(reviews) ? reviews : []
     return (
         <Sheet>
             <SheetTrigger asChild>
@@ -43,8 +44,8 @@ export default function Reviews({ reviews }: ReviewsProps) {
                         Check out the reviews for this product.
                     </SheetDescription>
                 </SheetHeader>
-                {reviews.map((review) => {
-                    const images = review.images
+                {safeReviews.map((review) => {
+                    const images = Array.isArray(review.images) ? review.images : []
                     return (
                         <div key={review.id} className="px-4 pb-4 border-b border-foreground/30">
                             <div className="flex items-center gap-2">

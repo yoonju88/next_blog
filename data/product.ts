@@ -71,8 +71,10 @@ export const getProperties = async (options?: GetPropetyOptions) => {
             id: doc.id,
             ...data,
             created: data.created?.toDate?.()?.toISOString() || new Date().toISOString(),
-            updated: data.updated?.toDate?.()?.toISOString() || new Date().toISOString()
-        } as Property;
+            updated: data.updated?.toDate?.()?.toISOString() || new Date().toISOString(),
+            saleStartDate: data.saleStartDate?.toDate?.()?.toISOString() || null,
+            saleEndDate: data.saleEndDate?.toDate?.()?.toISOString() || null,
+        } as unknown as Property;
     });
 
     return { data: properties, totalPages }

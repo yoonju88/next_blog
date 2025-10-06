@@ -9,10 +9,7 @@ export const addFavourite = async (propertyId: string, authToken: string) => {
     const verifiedToken = await auth.verifyIdToken(authToken)
 
     if (!verifiedToken) {
-        return {
-            error: true,
-            message: "Unauthorized"
-        }
+        return { ok: false, message: "Unauthorized" }
     }
 
     await firestore
@@ -26,16 +23,14 @@ export const addFavourite = async (propertyId: string, authToken: string) => {
                 merge: true
             }
         )
+    return { ok: true }
 }
 
 export const removefavourite = async (propertyId: string, authToken: string) => {
     const verifiedToken = await auth.verifyIdToken(authToken)
 
     if (!verifiedToken) {
-        return {
-            error: true,
-            message: "Unauthorized"
-        }
+        return { ok: false, message: "Unauthorized" }
     }
     await firestore
         .collection("favourites")
@@ -43,4 +38,5 @@ export const removefavourite = async (propertyId: string, authToken: string) => 
         .update({
             [propertyId]: FieldValue.delete(),
         });
+    return { ok: true }
 }

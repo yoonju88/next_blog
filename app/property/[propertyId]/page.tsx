@@ -101,6 +101,5 @@ export default async function PropertyPage({
                 verifiedToken={verifiedToken}
             />
         </div>
-
     )
 }

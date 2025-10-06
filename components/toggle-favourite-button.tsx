@@ -22,17 +22,31 @@ export default function ToggleFavouriteButton({ propertyId, isFavourite: initial
             return
         }
 
-        const tokenResult = await auth?.user.getIdTokenResult()
-        if (isFavourite) {
-            await removefavourite(propertyId, tokenResult.token)
-        } else {
-            await addFavourite(propertyId, tokenResult.token)
+        try {
+            const tokenResult = await auth?.user.getIdTokenResult()
+            const token = tokenResult?.token
+            if (!token) {
+                toast.error("Auth error", { description: "Please login again" })
+                router.push("/login")
+                return
+            }
+            const res = isFavourite
+                ? await removefavourite(propertyId, token)
+                : await addFavourite(propertyId, token)
+
+            if (!res?.ok) {
+                toast.error("Failed", { description: res?.message || "Try again later" })
+                return
+            }
+
+            toast.success("success", {
+                description: `Product ${isFavourite ? "Remove from" : "Added to"} favourites`
+            })
+            setIsFavourite(!isFavourite)
+            router.refresh()
+        } catch (e) {
+            toast.error("Unexpected error", { description: "Please try again" })
         }
-        toast.success("success", {
-            description: `Product ${isFavourite ? "Remove from" : "Added to"} favourites`
-        })
-        setIsFavourite(!isFavourite)
-        router.refresh()
     }
 
     return (

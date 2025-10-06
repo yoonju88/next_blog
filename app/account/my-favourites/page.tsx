@@ -21,7 +21,7 @@ export default async function MyFavourites({
     const searchParamsValue = await searchParams
     const page = searchParamsValue?.page ? parseInt(searchParamsValue.page) : 1
 
-    const pageSize = 6;
+    const pageSize = 3;
     const favourites = await getUserFavourites();
     const allFavourites = favourites.propertyIds || []
     const totalPages = Math.ceil(allFavourites.length / pageSize)
@@ -46,7 +46,7 @@ export default async function MyFavourites({
                     buttonHref='/'
                 />
             ) : (
-                <div className="grid gap-6 grid-cols-3">
+                <div className="grid gap-6 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
                     {paginatedFavourites.map((favourite) => {
                         const property = properties.find(
                             (property) => property.id === favourite

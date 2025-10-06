@@ -14,17 +14,17 @@ export default function LoginByGoogle() {
 
     const handleGoogleLogin = async () => {
         if (!auth) return;
-        
+
         setIsLoading(true)
         try {
             await auth.loginWithGoogle()
-            toast.success("로그인 성공!")
+            toast.success("Login succes!")
             router.refresh()
         } catch (error) {
             if (error instanceof Error) {
                 // 사용자가 팝업을 닫은 경우는 에러 메시지를 표시하지 않음
                 if (!error.message.includes("popup-closed-by-user")) {
-                    toast.error("로그인 중 오류가 발생했습니다.")
+                    toast.error("Login error")
                 }
             }
             console.error("Google login error:", error)
@@ -47,10 +47,10 @@ export default function LoginByGoogle() {
                 </div>
             ) : (
                 <>
-                    <Image 
-                        src={GoogleLogo} 
-                        alt="google logo" 
-                        className='object-cover w-5 h-5 mr-2' 
+                    <Image
+                        src={GoogleLogo}
+                        alt="google logo"
+                        className='object-cover w-5 h-5 mr-2'
                     />
                     Continue with Google
                 </>

@@ -19,13 +19,34 @@ export default async function MyFavourites({
     searchParams?: Promise<Record<string, string | undefined>>
 }) {
     const searchParamsValue = await searchParams
-    const page = searchParamsValue?.page ? parseInt(searchParamsValue.page) : 1
-
     const pageSize = 3;
     const favourites = await getUserFavourites();
-    const allFavourites = favourites.propertyIds || []
-    const totalPages = Math.ceil(allFavourites.length / pageSize)
-    const paginatedFavourites = allFavourites.slice(
+    const allFavouritesIds = favourites.propertyIds || []
+
+    if (allFavouritesIds.length === 0) {
+        return (
+            <div className='text-center'>
+                <h1 className="text-4xl font-semibold mb-10 mt-10">My Favourites</h1>
+                <EmptyList
+                    title="Your favorites list is empty"
+                    description="Start adding items to your favorites to see them here."
+                    buttonText="return"
+                    buttonHref='/'
+                />
+            </div>
+        )
+    }
+
+    const allValidProperties = await getPropertiesById(allFavouritesIds)
+
+    const totalPages = Math.ceil(allValidProperties.length / pageSize)
+    const page = searchParamsValue?.page ? parseInt(searchParamsValue.page) : 1
+
+    if (page > totalPages && totalPages > 0) {
+        redirect(`/account/my-favourites?page=${totalPages}`)
+    }
+
+    const paginatedFavourites = allValidProperties.slice(
         (page - 1) * pageSize,
         page * pageSize
     )
@@ -33,12 +54,12 @@ export default async function MyFavourites({
     if (!paginatedFavourites.length && page > 1) {
         redirect(`/account/my-favourites?page=${totalPages}`)
     }
-    const properties = await getPropertiesById(paginatedFavourites)
+
 
     return (
         <div className='text-center'>
             <h1 className="text-4xl font-semibold mb-10 mt-10">My Favourites</h1>
-            {!paginatedFavourites.length ? (
+            {paginatedFavourites.length === 0 ? (
                 <EmptyList
                     title="Your favorites list is empty"
                     description="Start adding items to your favorites to see them here."
@@ -47,11 +68,7 @@ export default async function MyFavourites({
                 />
             ) : (
                 <div className="grid gap-6 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
-                    {paginatedFavourites.map((favourite) => {
-                        const property = properties.find(
-                            (property) => property.id === favourite
-                        )
-                        if (!property) return null
+                    {paginatedFavourites.map((property) => {
 
                         const mainImage = Array.isArray(property.images) && property.images.length > 0
                             ? imageUrlFormatter(property.images[0])
@@ -59,7 +76,7 @@ export default async function MyFavourites({
 
                         const PropertyId = property.id
                         return (
-                            <Card key={favourite} className="flex flex-col-2 overflow-hidden mt-10 w-[350px] border-none pt-0">
+                            <Card key={PropertyId} className="flex flex-col-2 overflow-hidden mt-10 w-[350px] border-none pt-0">
                                 <CardHeader className="px-0">
                                     <CardTitle >
                                         <div className="relative flex flex-col justify-center items-center w-full h-[220px] overflow-hidden">
@@ -108,18 +125,20 @@ export default async function MyFavourites({
                     })}
                 </div>
             )}
-            <div className="mt-8 flex justify-center gap-4">
-                {Array.from({ length: totalPages }, (_, idx) => (
-                    <Link
-                        key={idx}
-                        href={`/account/my-favourites?page=${idx + 1}`}
-                        className={`px-3 py-1 rounded ${page === idx + 1 ? "bg-primary text-white" : "bg-gray-200 text-gray-700"
-                            }`}
-                    >
-                        {idx + 1}
-                    </Link>
-                ))}
-            </div>
+            {totalPages > 1 && (
+                <div className="mt-8 flex justify-center gap-4">
+                    {Array.from({ length: totalPages }, (_, idx) => (
+                        <Link
+                            key={idx}
+                            href={`/account/my-favourites?page=${idx + 1}`}
+                            className={`px-3 py-1 rounded ${page === idx + 1 ? "bg-primary text-white" : "bg-gray-200 text-gray-700"
+                                }`}
+                        >
+                            {idx + 1}
+                        </Link>
+                    ))}
+                </div>
+            )}
         </div>
     )
 }

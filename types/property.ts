@@ -28,6 +28,8 @@ export type Property = {
     images: string[];
     salePrice?: number;
     saleRate?: number;
+    saleStartDate?: Date;
+    saleEndDate?: Date;
     onSale?: boolean;
     weight?: number;
     soldQuantity?: number;

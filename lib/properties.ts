@@ -16,7 +16,9 @@ export const getPropertyById = async (id: string) => {
         id: propertySnapshot.id,
         ...data,
         created: data?.created?.toDate?.()?.toISOString() || new Date().toISOString(),
-        updated: data?.updated?.toDate?.()?.toISOString() || new Date().toISOString()
+        updated: data?.updated?.toDate?.()?.toISOString() || new Date().toISOString(),
+        saleStartDate: data?.saleStartDate?.toDate?.()?.toISOString() || null,
+        saleEndDate: data?.saleEndDate?.toDate?.()?.toISOString() || null,
     } as Property
 
     return propertyData
@@ -37,7 +39,9 @@ export const getPropertiesById = async (propertyIds: string[]) => {
             id: doc.id,
             ...data,
             created: data?.created?.toDate?.()?.toISOString() || new Date().toISOString(),
-            updated: data?.updated?.toDate?.()?.toISOString() || new Date().toISOString()
+            updated: data?.updated?.toDate?.()?.toISOString() || new Date().toISOString(),
+            saleStartDate: data?.saleStartDate?.toDate?.()?.toISOString() || null,
+            saleEndDate: data?.saleEndDate?.toDate?.()?.toISOString() || null,
         } as Property
     });
 
@@ -57,7 +61,9 @@ export const getRecentProperies = async (): Promise<Property[]> => {
             id: doc.id,
             ...data,
             created: data.created?.toDate?.()?.toISOString() || new Date().toISOString(),
-            updated: data.updated?.toDate?.()?.toISOString() || new Date().toISOString()
+            updated: data.updated?.toDate?.()?.toISOString() || new Date().toISOString(),
+            saleStartDate: data?.saleStartDate?.toDate?.()?.toISOString() || null,
+            saleEndDate: data?.saleEndDate?.toDate?.()?.toISOString() || null,
         } as Property;
     });
 

@@ -1,6 +1,6 @@
 "use client"
 
-import PropertyForm from '@/components/property-form'
+import PropertyForm from '@/components/forms/property-form'
 import { useAuth } from "@/context/auth";
 import { propertyDataSchema, propertySchema } from '@/validation/propertySchema'
 import { z } from "zod"

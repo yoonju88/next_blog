@@ -1,6 +1,6 @@
 "use client"
 import { useState } from "react"
-import PropertyForm from "@/components/property-form"
+import PropertyForm from "@/components/forms/property-form"
 import { Property, UpdatePropertyInput } from "@/types/property"
 import { propertySchema } from "@/validation/propertySchema"
 import { z } from "zod"

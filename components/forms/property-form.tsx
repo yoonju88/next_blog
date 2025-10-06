@@ -4,13 +4,13 @@ import { useForm } from "react-hook-form"
 import { propertySchema } from '@/validation/propertySchema'
 import { z } from "zod"
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from './ui/form'
-import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { Input } from './ui/input'
-import { Textarea } from './ui/textarea'
-import { Button } from './ui/button'
-import MultiImageUpload, { ImageUpload } from './multi-image-upload'
-import { Label } from './ui/label'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../ui/form'
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { Input } from '../ui/input'
+import { Textarea } from '../ui/textarea'
+import { Button } from '../ui/button'
+import MultiImageUpload, { ImageUpload } from '../multi-image-upload'
+import { Label } from '../ui/label'
 
 type Props = {
     submitButtonLabel: React.ReactNode;

@@ -87,5 +87,5 @@ npm start
 
 ## Deployment | 배포 | Déploiement
 
-- Any Node-friendly platform works. For Vercel or similar, add the above env vars.
+- This project was deployed using Vercel. Make sure to add the above environment variables.
 - Ensure Firebase Admin credentials are set as secure environment variables.

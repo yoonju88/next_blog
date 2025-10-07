@@ -27,22 +27,16 @@ export default async function Home() {
         webImages={allWebImages}
         mobileImages={allMobileImages}
       />
-      <section>
-        <h1 className="text-foreground text-4xl text-center font-bold">
-          <Link href="/property?sort=newest">
-            New Arrivals
-          </Link>
-        </h1>
-        <ItemSection data={recentItems} />
-      </section>
-      <section>
-        <h1 className="text-foreground text-4xl text-center font-bold">
-          <Link href="/property?sale=true">
-            On sale
-          </Link>
-        </h1>
-        <ItemSection data={saleItems} />
-      </section >
+      <ItemSection
+        data={recentItems}
+        title="New Arrivals"
+        link="/property?sort=newest"
+      />
+      <ItemSection
+        data={saleItems}
+        title="On sale"
+        link="/property?sale=true"
+      />
     </div >
   );
 }

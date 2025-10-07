@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { DarkModeSwatch } from './DarkModeSwatch'
 import AuthButtons from './auth-buttons'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { HeartIcon, ShoppingCartIcon } from 'lucide-react'
+import { HeartIcon } from 'lucide-react'
 import {
     NavigationMenuItem,
     NavigationMenuTrigger,

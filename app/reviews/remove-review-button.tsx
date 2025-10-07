@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation';
 import { deleteObject, ref } from 'firebase/storage';
 import { storage } from '@/firebase/client';
 
-
 export default function RemoveReviewButton({
     reviewId,
     className,

@@ -43,8 +43,9 @@ export const getProperties = async (options?: GetPropetyOptions) => {
     const page = options?.pagination?.page || 1;
     const pageSize = options?.pagination?.pageSize || 10;
     const { category, brand, skinType } = options?.filters || {};
-
-    let query = firestore.collection("properties");
+    // properties 컬렉션에 대한 쿼리 객체 생성
+    // Query 타입 사용: 이후 where(), orderBy() 등의 필터/정렬 메서드 체이닝을 위함
+    let query: FirebaseFirestore.Query<FirebaseFirestore.DocumentData> = firestore.collection("properties");
 
     // 최근 2개월 필터
     if (options?.sort === "newest") {

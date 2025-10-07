@@ -48,7 +48,7 @@ export const getPropertiesById = async (propertyIds: string[]) => {
     return propertiesData
 }
 
-export const getRecentProperies = async (): Promise<Property[]> => {
+export const getRecentProperties = async (): Promise<Property[]> => {
     const sanpshot = await firestore
         .collection('properties')
         .orderBy("created", "desc")
@@ -69,3 +69,4 @@ export const getRecentProperies = async (): Promise<Property[]> => {
 
     return recentProperties;
 }
+

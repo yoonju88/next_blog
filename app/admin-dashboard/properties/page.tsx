@@ -4,7 +4,7 @@ import { Breadcrumbs } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 import { PlusCircleIcon } from 'lucide-react'
-import { getProperties } from '@/data/product'
+import { getProperties } from '@/lib/product'
 import type { PromiseSearchParams } from '@/types/routes'
 import { Suspense } from 'react'
 

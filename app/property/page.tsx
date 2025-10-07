@@ -1,4 +1,4 @@
-import { getProperties } from '@/data/product'
+import { getProperties } from '@/lib/product'
 import { ShoppingBagIcon } from 'lucide-react'
 import BrandFilter from '@/components/property/brand-filter'
 import PropertyCard from '@/components/property/PropertyCard';
@@ -11,26 +11,6 @@ type PropertyPageProps = {
     skinType?: string | string[]
     sale?: string
     sort?: string
-}
-function serializeTimestamps(obj: any) {
-    if (Array.isArray(obj)) {
-        return obj.map(serializeTimestamps);
-    } else if (obj && typeof obj === 'object') {
-        const newObj: any = {};
-        for (const key in obj) {
-            const value = obj[key];
-            if (value?.toDate instanceof Function) {
-                newObj[key] = value.toDate().toISOString();
-            } else if (value?._seconds) {
-                newObj[key] = new Date(value._seconds * 1000).toISOString();
-            } else {
-                newObj[key] = serializeTimestamps(value);
-            }
-        }
-        return newObj;
-    } else {
-        return obj;
-    }
 }
 
 function normalizeCategory(input: string | null): "Skin Care" | "Make Up" | "Sun Care" | null {
@@ -47,57 +27,60 @@ function normalizeCategory(input: string | null): "Skin Care" | "Make Up" | "Sun
 }
 
 export default async function PropertyPage({ searchParams }: { searchParams: Promise<PropertyPageProps> }) {
-    const resolvedParams = await searchParams
-    const brand = typeof resolvedParams.brand === 'string' ? resolvedParams.brand : null
-    const categoryParam = typeof resolvedParams.category === 'string' ? resolvedParams.category : null
-    const skinType = typeof resolvedParams.skinType === 'string' ? resolvedParams.skinType : null
-    const sale = resolvedParams.sale === 'true'
-    const sort = resolvedParams.sort === 'best'
-    const category = normalizeCategory(categoryParam)
+    const { brand, category: rawCategory, skinType, sale, sort } = await searchParams;
+    const category = normalizeCategory(typeof rawCategory === "string" ? rawCategory : null);
 
-    const { data: rawProperties } = await getProperties({
+
+    const { data: properties } = await getProperties({
         filters: {
-            brand,
+            brand: typeof brand === "string" ? brand : null,
             category,
-            skinType
+            skinType: typeof skinType === "string" ? skinType : null
         },
-        pagination: {
-            pageSize: 8
-        }
-    })
-    const properties = rawProperties.map(p => serializeTimestamps(p));
+        sort: sort as "newest" | "best",
+        pagination: { pageSize: 8 },
+    });
+
+    const filteredProperties = properties
+        .filter(p => !sale || p.onSale) // sale 필터
+        .sort((a, b) => (sort === "best" ? (b.soldQuantity || 0) - (a.soldQuantity || 0) : 0));
+
 
     const brands = [...new Set(properties.map(property => property.brand))].filter(Boolean)
     const categories = [...new Set(properties.map(property => property.category))].filter(Boolean)
     const skinTypes = [...new Set(properties.map(property => property.skinType))].filter(Boolean)
 
-    let filteredProperties = properties
+    let title = "All products";
     if (sale) {
-        filteredProperties = filteredProperties.filter((property) => property.onSale)
-    }
-    if (sort) {
-        filteredProperties = [...filteredProperties].sort((a, b) => (b.soldQuantity || 0) - (a.soldQuantity || 0))
+        title = "Products On Sale "
+    } else if (sort === "newest") {
+        title = "Recently Added Products"
+    } else if (sort === "best") {
+        title = "Our Best Selling Products"
     }
 
     return (
         <div className='container w-full'>
-            <div className="mb-10 mt-10 overflow-x-auto max-w-full">
+            <h1 className="text-center text-foreground/80 py-10 mt-10 text-3xl font-semibold uppercase">
+                {title}
+            </h1>
+            <div className="mb-10 overflow-x-auto max-w-full">
                 <Suspense fallback={null}>
                     <BrandFilter
                         brands={brands}
                         categories={categories}
                         skinTypes={skinTypes}
-                        selectedBrand={brand}
+                        selectedBrand={brand as string}
                         selectedCategory={category}
-                        selectedSkinType={skinType}
+                        selectedSkinType={skinType as string}
                     />
                 </Suspense>
             </div>
             <div className="px-4">
                 {filteredProperties.length === 0 ? (
-                    <div className="text-center text-muted-foreground py-10">
-                        The Product
-                    </div>
+                    <h2 className="text-center text-muted-foreground py-10 text-4xl">
+                        No products found...
+                    </h2>
                 ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
                         {filteredProperties.map((property) => (

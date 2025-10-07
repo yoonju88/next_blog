@@ -1,14 +1,14 @@
 import { getWebBanners, getMobileBanners } from "@/app/admin-dashboard/banners/action";
 import BannersClient from '@/components/home-banner/Banners';
 import PropertyCard from "@/components/property/PropertyCard";
-import { getRecentProperies } from "@/lib/properties";
+import { getRecentProperties } from "@/lib/properties";
 import Link from "next/link";
 import { ChevronRight } from 'lucide-react';
 
 export default async function Home() {
   const webImages = await getWebBanners();
   const mobileImages = await getMobileBanners();
-  const recentItems = await getRecentProperies()
+  const recentItems = await getRecentProperties()
 
   const allWebImages: string[] = (webImages ?? []).flatMap((b) =>
     (b.images ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)

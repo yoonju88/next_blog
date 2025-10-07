@@ -99,7 +99,10 @@ export default function SearchPage() {
     return (
         <div className='text-center'>
             <h1 className="text-2xl font-bold mb-8">
-                &quot{searchQuery}&quot Search Results ({properties.length} items)
+                <span className="text-primary uppercase">
+                    {`"${searchQuery}"`}
+                </span>
+                {` search results (${properties.length} items)`}
             </h1>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

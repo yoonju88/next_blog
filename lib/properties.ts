@@ -70,3 +70,25 @@ export const getRecentProperties = async (): Promise<Property[]> => {
     return recentProperties;
 }
 
+
+export const getOnSaleProperties = async (): Promise<Property[]> => {
+    const sanpshot = await firestore
+        .collection('properties')
+        .orderBy("onSale", "desc")
+        .limit(4)
+        .get()
+
+    const recentProperties = sanpshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            ...data,
+            created: data.created?.toDate?.()?.toISOString() || new Date().toISOString(),
+            updated: data.updated?.toDate?.()?.toISOString() || new Date().toISOString(),
+            saleStartDate: data?.saleStartDate?.toDate?.()?.toISOString() || null,
+            saleEndDate: data?.saleEndDate?.toDate?.()?.toISOString() || null,
+        } as Property;
+    });
+
+    return recentProperties;
+}

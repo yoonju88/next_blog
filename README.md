@@ -95,7 +95,7 @@ npm start
 
 This project uses **Prisma** as a type-safe ORM to handle payment-related data while continuing to use **Firebase** for authentication and product data. Here's a summary of the setup and work done:
 
-### Setup
+### Prisma Setup
 
 1. Installed Prisma dependencies:
    ```bash
@@ -121,3 +121,22 @@ This project uses **Prisma** as a type-safe ORM to handle payment-related data w
     go to http://localhost:5555 
 
 if you can see the data table, it success!!
+
+## Payment by Stripe
+
+1. Stripe install 
+    ```bash 
+    npm install stripe  
+    npm install @stripe/react-stripe-js @stripe/stripe-js
+
+- stripe는 서버에서 결제 요청을 보내기 위해 필요
+- 프론트에서는 @stripe/react-stripe-js + @stripe/stripe-js를 사용해서 카드 정보 입력 UI를 만들수 있음
+
+2. Stripe Key Setup
+    -Go to the Stripe Dashboard and obtain your Test Secret Key and Publishable Key.
+    -Add them to your .env file:
+    ```
+    STRIPE_SECRET_KEY=your_test_secret_key
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_publishable_key
+    ```
+    

@@ -9,7 +9,6 @@ import Modal from "@/components/Modal"
 import { NewReviewForm } from "./new-review-form"
 import Reviews from "@/components/review/reviewsSheet"
 import SlideImages from "@/components/carousel"
-import numeral from "numeral"
 import { Label } from '@radix-ui/react-dropdown-menu'
 import { Input } from "@/components/ui/input"
 import React, { useState } from 'react'

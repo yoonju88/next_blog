@@ -2,8 +2,7 @@ import React from 'react'
 import { Breadcrumbs } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
-import { PlusCircleIcon, Tag } from 'lucide-react'
-import PropertyTable from './properties/property-table'
+import { Tag } from 'lucide-react'
 import type { PromiseSearchParams } from '@/types/routes'
 
 export default async function AdminDashboard({
@@ -54,6 +53,6 @@ export default async function AdminDashboard({
                 </Button>
             </div>
 
-        </div>
+        </div >
     )
 }

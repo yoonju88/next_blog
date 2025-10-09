@@ -19,8 +19,6 @@ export default async function Home() {
     (b.images ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
   );
 
-  const hoverEffect = "transition-all duration-300"
-
   return (
     <div className="w-full flex flex-col gap-50">
       <BannersClient

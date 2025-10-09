@@ -89,3 +89,15 @@ npm start
 
 - This project was deployed using Vercel. Make sure to add the above environment variables.
 - Ensure Firebase Admin credentials are set as secure environment variables.
+
+
+## Payment | prisma DB 
+
+- npm install prisma --save-dev
+- npm install @prisma/client
+
+to start  : 
+- npx prisma init 
+
+=> prisma/schema.prisma → definition of Prisma file
+   .env → save database URL

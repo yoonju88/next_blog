@@ -91,13 +91,33 @@ npm start
 - Ensure Firebase Admin credentials are set as secure environment variables.
 
 
-## Payment | prisma DB 
+## Prisma Integration for Payment System
 
-- npm install prisma --save-dev
-- npm install @prisma/client
+This project uses **Prisma** as a type-safe ORM to handle payment-related data while continuing to use **Firebase** for authentication and product data. Here's a summary of the setup and work done:
 
-to start  : 
-- npx prisma init 
+### Setup
 
-=> prisma/schema.prisma → definition of Prisma file
-   .env → save database URL
+1. Installed Prisma dependencies:
+   ```bash
+   npm install prisma --save-dev
+   npm install @prisma/client
+
+2.	Initialized Prisma in the project:
+    ```bash
+    npx prisma init
+
+3.	Configured the Prisma client with optional performance extensions: 
+    lib/prisma.ts
+
+4.	Defined the database schema (schema.prisma) to manage users, orders, and payments:
+    prisma/schema.prisma 
+
+5. data migration excution 
+    ```bash
+    npx prisma migrate dev --name init
+6. test connection 
+    ```bash 
+    npx prisma studio
+    go to http://localhost:5555 
+
+if you can see the data table, it success!!

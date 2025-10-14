@@ -1,5 +1,4 @@
 'use client'
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -17,8 +16,7 @@ type Props = {
 
 export default function CartSheet({ open, onOpenChangeAction }: Props) {
     const { user } = useAuth();
-
-    const { cartItems, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
+    const { cartItems, totalItems, totalPrice, updateQuantity, removeFromCart, refreshCart } = useCart();
     const [loading, setLoading] = useState(false);
 
     if (user === undefined) return <div>Loading...</div>
@@ -67,6 +65,5 @@ export default function CartSheet({ open, onOpenChangeAction }: Props) {
             </SheetContent>
         </Sheet>
     )
-
 }
 

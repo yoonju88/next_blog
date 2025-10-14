@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/navigation-menu"
 import { cn } from '@/lib/utils'
 import SearchButtonWithModal from './searchButtonWithModal'
-import CartSheet from '../panier/cart-sheet'
+import CartSheet from '../cart/cart-sheet'
 import { useState } from 'react'
 import ListItem from './ListItem'
 import Image from 'next/image'
@@ -103,35 +103,6 @@ export default function Nav() {
                                 </NavigationMenuItem>
                             </NavigationMenuList>
                         </NavigationMenu>
-                        {/* <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <span className={cn(
-                                    "relative inline-block uppercase text-sm text-foreground hover:text-primary transition-all duration-300 px-1 py-1",
-                                    "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-full after:bg-primary after:origin-center after:transition-transform after:duration-300",
-                                    pathname === "/property" && !searchParams.toString() ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"
-                                )}>
-                                    Shop
-                                </span>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent>
-                                <DropdownMenuItem asChild>
-                                    <Link href="/property">All Products</Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem asChild>
-                                    <Link href={{ pathname: "/property", query: { category: "skincare" } }}>
-                                        Skin Care
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem asChild>
-                                    <Link href={{ pathname: "/property", query: { category: "makeup" } }}>
-                                        Make Up
-                                    </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem asChild>
-                                    <Link href={{ pathname: "/property", query: { category: "suncare" } }}>Sun Care</Link>
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu> */}
                         <Link
                             href='/property?sort=newest'
                             className={navLinkClass("/property", { key: "sort", value: "newest" })}

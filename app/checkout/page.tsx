@@ -5,10 +5,10 @@ import { useCart, useUserPoints } from "@/context/cart-context"
 import { getCouponByCode, validateCoupon, calculateDiscount } from '@/lib/coupons'
 import { Coupon } from '@/types/coupon'
 import { calculateShippingFee } from "@/lib/shipping"
-import { CheckoutCartList } from "@/components/panier/CartList";
-import CouponInput from "@/components/panier/SubmitCoupon";
-import PointInput from "@/components/panier/PointInput";
-import SummaryPayment from "@/components/panier/SummaryPayment";
+import { CheckoutCartList } from "@/components/cart/CartList";
+import CouponInput from "@/components/cart/SubmitCoupon";
+import PointInput from "@/components/cart/PointInput";
+import SummaryPayment from "@/components/cart/SummaryPayment";
 import CheckoutButton from "./checkoutButton";
 import { toast } from "sonner"
 

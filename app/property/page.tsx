@@ -2,7 +2,7 @@ import { getProperties } from '@/lib/product'
 import { ShoppingBagIcon } from 'lucide-react'
 import BrandFilter from '@/components/property/brand-filter'
 import PropertyCard from '@/components/property/PropertyCard';
-import AddToCartButton from '@/components/panier/add-to-cart-button';
+import AddToCartButton from '@/components/cart/add-to-cart-button';
 import { Suspense } from 'react';
 
 type PropertyPageProps = {

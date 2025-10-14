@@ -12,7 +12,7 @@ import SlideImages from "@/components/carousel"
 import { Label } from '@radix-ui/react-dropdown-menu'
 import { Input } from "@/components/ui/input"
 import React, { useState } from 'react'
-import AddToCartButton from "@/components/panier/add-to-cart-button"
+import AddToCartButton from "@/components/cart/add-to-cart-button"
 
 
 type Props = {

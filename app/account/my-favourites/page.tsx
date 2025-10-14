@@ -7,7 +7,7 @@ import imageUrlFormatter from '@/lib/imageUrlFormatter';
 import RemoveFavouriteButton from './remove-favourite'
 import ProductStatusBadge from '@/components/Product-status-badge'
 import Link from 'next/link'
-import SelectedQuantity from '../../../components/panier/selectedQuantityToCart'
+import SelectedQuantity from '@/components/cart/selectedQuantityToCart'
 import EmptyList from '@/components/EmptyList'
 import { Heart } from 'lucide-react'
 

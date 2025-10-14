@@ -13,6 +13,7 @@ const nextConfig: NextConfig = {
       }
     ]
   },
+  serverExternalPackages: ['@prisma/client', 'prisma'],
   async headers() {
     return [
       {
@@ -25,6 +26,12 @@ const nextConfig: NextConfig = {
         ]
       }
     ]
+  },
+  webpack: (config, { isServer }) => {
+    if (isServer) {
+      config.externals.push('@prisma/client')
+    }
+    return config
   }
 };
 

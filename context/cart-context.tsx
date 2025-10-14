@@ -163,4 +163,36 @@ export function useCart() {
         throw new Error('useCart must be used within a CartProvider')
     }
     return context
-} 
+}
+
+export function useUserPoints(userId?: string) {
+    const [points, setPoints] = useState<number>(0);
+
+    useEffect(() => {
+        if (!userId) {
+            setPoints(0);
+            return;
+        }
+
+        const fetchPoints = async () => {
+            try {
+                const userRef = doc(db, "users", userId);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    const data = userSnap.data();
+                    setPoints(typeof data.points === "number" ? data.points : 0);
+                } else {
+                    setPoints(0);
+                }
+            } catch (error) {
+                console.error("Error fetching user points:", error);
+                setPoints(0);
+            }
+        };
+
+        fetchPoints();
+    }, [userId]);
+
+    return points;
+}

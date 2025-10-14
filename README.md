@@ -139,4 +139,431 @@ if you can see the data table, it success!!
     STRIPE_SECRET_KEY=your_test_secret_key
     NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_publishable_key
     ```
+4.prisma/schema.prisma에 타입 추가후  데이터 추가 명령어 
+```bash
+npx prisma db push
+````
+
+## Create Serve endpoint 
+app/api/payment/route.ts
+## Create payment button 
+app/checkout/page.tsx
+
+## 결제 페이지에 대한 문제들 요약
+# Payment Implementation - Troubleshooting Guide
+
+## 🎯 Overview
+Stripe 결제 시스템을 Next.js 15 + Prisma + Firebase Auth 환경에서 구현하면서 발생한 문제들과 해결 과정.
+
+---
+
+## 🔴 발생했던 주요 문제들
+
+### 1. Prisma Client 초기화 오류
+```
+Error: @prisma/client did not initialize yet. Please run "prisma generate"
+```
+
+**원인:**
+- Next.js 15의 webpack 번들링 시스템과 Prisma의 호환성 문제
+- `lib/prisma.ts`를 통한 간접 import 시 모듈이 제대로 로드되지 않음
+
+**해결:**
+- API 라우트에서 PrismaClient를 직접 import
+- `serverExternalPackages` 설정 추가
+
+### 2. Prisma Schema 필드 누락
+```
+Error: Unknown field 'stripeSessionId' in Payment model
+```
+
+**원인:**
+- Payment 모델에 Stripe 관련 필드가 정의되지 않음
+
+**해결:**
+- Schema에 필수 필드 추가 및 데이터베이스 컬럼명 매핑
+
+### 3. DATABASE_URL 환경변수 누락
+```
+Error: Environment variable not found: DATABASE_URL
+```
+
+**원인:**
+- `.env` 파일이 없거나 Prisma가 환경변수를 읽지 못함
+
+**해결:**
+- 프로젝트 루트에 `.env` 파일 생성 및 DATABASE_URL 설정
+
+### 4. User Not Found (404)
+```
+POST /api/payment 404
+```
+
+**원인:**
+- 데이터베이스에 Firebase UID와 매칭되는 User가 없음
+
+**해결:**
+- User를 찾거나 없으면 자동으로 생성하는 로직 추가
+
+---
+
+## ✅ 최종 구현 코드
+
+### 1. Prisma Schema 수정
+```prisma
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+  // ⚠️ output 경로를 커스텀하지 않고 기본값 사용
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(cuid())
+  firebaseUID String   @unique @map("firebase_uid")
+  email       String   @unique
+  name        String?
+  orders      Order[]
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@map("users")
+}
+
+model Order {
+  id          String   @id @default(cuid())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String   @map("user_id")
+  totalAmount Float    @map("total_amount")
+  status      String   @default("pending")
+  createdAt   DateTime @default(now()) @map("created_at")
+  payment     Payment?
+  
+  @@map("orders")
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  order           Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  orderId         String   @unique @map("order_id")
+  provider        String 
+  amount          Float
+  status          String   @default("unpaid")
+  stripeSessionId String?  @map("stripe_session_id")  // ✅ 추가
+  couponCode      String?  @map("coupon_code")        // ✅ 추가
+  pointsUsed      Float    @default(0) @map("points_used") // ✅ 추가
+  createdAt       DateTime @default(now()) @map("created_at")
+  
+  @@map("payments")
+}
+```
+
+### 2. Next.js Config 수정
+```typescript
+// next.config.ts
+
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com"
+      },
+      {
+        protocol: "https",
+        hostname: "firebasestorage.googleapis.com"
+      }
+    ]
+  },
+  // ✅ Next.js 15에서는 experimental이 아닌 최상위 레벨로 이동
+  serverExternalPackages: ['@prisma/client', 'prisma'],
+  async headers() {
+    return [
+      {
+        source: '/(admin-dashboard|account|checkout)/:path*',
+        headers: [
+          {
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin-allow-popups'
+          }
+        ]
+      }
+    ]
+  }
+};
+
+export default nextConfig;
+```
+
+### 3. API Route 구현
+```typescript
+// app/api/payment/route.ts
+
+import { NextRequest, NextResponse } from "next/server";
+import Stripe from 'stripe';
+import { PrismaClient } from '@prisma/client'; // ✅ 직접 import
+import { auth } from "@/firebase/server";
+
+export const runtime = "nodejs";
+export const dynamic = 'force-dynamic';
+
+// ✅ API 라우트 내에서 직접 인스턴스 생성
+const prisma = new PrismaClient({
+    log: process.env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+});
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+
+export async function POST(req: NextRequest) {
+    const requestHeaders = new Headers(req.headers);
+    const origin = requestHeaders.get('origin') || process.env.NEXT_PUBLIC_BASE_URL;
     
+    try {
+        const { firebaseToken, cartItems, couponCode, discount, pointsUsed } = await req.json();
+        
+        // Firebase 인증
+        const decodedToken = await auth.verifyIdToken(firebaseToken);
+        const firebaseUID = decodedToken.uid;
+        
+        // ✅ User 찾기 또는 생성
+        let user = await prisma.user.findUnique({
+            where: { firebaseUID }
+        });
+        
+        if (!user) {
+            user = await prisma.user.create({
+                data: {
+                    firebaseUID: firebaseUID,
+                    email: decodedToken.email || `${firebaseUID}@example.com`,
+                    name: decodedToken.name || null,
+                }
+            });
+        }
+
+        // 금액 계산
+        const totalSubtotal = cartItems.reduce(
+            (sum: number, item: any) => sum + Number(item.price || 0) * Number(item.quantity || 1),
+            0
+        );
+        const totalDiscountAmount = (discount || 0) + (pointsUsed || 0);
+        const finalAmount = Math.max(totalSubtotal - totalDiscountAmount, 0);
+        
+        // Stripe Line Items 구성
+        const lineItems: any[] = cartItems.map((item: any) => ({
+            price_data: {
+                currency: 'eur',
+                product_data: { name: item.name },
+                unit_amount: Math.round(Number(item.price) * 100),
+            },
+            quantity: Number(item.quantity) || 1,
+        }));
+        
+        if (totalDiscountAmount > 0) {
+            lineItems.push({
+                price_data: {
+                    currency: 'eur',
+                    product_data: { name: 'Coupon/Points Discount' },
+                    unit_amount: Math.round(-totalDiscountAmount * 100),
+                },
+                quantity: 1,
+            });
+        }
+        
+        // Stripe 세션 생성
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: lineItems,
+            mode: 'payment',
+            success_url: `${origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${origin}/payment/cancel`
+        });
+        
+        // Order 생성
+        const order = await prisma.order.create({
+            data: {
+                userId: user.id,
+                totalAmount: finalAmount,
+                status: 'pending',
+                payment: {
+                    create: {
+                        provider: 'stripe',
+                        amount: finalAmount,
+                        status: 'unpaid',
+                        stripeSessionId: session.id,
+                        couponCode: couponCode || null,
+                        pointsUsed: pointsUsed || 0,
+                    },
+                },
+            },
+        });
+
+        return NextResponse.json({
+            url: session.url,
+            orderId: order.id
+        });
+    } catch (error: any) {
+        console.error("💥 Payment Error:", error);
+        return NextResponse.json(
+            { message: error.message || "결제 세션 생성 중 오류 발생" },
+            { status: 500 }
+        );
+    }
+}
+```
+
+### 4. 환경 변수 설정
+```bash
+# .env
+
+DATABASE_URL="postgresql://user:password@host:5432/database?schema=public"
+STRIPE_SECRET_KEY="sk_test_..."
+NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+```
+
+### 5. package.json 스크립트
+```json
+{
+  "scripts": {
+    "dev": "prisma generate && next dev",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate"
+  }
+}
+```
+
+---
+
+## 🔧 필수 실행 명령어
+
+### 초기 설정
+```bash
+# 1. 의존성 설치
+npm install
+
+# 2. Prisma Client 생성
+npx prisma generate
+
+# 3. 데이터베이스 마이그레이션
+npx prisma db push
+
+# 4. 개발 서버 시작
+npm run dev
+```
+
+### 문제 발생 시 (캐시 클리어)
+```bash
+# 모든 캐시 삭제
+rm -rf .next
+rm -rf node_modules/.prisma
+rm -rf node_modules/@prisma
+
+# 재설치 및 재생성
+npm install
+npx prisma generate
+npm run dev
+```
+
+### Prisma Studio로 데이터 확인
+```bash
+npx prisma studio
+```
+
+---
+
+## 📚 주요 학습 포인트
+
+### 1. Next.js 15 변경사항
+- `experimental.serverComponentsExternalPackages` → `serverExternalPackages`
+- webpack 번들링 방식 변경으로 Prisma import 방식 조정 필요
+
+### 2. Prisma 모범 사례
+- Schema에서 `@map()` 사용으로 TypeScript 네이밍과 DB 컬럼명 분리
+- API 라우트마다 새로운 인스턴스를 생성하는 것보다 글로벌 인스턴스 재사용 권장 (프로덕션에서)
+- Connection pooling 설정으로 DB 연결 최적화
+
+### 3. Stripe 통합 팁
+- 금액은 항상 센트 단위로 변환 (`Math.round(amount * 100)`)
+- 할인은 마이너스 line item으로 처리
+- Webhook을 통한 결제 확인 구현 필수
+
+---
+
+## ⚠️ 주의사항
+
+1. **환경변수 보안**
+   - `.env` 파일은 절대 Git에 커밋하지 말 것
+   - `.gitignore`에 `.env*` 추가 확인
+
+2. **Prisma Generate**
+   - 스키마 수정 후 반드시 `npx prisma generate` 실행
+   - 배포 시 `postinstall` 스크립트로 자동화
+
+3. **에러 처리**
+   - 모든 API 호출에 try-catch 구현
+   - 사용자에게 명확한 에러 메시지 제공
+
+4. **테스트**
+   - Stripe Test Mode 키 사용
+   - 테스트 카드: `4242 4242 4242 4242`
+
+---
+
+## 🎯 다음 구현 예정
+
+- [ ] Stripe Webhook 구현 (결제 확인)
+- [ ] 결제 성공/실패 페이지 개선
+- [ ] 주문 내역 조회 기능
+- [ ] 이메일 알림 (결제 완료 시)
+- [ ] 환불 처리 로직
+
+---
+
+## 🔗 참고 자료
+
+- [Next.js 15 Documentation](https://nextjs.org/docs)
+- [Prisma Documentation](https://www.prisma.io/docs)
+- [Stripe Checkout Documentation](https://stripe.com/docs/payments/checkout)
+- [Firebase Auth with Next.js](https://firebase.google.com/docs/auth/web/start)
+
+##A summary of issues related to the payment page
+Issue 1: Non-JSON response from /api/payment
+Problem: The /api/payment API Route failed to return a JSON object, instead sending an HTML error page to the client.
+
+Cause: The STRIPE_SECRET_KEY was located in the .env file but was not being correctly loaded by Next.js due to an incorrect file name or a syntax error (e.g., spaces around the equal sign). This caused the server to crash on startup, returning the default HTML error page.
+
+Solution:
+
+We moved the sensitive environment variables to the .env.local file and removed unnecessary spaces from the variable assignment, which fixed the loading issue.
+
+We completely restarted the server using npm run dev to ensure the new environment variables were correctly loaded.
+
+Issue 2: Prisma Client Initialization Error
+Problem: The error @prisma/client did not initialize yet occurred.
+
+Cause: The lib/prisma.ts file had a syntax error in its Prisma Client singleton pattern. Additionally, the npx prisma generate command was not correctly reflected in the build process, and Next.js was not configured to handle Prisma as an external module, leading to a build conflict.
+
+Solution:
+
+We corrected the syntax error in the lib/prisma.ts file and ran npx prisma generate to regenerate the Prisma Client files.
+
+We added the serverExternalPackages configuration to next.config.js to prevent Next.js from bundling the Prisma Client, allowing it to be correctly loaded from the Node.js runtime.
+
+Issue 3: Database Migration Error
+Problem: We encountered a P2022 error: The column stripe_session_id does not exist in the current database.
+
+Cause: While the schema.prisma file was updated to include the new stripeSessionId field, the corresponding change was not applied to the actual PostgreSQL database table.
+
+Solution:
+
+We ran the command npx prisma migrate dev --name add_stripe_session_id to create and apply a new migration file, which added the required column to the database.
+
+We restarted the server with npm run dev to ensure the new database schema was synchronized with the application code.
+
+
+## Payment - test card number : https://docs.stripe.com/testing?locale=fr-FR

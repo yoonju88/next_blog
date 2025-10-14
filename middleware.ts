@@ -5,35 +5,35 @@ import { decodeJwt } from "jose"
 
 export async function middleware(request: NextRequest) {
     // console.log("Middlewaore:", request.url)
-    if (request.method === "POST") {
-        return NextResponse.next()
-    }
+    // Always allow API routes to pass through without auth redirects
+    if (request.nextUrl.pathname.startsWith('/api/')) return NextResponse.next()
+
 
     const cookieStore = await cookies()
     const token = cookieStore.get("firebaseAuthToken")?.value;
 
     const { pathname } = request.nextUrl
 
+    // 로그인 필요 페이지 접근시 토큰 없으면 리다이렉트
+    if (!token && pathname.startsWith("/checkout")) {
+        return NextResponse.redirect(new URL("/login", request.url));
+    }
+
     //token이 없을 때 (즉, 로그인 안 되어 있을 때), 요청한 경로(pathname)가 아래 중 하나라면 그때는 NextResponse.next()를 호출해서, 요청을 그냥 통과
-    if (
-        !token &&
-        (
-            pathname.startsWith("/login") ||
-            pathname.startsWith("/register") ||
-            pathname.startsWith("/forgot-password") ||
-            pathname.startsWith("/property")
-        )
+    if (!token && (
+        pathname.startsWith("/login") ||
+        pathname.startsWith("/register") ||
+        pathname.startsWith("/forgot-password") ||
+        pathname.startsWith("/property")
+    )
     ) {
         return NextResponse.next()
     }
     //로그인한 사용자가 로그인/회원가입 페이지로 가려는 걸 막는 로직
-    if (
-        token &&
-        (
-            pathname.startsWith("/login") ||
-            pathname.startsWith("/register") ||
-            pathname.startsWith("/forgot-password")
-        )
+    if (token && (
+        pathname.startsWith("/login") ||
+        pathname.startsWith("/register") ||
+        pathname.startsWith("/forgot-password"))
     ) {
         return NextResponse.redirect(new URL("/", request.url))
     }
@@ -50,7 +50,7 @@ export async function middleware(request: NextRequest) {
     ) {
         return NextResponse.redirect(
             new URL(
-                `/api/refresh-token?redirect=${encodeURIComponent(
+                `/api/refersh-token?redirect=${encodeURIComponent(
                     request.nextUrl.pathname
                 )}`,
                 request.url
@@ -82,5 +82,8 @@ export const config = {
         "/account/:path*", // "/account/my-favorites"
         "/property",
         "/property/:path*",
+        "/checkout",
+        "/account/:path*",
+        "/api/payment"
     ],
 }

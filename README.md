@@ -567,3 +567,39 @@ We restarted the server with npm run dev to ensure the new database schema was s
 
 
 ## Payment - test card number : https://docs.stripe.com/testing?locale=fr-FR
+
+## 결제 확인 단계 Payment Verification
+app/api/payment/verify/route.ts 
+app/payment/success/page.ts 결제 성공 페이지를 만든다 
+
+사용자가 Stripe 결제를 완료하면, Stripe는 `success_url`로 지정된 `/payment/success` 페이지로 사용자를 리디렉션합니다. 이 페이지는 URL에 포함된 `session_id`를 사용하여 서버의 `/api/payment/verify` 엔드포인트로 결제 확인 요청을 보냅니다.
+Once the user completes the Stripe payment, Stripe redirects them to the /payment/success page specified in the success_url. This page then uses the session_id contained in the URL to send a payment verification request to the /api/payment/verify endpoint on the server.
+
+**`/api/payment/verify` API의 주요 역할:**
+**Key Roles of the /api/payment/verify API:**
+
+* **Stripe 세션 유효성 검사**: 전달받은 `session_id`를 사용하여 Stripe API에 결제 상태를 직접 확인합니다.
+* **결제 상태 업데이트**: Stripe에서 `payment_status`가 'paid'로 확인되면, 데이터베이스의 `Payment` 레코드를 'paid'로 업데이트합니다.
+* **주문 상태 업데이트**: 동시에 관련 `Order` 레코드의 상태를 'pending'에서 'completed'로 변경합니다. 이 두 작업은 **Prisma 트랜잭션**으로 묶여 있어 데이터 불일치가 발생하지 않도록 합니다.
+* **응답**: 결제 확인 결과를 JSON 형식으로 반환하여 클라이언트(프런트엔드)에 성공 여부를 알려줍니다.
+
+* Stripe Session Validation: Uses the received session_id to directly check the payment status with the Stripe API.
+
+* Payment Status Update: If Stripe confirms the payment_status as 'paid', the Payment record in the database is updated to 'paid'.
+
+* Order Status Update: Simultaneously, the status of the related Order record is changed from 'pending' to 'completed'. These two operations are bundled using Prisma transactions to ensure atomicity and prevent data inconsistency.
+
+* Response: Returns the payment verification result in JSON format to notify the client (frontend) of the success status.
+
+### 데이터베이스 스키마 (`prisma/schema.prisma`) 
+### Database Schema (`prisma/schema.prisma`) 
+
+* **`Order`**: 사용자의 주문 정보를 저장합니다. `status` 필드는 'pending'과 'completed' 상태를 추적합니다.
+* **`Payment`**: 각 주문에 대한 결제 정보를 담고 있습니다. `stripeSessionId` 필드는 Stripe 세션 ID와 `Order`를 1:1로 연결하는 데 사용되는 **고유 키**입니다.
+
+* Order: Stores user order information. The status field tracks 'pending' and 'completed' states.
+
+* Payment: Contains payment information for each order. The stripeSessionId field is a unique key used to link the Stripe session ID 1:1 with the Order.
+
+
+

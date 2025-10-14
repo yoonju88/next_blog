@@ -39,7 +39,7 @@ orderId String @unique
 provider String 
 amount Float
 status String @default("unpaid")
-stripeSessionId String? @map("stripe_session_id")
+stripeSessionId String? @unique @map("stripe_session_id")
 couponCode  String?
 pointsUsed Float @default(0)
 createdAt DateTime @default(now())

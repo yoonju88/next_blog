@@ -15,4 +15,5 @@ export type CartContextType = {
     clearCart: () => void
     totalItems: number
     totalPrice: number
+    refreshCart: () => void
 } 

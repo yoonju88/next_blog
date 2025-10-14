@@ -601,5 +601,78 @@ Once the user completes the Stripe payment, Stripe redirects them to the /paymen
 
 * Payment: Contains payment information for each order. The stripeSessionId field is a unique key used to link the Stripe session ID 1:1 with the Order.
 
+## 결제 완료 후 장바구니 처리 (Post-Payment Cart Clearing)
+
+결제가 성공적으로 완료되면 사용자의 장바구니를 자동으로 비워주는 기능입니다. 이 프로세스는 클라이언트와 서버 간의 비동기 통신과 상태 관리를 통해 데이터의 정합성을 보장하며, 여러 단계의 디버깅을 통해 안정화되었습니다.
+This feature automatically clears a user's shopping cart after a payment is successfully completed. The process ensures data consistency through asynchronous communication and state management between the client and server, and it has been stabilized through multiple debugging stages.
 
 
+
+# 핵심 수정 및 추가 사항 Core Modifications and Additions
+
+(File: app/api/cart/route.ts)
+서버 API 로직 수정: 기존에는 장바구니를 Firestore의 서브컬렉션으로 잘못 간주하여 삭제를 시도했으나, 실제 데이터 구조인 사용자 문서 내의 배열 필드(cart: [])를 직접 업데이트하도록 수정했습니다. 이것이 기능이 동작하지 않았던 근본적인 원인이었습니다.
+Server API Logic Correction: The API previously attempted to delete the cart by incorrectly treating it as a Firestore subcollection. This was corrected to update the actual data structure, which is an array field (cart: []) within the user document. This was the root cause of the feature's malfunction.
+
+(File: @/context/CartContext.tsx)
+클라이언트 상태 갱신 메커니즘 추가: 서버에서 데이터가 삭제된 후, 클라이언트 UI가 변경 사항을 인지하고 화면을 다시 렌더링할 수 있도록 CartContext에 refreshCart 함수를 추가했습니다.
+Client-Side State Refresh Mechanism: After data is deleted on the server, the refreshCart function was added to the CartContext to enable the client UI to recognize the change and re-render.
+
+(File: app/payment/success/page.tsx)
+인증 토큰 처리 강화: 클라이언트에서 서버로 API 요청 시, 만료되지 않은 최신 ID 토큰을 보내도록 getIdToken(true)를 사용하여 토큰 새로고침을 강제했습니다.
+Enhanced Authentication Token Handling: To ensure a non-expired, up-to-date ID token is sent with API requests from the client, token refreshing was enforced using getIdToken(true).
+
+1. 결제 성공 및 확인 (/payment/success 페이지)
+Payment Success and Verification (/payment/success page)
+(File: app/payment/success/page.tsx)
+
+진입: 사용자가 Stripe 결제를 마치면 success_url에 지정된 /payment/success 페이지로 리디렉션됩니다. 이때 URL 쿼리 파라미터로 session_id가 함께 전달됩니다.
+Entry: When a user completes a Stripe payment, they are redirected to the /payment/success page as specified in the success_url. The session_id is passed along as a URL query parameter.
+
+로직 실행 조건: 페이지의 useEffect 훅은 sessionId와 useAuth()를 통해 가져온 currentUser 객체가 모두 유효할 때 실행됩니다. 이를 통해 비동기적인 사용자 인증 정보 로딩을 안전하게 기다립니다.
+Logic Execution Condition: The page's useEffect hook executes only when both the sessionId and the currentUser object (fetched via useAuth()) are valid. This ensures it safely waits for asynchronous user authentication information to load.
+
+결제 검증: fetch를 사용해 /api/payment/verify 엔드포인트로 session_id를 보내 결제를 최종 확인합니다.
+Payment Verification: It sends the session_id to the /api/payment/verify endpoint using fetch to finalize payment confirmation.
+
+2. 장바구니 비우기 요청 (클라이언트)
+Request to Clear Cart (Client-Side)
+(File: app/payment/success/page.tsx)
+
+토큰 준비: 결제 검증이 성공하면, currentUser.getIdToken(true)를 호출하여 만료되지 않은 최신 Firebase ID 토큰을 가져옵니다. true 플래그는 토큰을 강제로 새로고침하여 인증 오류를 방지합니다.
+Token Preparation: Once payment verification succeeds, it calls currentUser.getIdToken(true) to fetch the latest non-expired Firebase ID token. The true flag forces the token to be refreshed, preventing authentication errors.
+
+API 호출: fetch를 사용하여 DELETE 메서드로 /api/cart 엔드포인트에 요청을 보냅니다. Authorization: 'Bearer ' + idToken 형식으로 HTTP 헤더에 인증 토큰을 포함시킵니다.
+API Call: It sends a request to the /api/cart endpoint using the DELETE method via fetch. The authentication token is included in the HTTP headers in the format Authorization: 'Bearer ' + idToken.
+
+3. 장바구니 데이터 삭제 (서버 API)
+Deleting Cart Data (Server API)
+(File: app/api/cart/route.ts)
+
+인증: /api/cart API는 요청 헤더에서 Bearer 토큰을 추출하고, Firebase Admin SDK의 auth.verifyIdToken()을 사용해 토큰의 유효성을 검증하고 사용자(uid)를 식별합니다.
+Authentication: The /api/cart API extracts the Bearer token from the request headers and verifies its validity using the Firebase Admin SDK's auth.verifyIdToken() to securely identify the user (uid)
+
+데이터 수정: Firestore에서 users/{uid} 경로의 사용자 문서를 참조합니다.
+Data Modification: It references the user document at the path users/{uid} in Firestore.
+
+핵심 로직: userRef.update({ cart: [] })를 실행하여 해당 문서의 cart 필드를 빈 배열로 덮어씁니다. 이전에 시도했던 서브컬렉션 삭제 로직 대신, 실제 데이터 구조에 맞는 필드 업데이트를 수행합니다.
+Core Logic: It executes userRef.update({ cart: [] }) to overwrite the cart field in that document with an empty array. This performs a field update that matches the actual data structure, instead of the previous attempt to delete a subcollection.
+
+응답: 작업이 성공하면 200 OK 상태와 성공 메시지를 담은 JSON을 클라이언트에 반환합니다.
+Response: Upon success, it returns a JSON object with a success message and a 200 OK status to the client.
+
+4. 클라이언트 UI 갱신 (React Context)
+Client-Side UI Update (React Context)
+ (File: @/context/CartContext.tsx)
+
+갱신 신호 전송: 클라이언트는 API로부터 성공 응답을 받으면, useCart() 훅에서 가져온 refreshCart() 함수를 호출합니다.
+Sending a Refresh Signal: When the client receives a success response from the API, it calls the refreshCart() function obtained from the useCart() hook.
+
+상태 변경: refreshCart() 함수는 CartContext 내부의 refreshTrigger라는 useState 상태를 변경시킵니다.
+State Change: The refreshCart() function updates a useState variable called refreshTrigger inside the CartContext.
+
+데이터 리페칭(Re-fetching): CartContext의 useEffect 훅은 refreshTrigger 상태를 의존성 배열에 포함하고 있습니다. 따라서 refreshTrigger가 변경되면 useEffect가 다시 실행되어, Firestore로부터 최신 장바구니 데이터(이제 비어있는 배열)를 다시 불러옵니다.
+Data Re-fetching: The useEffect hook in CartContext includes refreshTrigger in its dependency array. Therefore, when refreshTrigger changes, the useEffect hook re-runs, fetching the latest cart data (which is now an empty array) from Firestore.
+
+UI 리렌더링: setCartItems([])가 호출되면서 Context가 관리하는 cartItems 상태가 업데이트되고, 이 상태를 구독하는 모든 UI 컴포넌트(예: 장바구니 아이콘, 사이드 모달)가 자동으로 리렌더링되어 빈 장바구니 상태를 화면에 즉시 반영합니다.
+UI Rerendering: As setCartItems([]) is called, the cartItems state managed by the Context is updated. All UI components subscribing to this state (e.g., the cart icon, side modal) automatically re-render, immediately reflecting the empty cart status on the screen.

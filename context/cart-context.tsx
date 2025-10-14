@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useState, ReactNode, useMemo, useEffect } from 'react'
+import { createContext, useContext, useState, ReactNode, useMemo, useEffect, useCallback } from 'react'
 import { Property } from '@/types/property'
 import { CartItem, CartContextType } from '@/types/cart'
 import { useAuth } from './auth'
@@ -11,22 +11,42 @@ const CartContext = createContext<CartContextType | undefined>(undefined)
 
 
 export function CartProvider({ children }: { children: ReactNode }) {
-    const [cartItems, setCartItems] = useState<CartItem[]>([])
     const { user } = useAuth()
+    const [cartItems, setCartItems] = useState<CartItem[]>([])
+    // 이 값이 변경되면 장바구니 데이터 로딩을 강제합니다.
+    const [refreshTrigger, setRefreshTrigger] = useState(0)
 
+    // 1. useEffect 훅이 user와 refreshTrigger의 변경을 감지하고, 그에 따라 loadCartItems를 호출합니다.
     useEffect(() => {
         const loadCartItems = async () => {
             if (user) {
-                const userRef = doc(db, 'users', user.uid)
-                const userDoc = await getDoc(userRef)
-                if (userDoc.exists()) {
-                    const userData = userDoc.data()
-                    setCartItems(userData.cart || [])
+                try {
+                    const userRef = doc(db, 'users', user.uid)
+                    const userDoc = await getDoc(userRef)
+                    if (userDoc.exists()) {
+                        const userData = userDoc.data()
+                        setCartItems(userData.cart || [])
+                    } else {
+                        setCartItems([])
+                    }
+                } catch (error) {
+                    console.error("Error loading cart items:", error);
+                    setCartItems([]);
                 }
+            } else {
+                // 2. user가 없으면 무한 호출 대신, 장바구니를 그냥 비웁니다.
+                setCartItems([])
             }
         }
+
         loadCartItems()
-    }, [user])
+    }, [user, refreshTrigger])
+
+    //장바구니 갱신을 강제하는 함수
+    const refreshCart = useCallback(() => {
+        setRefreshTrigger(prev => prev + 1)
+        console.log("Cart refresh trigger updated.");
+    }, [])
 
     const addToCart = async (property: Property, quantityInput?: number) => {
         const quantity = !quantityInput || isNaN(quantityInput) || quantityInput < 1 ? 1 : quantityInput;
@@ -148,6 +168,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         clearCart,
         totalItems,
         totalPrice,
+        refreshCart,
     }
 
     return (

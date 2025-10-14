@@ -20,6 +20,7 @@ interface ParsedToken {
 
 // Context에서 관리할 데이터의 구조를 정의
 export type AuthContextType = {
+    getIdToken: () => Promise<string | null>
     user: User | null
     loading: boolean
     logout: () => Promise<void>
@@ -172,6 +173,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }
 
+    const getIdToken = async (): Promise<string | null> => {
+        if (user) {
+            return user.getIdToken();
+        }
+        return null;
+    };
+
     const value = {
         user,
         loading,
@@ -181,6 +189,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         loginWithEmail,
         updateUserProfile,
         signOut,
+        getIdToken
     }
 
     return (

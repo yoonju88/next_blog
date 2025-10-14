@@ -36,7 +36,6 @@ export default function PaymentSuccessPage() {
                 if (!res.ok || !data.success) {
                     throw new Error(data.message || 'Payment Verification failed')
                 }
-
                 setStatus('✅ Payment successful! Your order has been confirmed.')
                 setError(false)
 
@@ -57,8 +56,7 @@ export default function PaymentSuccessPage() {
                     console.log('Cart view refresh triggered.');
                 } else {
                     const errorText = await cartClearRes.text();
-                    let errorMessage = errorText;
-                    console.error('Failed to clear cart:', errorMessage);
+                    console.error('Failed to clear cart:', errorText);
                 }
             } catch (err) {
                 console.error('Verification error:', err)

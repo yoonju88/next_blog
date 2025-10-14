@@ -1,14 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from 'stripe'
-import prisma from "@/lib/prisma";
 import { auth } from "@/firebase/server";
 
 // Ensure Node.js runtime (Prisma is not supported on the Edge runtime)
 export const runtime = "nodejs";
 export const dynamic = 'force-dynamic'
+
 console.log("Node.js runtime active")
 import { PrismaClient } from '@prisma/client'
-
 
 
 const prisma = new PrismaClient({

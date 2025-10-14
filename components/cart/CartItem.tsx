@@ -38,7 +38,7 @@ export default function CartItem({ item, updateQuantity, removeFromCart }: CartI
                 <div>
                     <h3 className="font-medium">{item.property.name}</h3>
                     <p className="text-sm text-muted-foreground">
-                        €{unitPrice.toLocaleString()} x {item.quantity} = €{totalPriceForItem.toLocaleString()}
+                        {unitPrice.toLocaleString()} € x {item.quantity} = {totalPriceForItem.toLocaleString()} €
                     </p>
                 </div>
                 <div className="flex items-center gap-1">

@@ -37,11 +37,11 @@ export const CheckoutCartList = ({ cartItems }: CheckoutCartListProps) => {
                     <div>
                         <p className="font-semibold">{item.property.name}</p>
                         <p className="text-sm text-muted-foreground">
-                            {item.quantity} × €{item.property.price.toLocaleString()}
+                            {item.quantity} × {item.property.price.toLocaleString()} €
                         </p>
                     </div>
                     <p className="font-bold">
-                        €{(item.property.price * item.quantity).toLocaleString()}
+                        {(item.property.price * item.quantity).toLocaleString()}  €
                     </p>
                 </li>
             ))}

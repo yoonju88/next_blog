@@ -87,13 +87,13 @@ export default function PropertyContent({
                         <span className="flex justify-end mt-6">
                             {property.onSale && property.salePrice
                                 ? (<div className="flex items-center gap-1">
-                                    <span className="line-through text-gray-400 mr-1 text-md">€ {property.price}</span>
+                                    <span className="line-through text-gray-400 mr-1 text-md"> {property.price} €</span>
                                     <span className="text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-medium">
                                         -{property.saleRate}%
                                     </span>
-                                    <span className="text-foreground/80 font-bold text-lg">€ {property.salePrice}</span>
+                                    <span className="text-foreground/80 font-bold text-lg">{property.salePrice} €</span>
                                 </div>)
-                                : <span className="text-foreground/80 font-bold text-lg">€ {property.price}</span>
+                                : <span className="text-foreground/80 font-bold text-lg"> {property.price} €</span>
                             }
                         </span>
 

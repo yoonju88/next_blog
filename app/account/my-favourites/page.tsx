@@ -102,14 +102,14 @@ export default async function MyFavourites({
                                         <h3 className="text-base text-foreground px-4 mb-4 uppercase">{property.name}</h3>
                                         <CardDescription className="px-4">
                                             <p className="text-base">
-                                                <span className="line-through pr-2">
-                                                    €{property.price}
+                                                {/* <span className="line-through pr-2">
+                                                    {property.price} €
                                                 </span>
                                                 <span className=" text-white px-2 py-1 bg-primary rounded-lg text-sm ">
                                                     Club -5%
-                                                </span>
+                                                </span> */}
                                                 <span className="text-primary font-bold text-lg pl-2">
-                                                    €{property.price * 0.95}
+                                                    {property.price} €
                                                 </span>
                                             </p>
                                         </CardDescription>

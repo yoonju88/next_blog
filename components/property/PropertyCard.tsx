@@ -55,10 +55,10 @@ export default function PropertyCard({ property, actionButton }: Props) {
                     <span className="text-foreground/80">
                         {property.onSale && property.salePrice
                             ? (<>
-                                <span className="line-through text-gray-400 mr-1">€ {property.price}</span>
-                                <span className="text-foreground/80 font-bold">€ {property.salePrice}</span>
+                                <span className="line-through text-gray-400 mr-1">{property.price} €</span>
+                                <span className="text-foreground/80 font-bold">{property.salePrice} € </span>
                             </>)
-                            : <>€ {property.price}</>
+                            : <> {property.price} €</>
                         }
                     </span>
                 </div>

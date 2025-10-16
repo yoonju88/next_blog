@@ -17,10 +17,14 @@ import { CircleUserRound } from "lucide-react";
 
 export default function AuthButtons() {
     const router = useRouter();
-    const auth = useAuth();
-    //두 번의 부정(!)을 통해 값을 명시적으로 boolean으로 변환
-    //값이 존재한다면 true, 값이 없으면 false.
-    const user = auth.user;
+    const { user, loading, logout, customClaims } = useAuth();
+
+    if (loading) {
+        return (
+            <div className="h-10 w-10 bg-gray-200 rounded-full animate-pulse" />
+        );
+    }
+
     return (
         <>
             {user ? (
@@ -66,8 +70,7 @@ export default function AuthButtons() {
                                 My Favourites
                             </Link>
                         </DropdownMenuItem>
-
-                        {!!auth.customClaims?.admin && (
+                        {!!customClaims?.admin && (
                             <DropdownMenuItem asChild>
                                 <Link href="/admin-dashboard" >
                                     Admin Dashboard
@@ -83,8 +86,8 @@ export default function AuthButtons() {
                         )} */}
                         <DropdownMenuItem
                             onClick={async () => {
-                                await auth.logout()
-                                router.refresh()
+                                await logout()
+                                router.push('/');
                             }}
                         >
                             Logout

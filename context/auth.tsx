@@ -1,6 +1,6 @@
 "use client"
 import { auth, db } from "@/firebase/client"
-import { removeToken, setToken } from "./actions"
+import { setAuthCookie, clearAuthCookie } from "@/lib/auth/actions"
 import {
     signInWithPopup,
     GoogleAuthProvider,
@@ -43,25 +43,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [loading, setLoading] = useState(true)
     const [customClaims, setCustomClaims] = useState<ParsedToken | null>(null)
 
-    // Firebase 인증 상태 변화를 감지하고, user를 업데이트
+    // Firebase 인증 상태 변화를 감지하고, 세션 쿠키를 관리
     useEffect(() => {
         const unsubscribe = auth.onAuthStateChanged(async (user) => {
             setUser(user ?? null)
             setLoading(false)
             if (user) {
+                // 사용자가 로그인하면, ID 토큰을 가져와 setAuthCookie 액션을 호출합니다.
+                const token = await user.getIdToken()
+                await setAuthCookie(token); // 세션 + 미들웨어용 쿠키 + 리프레시 토큰 설정
                 const tokenResult = await user.getIdTokenResult(true)
-                const token = tokenResult.token;
-                const refreshToken = user.refreshToken;
                 const claims = tokenResult.claims as ParsedToken
                 setCustomClaims(claims ?? null)
-                if (token && refreshToken) {
-                    await setToken({
-                        token,
-                        refreshToken
-                    });
-                }
             } else {
-                await removeToken()
+                await clearAuthCookie()
+                setCustomClaims(null)
             }
         })
         return () => unsubscribe()

@@ -42,6 +42,7 @@ productId String
 productName String
 price Float  // 구매 시점의 가격
 quantity Int // 구매한 수량
+imageUrl String?
 }
 
 model Payment {

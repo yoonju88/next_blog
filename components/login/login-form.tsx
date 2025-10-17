@@ -88,7 +88,7 @@ export default function LoginForm() {
                     />
                     <Button
                         type="submit"
-                        className="mt-4 text-white"
+                        className="mt-4 text-foreground"
                     >
                         Login
                     </Button>

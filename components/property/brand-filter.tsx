@@ -109,7 +109,7 @@ export default function PropertyFilter({
             <div className="mb-4">
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
-                        <Button variant="outline" size="lg">Filter</Button>
+                        <Button variant="default" size="lg">Filter</Button>
                     </DialogTrigger>
                     <DialogContent>
                         <DialogHeader>

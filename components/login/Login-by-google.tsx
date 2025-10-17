@@ -37,7 +37,7 @@ export default function LoginByGoogle() {
         <Button
             onClick={handleGoogleLogin}
             className="w-full bg-secondary"
-            variant="outline"
+            variant="default"
             disabled={isLoading}
             type="button"
         >

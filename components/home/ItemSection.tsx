@@ -32,7 +32,7 @@ export default function ItemSection({ data, title, link }: itemsProps) {
                         actionButton={
                             <button
                                 type="button"
-                                className={`shrink-0 rounded-2xl bg-primary/10 p-1 hover:bg-primary/20 hover:shadow-sm ${hoverEffect}`}
+                                className={`shrink-0 rounded-2xl bg-gray-100 shadow-sm shadow-foreground/20 p-1 hover:shadow-inner ${hoverEffect}`}
                             >
                                 <Link href={`/property/${item.id}`}>
                                     <ChevronRight className="w-5 h-5" />

@@ -56,7 +56,8 @@ export default function ReviewForm({
                             <FormControl>
                                 <div className="flex flex-col justify-center items-center">
                                     {userPhotoURL ? (
-                                        <Image src={userPhotoURL} alt="User photo" className="w-24 h-24 rounded-full mb-2 object-cover" />
+                                        <Image src={userPhotoURL} alt="User photo" width={96}      // Tailwind w-24 → 96px
+                                            height={96} className="w-24 h-24 rounded-full mb-2 object-cover" />
                                     ) : (
                                         <div className="w-24 h-24 rounded-full bg-gray-300 mb-2 flex items-center justify-center text-gray-600">
                                             No Image

@@ -27,9 +27,9 @@ export default function PickCalenderDate({ onDateSelect }: Props) {
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button
-                        variant="outline"
+                        variant="default"
                         id="date"
-                        className="w-full justify-between font-normal"
+                        className="w-full justify-between font-normal bg-background border-1 border-foreground/10"
                     >
                         {date ? date.toLocaleDateString() : "Select date"}
                         <ChevronDownIcon />

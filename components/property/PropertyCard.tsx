@@ -38,10 +38,8 @@ export default function PropertyCard({ property, actionButton }: Props) {
                             </span>
                         </div>
                     </div>
-
                 </Link>
             </div>
-
             <div className="mt-4 flex items-center justify-between p-2">
                 <div className="flex-1 text-left">
                     <h2 className={`uppercase font-semibold text-foreground/90 hover:tracking-wide hover:text-foreground/80 ${hoverEffect}`}>

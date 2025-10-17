@@ -118,4 +118,11 @@
   body {
     @apply bg-background text-foreground;
   }
+  input {
+    @apply focus:outline-none focus:ring-0 border-1 border-foreground/10; /* Tailwind 클래스 */
+    box-shadow: none;                      /* CSS 속성 직접 */
+  }
+  p,h1,h2,h3,h4,h5{
+    @apply text-foreground
+  }
 }

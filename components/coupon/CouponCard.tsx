@@ -28,9 +28,9 @@ const getStatusBadge = (coupon: Coupon) => {
     const now = new Date()
     if (!coupon.isActive) return <Badge variant="secondary">Inactive</Badge>
     if (now < new Date(coupon.validFrom)) return <Badge variant="outline">Pending</Badge>
-    if (now > new Date(coupon.validUntil)) return <Badge variant="destructive">Expired</Badge>
+    if (now > new Date(coupon.validUntil)) return <Badge variant="primary">Expired</Badge>
     if (coupon.usedCount >= coupon.usageLimit) return <Badge variant="destructive">Limit Reached</Badge>
-    return <Badge variant="default">Active</Badge>
+    return <Badge variant="success">Active</Badge>
 }
 
 export default function CouponCard({ coupon, onEditAction, onDeleteAction }: CouponCardProps) {
@@ -49,7 +49,7 @@ export default function CouponCard({ coupon, onEditAction, onDeleteAction }: Cou
                         <p className="text-muted-foreground mt-1">{coupon.description}</p>
                     </div>
                     <div className="flex gap-2">
-                        <Button variant="outline" size="sm" onClick={onEditAction}>
+                        <Button variant="default" onClick={onEditAction}>
                             <Edit className="h-4 w-4" />
                         </Button>
                         <ConfirmDeleteButton

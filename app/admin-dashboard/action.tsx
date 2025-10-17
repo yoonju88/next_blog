@@ -134,3 +134,17 @@ export async function removeSaleAction(selectedIds: string[], authToken: string)
     })
     await batch.commit()
 }
+
+export async function getSaleProperties() {
+    const snapshot = await firestore
+        .collection("properties")
+        .where("onSale", "==", true)
+        .orderBy("saleEndDate", "desc")
+        .get()
+
+    const properties = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+    }))
+    return properties;
+}

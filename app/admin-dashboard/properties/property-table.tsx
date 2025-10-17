@@ -30,6 +30,10 @@ export default function PropertyTable({
 
     const [selectedIds, setSelectedIds] = useState<string[]>([])
     const [dialogOpen, setDialogOpen] = useState(false)
+    const [defaultSalePrice, setDefaultSalePrice] = useState<number>(0);
+    const [defaultSaleRate, setDefaultSaleRate] = useState<number>(0);
+    const [defaultSaleStartDate, setDefaultSaleStartDate] = useState<string>("");
+    const [defaultSaleEndDate, setDefaultSaleEndDate] = useState<string>("");
 
     const toggleSelect = (id: string) => {
         setSelectedIds(prev =>
@@ -68,10 +72,10 @@ export default function PropertyTable({
                         open={dialogOpen}
                         onClose={() => setDialogOpen(false)}
                         selectedIds={selectedIds}
-                        defaultSalePrice={0}
-                        defaultSaleRate={0}
-                        defaultSaleStartDate=""
-                        defaultSaleEndDate=""
+                        defaultSalePrice={defaultSalePrice}
+                        defaultSaleRate={defaultSaleRate}
+                        defaultSaleStartDate={defaultSaleStartDate}
+                        defaultSaleEndDate={defaultSaleEndDate}
                     />
                 </div>
                 <Table className="mt-10 text-center" >
@@ -86,6 +90,7 @@ export default function PropertyTable({
                             <TableHead>Stock Qty</TableHead>
                             <TableHead>Sales Qty</TableHead>
                             <TableHead className='text-center'>Option</TableHead>
+                            <TableHead >Sale</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -146,21 +151,43 @@ export default function PropertyTable({
                                     </TableCell>
                                     <TableCell >
                                         <div className='inline-flex space-x-2'>
-                                            <Button asChild variant="outline" size="sm">
+                                            <Button asChild variant="default" size="sm">
                                                 <Link href={`/property/${property.id}`}>
                                                     <EyeIcon />
                                                 </Link>
                                             </Button>
-                                            <Button asChild variant="outline" size="sm" className="mx-1">
+                                            <Button asChild variant="default" size="sm" className="mx-1">
                                                 <Link href={`/admin-dashboard/properties/${property.id}`}>
                                                     <PencilIcon />
                                                 </Link>
                                             </Button>
                                         </div>
                                     </TableCell>
+                                    <TableCell className='text-center'>
+                                        {property.onSale ? (
+                                            <Button
+                                                size="sm"
+                                                variant="default"
+                                                onClick={() => {
+                                                    setSelectedIds([property.id])
+                                                    setDialogOpen(true)
+                                                    setDefaultSalePrice(property.salePrice || 0)
+                                                    setDefaultSaleRate(property.saleRate || 0)
+                                                    setDefaultSaleStartDate(property.saleStartDate || '')
+                                                    setDefaultSaleEndDate(property.saleEndDate || '')
+                                                }}
+                                            >
+                                                <PencilIcon className="w-4 h-4" />
+                                            </Button>
+
+                                        ) : (
+                                            <span className='text-foreground'>-</span>
+                                        )}
+                                    </TableCell>
                                 </TableRow>
                             )
                         })}
+
                     </TableBody>
                     <TableFooter>
                         <TableRow>

@@ -16,11 +16,10 @@ type Props = {
     onAddedToCartAction?: () => void
 }
 
-export default function AddToCartButton({ property, children, onAddedToCartAction, quantity: initialQuantity = 1 }: Props) {
+export default function AddToCartButton({ property, children, onAddedToCartAction, quantity = 1 }: Props) {
     const { addToCart } = useCart()
     const { user } = useAuth()
     const router = useRouter()
-    const [quantity, setQuantity] = useState(initialQuantity);
 
     const handleAddToCart = () => {
         if (!user) {

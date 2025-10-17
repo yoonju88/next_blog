@@ -36,6 +36,7 @@ export type Property = {
 }
 
 export type CreateProperty = {
+    id: string;
     name: string;
     subTitle: string;
     price: number;

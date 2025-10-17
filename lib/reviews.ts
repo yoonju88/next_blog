@@ -6,6 +6,7 @@ import admin from "firebase-admin";
 type Review = {
     id: string;
     propertyId: string;
+    propertyName: string;
     images?: string[];
     comment?: string;
     rating?: number;
@@ -66,6 +67,7 @@ export const getReviewsByPropertyId = async (propertyId: string): Promise<Review
             images: data.images,
             createdAt: data.createdAt,
             updatedAt: data.updatedAt,
+            propertyName: data.propertyName
         };
     })
     return productReviews

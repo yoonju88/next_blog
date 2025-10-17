@@ -19,7 +19,7 @@ export default function RemoveReviewButton({
 }) {
     const auth = useAuth()
     const router = useRouter()
-    console.log('images Data', images)
+    //console.log('images Data', images)
 
     return (
         <Button

@@ -1,5 +1,5 @@
 import React from 'react'
-import EmptyList from '@/components/home/EmptyList'
+import EmptyList from '@/components/EmptyList'
 import { getUserReviews } from '@/lib/reviews'
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
@@ -26,13 +26,15 @@ export default async function ReviewsPage({
     const page = searchParamsValue?.page ? parseInt(searchParamsValue.page) : 1
 
     const pageSize = 4
-    const reviews = await getUserReviews();
+    const reviews = await getUserReviews()
 
     if (!reviews || reviews.length === 0) {
         return (
             <EmptyList
                 title="Be the first to leave a review!"
-                message="We'd love to hear what you think. Write a review!"
+                description="We'd love to hear what you think. Write a review!"
+                buttonHref='/'
+                buttonText="Return to Home page"
             />
         )
     }
@@ -59,7 +61,7 @@ export default async function ReviewsPage({
                     const images = review.images || [];
 
                     return (
-                        <div key={review.id} className="relative w-full flex py-4 px-4 bg-white rounded-xl group hover:shadow-lg hover:shadow-foreground/20 transition-all duration-300">
+                        <div key={review.id} className="relative w-full flex py-4 px-4 bg-white rounded-xl border-1 border-foreground/20 shadow-sm shadow-foreground/20">
                             <div className="flex flex-col w-[80%] text-gray-800 space-y-2">
                                 <div className="flex gap-4 items-center">
                                     <div className="p-4 bg-gray-300 rounded-2xl relative overflow-hidden">
@@ -69,6 +71,7 @@ export default async function ReviewsPage({
                                     </div>
                                     <h3 className="font-semibold ">{review.userName}</h3>
                                 </div>
+                                <p className="font-semibold text-primary">Product Name : {review.propertyName}</p>
                                 <div className="flex gap-2 items-center text-sm">
                                     <p className="font-semibold text-primary">{review.rating}/5</p>
                                     <p className="capitalize text-gray-600">{relativeTime}</p>
@@ -105,7 +108,7 @@ export default async function ReviewsPage({
                             </div>
                             <RemoveReviewButton
                                 reviewId={review.id}
-                                className="absolute top-4 right-4 bg-gray-300 p-1.5 rounded-md text-foreground hover:text-primary hover:bg-gray-100  hover:shadow-foreground/30 hover:shadow-sm duration-300 transition-all"
+                                className="absolute top-4 right-4 bg-gray-100 shadow-sm shadow-foreground/20 p-1.5 rounded-md text-foreground  hover:shadow-inner duration-300 transition-all"
                                 images={images}
                             />
                         </div>

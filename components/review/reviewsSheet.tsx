@@ -12,6 +12,8 @@ import {
 import Image from "next/image"
 import { Avatar } from "@/components/ui/avatar"
 import SlideImages from "@/components/carousel"
+import { useAuth } from "@/context/auth"
+import RemoveReviewButton from "@/app/reviews/remove-review-button"
 
 type Review = {
     id: string;
@@ -31,7 +33,11 @@ interface ReviewsProps {
 }
 
 export default function Reviews({ reviews }: ReviewsProps) {
+
     const safeReviews = Array.isArray(reviews) ? reviews : []
+    const auth = useAuth()
+    const currentUserId = auth?.user?.uid
+
     return (
         <Sheet>
             <SheetTrigger asChild>
@@ -39,15 +45,16 @@ export default function Reviews({ reviews }: ReviewsProps) {
             </SheetTrigger>
             <SheetContent className='p-4'>
                 <SheetHeader>
-                    <SheetTitle>Review List</SheetTitle>
+                    <SheetTitle>All Reviews</SheetTitle>
                     <SheetDescription>
-                        Check out the reviews for this product.
                     </SheetDescription>
                 </SheetHeader>
                 {safeReviews.map((review) => {
                     const images = Array.isArray(review.images) ? review.images : []
+                    const isCurrentUserReview = review.userId === currentUserId
+
                     return (
-                        <div key={review.id} className="px-4 pb-4 border-b border-foreground/30">
+                        <div key={review.id} className="px-4 pb-4 border-b border-foreground/30 relative">
                             <div className="flex items-center gap-2">
                                 <Avatar>
                                     <Image
@@ -61,7 +68,7 @@ export default function Reviews({ reviews }: ReviewsProps) {
                             </div>
                             <span className="mt-2 text-sm text-foreground font-medium">{review.rating}/5</span>
                             <p className="mt-2">{review.comment}</p>
-                            <div className="w-ful overflow-hidden mt-4">
+                            <div className="w-full overflow-hidden mt-4">
                                 {images.length > 0 && (
                                     <SlideImages
                                         images={images}
@@ -69,6 +76,16 @@ export default function Reviews({ reviews }: ReviewsProps) {
                                     />
                                 )}
                             </div>
+
+                            {/* 현재 유저 리뷰면 삭제 버튼 */}
+                            {isCurrentUserReview && (
+                                <RemoveReviewButton
+                                    reviewId={review.id}
+                                    className="absolute top-4 right-4 bg-gray-100 shadow-foreground/30 p-1.5 rounded-md text-foreground 
+                                    hover:text-primary hover:shadow-inner duration-300 transition-all"
+                                    images={images}
+                                />
+                            )}
                         </div>
                     )
                 })}

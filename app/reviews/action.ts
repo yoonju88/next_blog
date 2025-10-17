@@ -21,10 +21,21 @@ export const createReview = async (
         }
     }
     const userId = verifiedToken.uid
+    // 1️⃣ propertyId 기반으로 프로퍼티 이름 조회
+    const propertyDoc = await firestore.collection("properties").doc(propertyId).get();
+    if (!propertyDoc.exists) {
+        return {
+            error: true,
+            message: "Property not found"
+        };
+    }
+    const propertyData = propertyDoc.data();
+    const propertyName = propertyData?.name ?? "Unknown";
 
     const reviewDoc = {
         userId,
         propertyId,
+        propertyName,
         rating: reviewData.rating,
         comment: reviewData.comment,
         userName: reviewData.userName,

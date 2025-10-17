@@ -13,6 +13,7 @@ import { Label } from '@radix-ui/react-dropdown-menu'
 import { Input } from "@/components/ui/input"
 import React, { useState } from 'react'
 import AddToCartButton from "@/components/cart/add-to-cart-button"
+import { useAuth } from "@/context/auth"
 
 
 type Props = {
@@ -39,8 +40,16 @@ export default function PropertyContent({
     userFavourites,
     verifiedToken
 }: Props) {
+    const auth = useAuth()
+    const currentUserId = auth?.user?.uid
+
     const [quantity, setQuantity] = useState(1)
     const [open, setOpen] = useState(false)
+
+
+    const userReview = allreviews.find(review => String(review.userId) === String(currentUserId))
+    const hasReviews = allreviews.length > 0
+    const hasUserReview = !!userReview
 
     return (
         <section className='w-[100%] px-10'>
@@ -59,15 +68,34 @@ export default function PropertyContent({
                         <h1 className="text-4xl title-font font-medium mb-2">{property.name}</h1>
                         <h3 className="text-primary tracking-widest mb-6 font-semibold">{property.subTitle}</h3>
                         <div className="mb-14">
-                            {allreviews.length < 1 && (
+                            {(!hasReviews && !hasUserReview) && (
                                 <Modal
                                     title="New review"
-                                    description="Create your review of this product."
+                                    description="Create your review"
                                 >
                                     <NewReviewForm propertyId={propertyId} />
                                 </Modal>
                             )}
-                            {allreviews.length > 0 && (
+                            {(hasReviews && !hasUserReview) && (
+                                <div className="flex flex-col items-start">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-foreground/80 tracking-widest">{reviewsAverage}/5</span>
+                                        <Rating rating={reviewsAverage} />
+                                        <p>({allreviews.length})</p>
+
+                                    </div>
+                                    <div className="flex gap-4 items-center mt-3">
+                                        <Reviews reviews={allreviews} />
+                                        <Modal
+                                            title="New review"
+                                            description="Create your review"
+                                        >
+                                            <NewReviewForm propertyId={propertyId} />
+                                        </Modal>
+                                    </div>
+                                </div>
+                            )}
+                            {(hasReviews && hasUserReview) && (
                                 <div className="flex flex-col items-start">
                                     <div className="flex items-center gap-2">
                                         <span className="text-foreground/80 tracking-widest">{reviewsAverage}/5</span>
@@ -97,19 +125,22 @@ export default function PropertyContent({
                             }
                         </span>
 
-                        <div className="flex justify-between mt-8">
-                            <div className="flex flex-col gap-4 items-letf flex-nowrap">
+                        <div className="flex justify-between items-center mt-8">
+                            <div className="flex gap-4 items-center flex-nowrap">
                                 <Label className='whitespace-nowrap text-foreground/80'>
-                                    Order Quantity
+                                    Order Quantity :
                                 </Label>
                                 <Input
                                     type="number"
                                     min="1"
                                     max="10"
                                     value={quantity}
-                                    onChange={(e) => setQuantity(Number(e.target.value))}
+                                    onChange={(e) => {
+                                        const val = parseInt(e.target.value, 10)
+                                        setQuantity(isNaN(val) || val < 1 ? 1 : val)
+                                    }}
                                     placeholder='Choose your order quantity'
-                                    className="w-[150px]"
+                                    className="w-[80px] *:text-center border-1"
                                 />
                             </div>
                             <div className="flex  items-center justify-end">

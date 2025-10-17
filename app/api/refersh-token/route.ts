@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-
+// 사용자의 브라우저(클라이언트)가 Firebase로부터 받은 단기 ID 토큰(유효기간 1시간)과 장기 리프레시 토큰을 가집니다. 
+// ID 토큰이 만료될 때쯤, 클라이언트는 이 API(/api/refresh-token)를 호출해서 새 ID 토큰을 발급받아 계속 로그인 상태를 유지합니다.
+//주요 특징: 모든 인증 부담이 클라이언트에 있습니다. 
+// 서버 액션 같은 서버 중심 기능을 사용할 때는 매번 클라이언트가 보내준 단기 토큰을 검증해야 해서 비효율적입니다.
 export const GET = async (request: NextRequest) => {
     const redirectPath = request.nextUrl.searchParams.get("redirect") ?? "/";
 

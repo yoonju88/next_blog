@@ -1,7 +1,6 @@
 "use server"
 import { auth, firestore } from "@/firebase/server"
 import { FieldValue } from "firebase-admin/firestore"
-import { collection, addDoc, getFirestore } from "firebase/firestore";
 import { z } from "zod"
 
 

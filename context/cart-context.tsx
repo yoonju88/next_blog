@@ -55,7 +55,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
             id: property.id,
             property,
             quantity,
+            name: property.name,
+            price: property.price,
+            images: property.images || [],  // images 배열도 함께 저장합니다.
             createdAt: new Date().toISOString()
+
         }
         // 1. 로컬 상태에 추가
         setCartItems(prev => {
@@ -75,14 +79,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
             const userDoc = await getDoc(userRef)
             if (userDoc.exists()) {
                 const userData = userDoc.data()
-                const existingItem = userData.cart?.find((item: CartItem) => item.property.id === property.id)
-
-                if (existingItem) {
-                    const updatedCart = userData.cart.map((item: CartItem) =>
-                        item.property.id === property.id
-                            ? { ...item, quantity: item.quantity + quantity }
-                            : item
-                    )
+                const existingItemIndex = userData.cart?.findIndex((item: any) => item.productId === property.id)
+                if (existingItemIndex > -1) {
+                    const updatedCart = [...userData.cart];
+                    updatedCart[existingItemIndex].quantity += quantity;
                     await setDoc(userRef, { cart: updatedCart }, { merge: true })
                 } else {
                     await updateDoc(userRef, {

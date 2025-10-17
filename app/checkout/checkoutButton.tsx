@@ -2,31 +2,22 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { handleCheckout } from "@/lib/checkout";
+import { useCart } from '@/context/cart-context';
 import { toast } from "sonner"
 
 
-interface CheckoutButtonProps {
-    cartItems: any[];
-    couponCode?: string;
-    discount?: number;
-    usedPoints?: number;
-}
-
-export default function CheckoutButton({
-    cartItems,
-    couponCode = "",
-    discount = 0,
-    usedPoints = 0,
-}: CheckoutButtonProps) {
+export default function CheckoutButton() {
     const [loading, setLoading] = useState(false)
+    const { cartItems } = useCart()
 
     const onCheckoutClick = async () => {
         setLoading(true)
         try {
-            await handleCheckout(cartItems, couponCode, discount, usedPoints);
-        } catch (err) {
-            alert("payment failed")
-            console.log(err)
+            await handleCheckout(cartItems);
+        } catch (err: any) {
+            toast.error("Payment Failed", {
+                description: err.message || "An unknown error occurred.",
+            });
         } finally {
             setLoading(false)
         }

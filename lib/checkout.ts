@@ -15,22 +15,20 @@ export async function handleCheckout(
 
         // Firebase 토큰 발급
         const token = await user.getIdToken()
-        console.log(process.env.STRIPE_SECRET_KEY)
+        //console.log(process.env.STRIPE_SECRET_KEY)
 
-        // 서버에 보낼 카트 아이템을 API 스키마에 맞게 매핑
-        const mappedCartItems = cartItems.map((item: any) => {
-            const basePrice = (item?.property?.onSale && !isNaN(item?.property?.salePrice))
-                ? Number(item.property.salePrice)
-                : Number(item?.property?.price || item?.price || 0)
-            return {
-                productId: item?.id,
-                name: item?.property?.name || item?.name || "Item",
-                price: basePrice,
-                quantity: Number(item?.quantity) || 1,
-            }
-        })
+        // ✅ 2. 서버에 보낼 데이터를 API 스키마에 맞게 최종적으로 매핑합니다.
+        // CartContext에서 오는 '평평한' 구조를 그대로 사용합니다.
+        const mappedCartItems = cartItems.map((item: any) => ({
+            productId: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            images: item.images || [], // images 배열도 포함
+        }));
 
-        // 결제 요청 데이터 구성
+
+        // 3. 결제 요청 데이터 구성
         const payload = {
             firebaseToken: token,
             cartItems: mappedCartItems,

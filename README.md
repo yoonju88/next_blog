@@ -678,117 +678,278 @@ UI 리렌더링: setCartItems([])가 호출되면서 Context가 관리하는 car
 UI Rerendering: As setCartItems([]) is called, the cartItems state managed by the Context is updated. All UI components subscribing to this state (e.g., the cart icon, side modal) automatically re-render, immediately reflecting the empty cart status on the screen.
 
 
+
 ## 오더 리스트 처리 작업 과정
+
 1.백엔드 API 엔드포인트 생성 (/api/orders)
 Prisma를 사용해 현재 로그인된 유저의 주문 내역을 DB에서 조회합니다.
 조회된 주문 내역에 포함된 상품 ID들을 이용해 Firestore에서 해당 상품들의 상세 정보(이름, 이미지 등)를 가져옵니다.
 두 데이터를 조합하여 프론트엔드에 최종 데이터를 전송합니다.
 
-2. 프론트엔드 페이지 생성 (account/orders)
+# Order List Processing Workflow
+	1.	Create a backend API endpoint (/api/orders)
+Using Prisma, fetch the logged-in user’s order history from the database.
+Using the product IDs included in the retrieved orders, fetch detailed product information (name, images, etc.) from Firestore.
+Combine the two datasets and send the final data to the frontend.
+
+⸻
+
+	2.	프론트엔드 페이지 생성 (account/orders)
 Next.js 페이지 컴포넌트를 만듭니다.
 페이지가 로드될 때 위에서 만든 /api/orders API를 호출하여 주문 데이터를 받아옵니다.
 받아온 데이터를 기반으로 UI를 렌더링하고, 로딩 및 에러 상태를 처리합니다.
+	3.	Create a Frontend Page (account/orders)
+Create a Next.js page component.
+When the page loads, call the /api/orders API created above to fetch order data.
+Render the UI based on the received data and handle loading and error states.
 
+⸻
 
-
-기능: 사용자 주문 목록 페이지
+# 사용자 주문 목록 페이지
 
 이 문서는 사용자가 자신의 주문 내역을 확인할 수 있는 페이지를 구현하는 전체 과정을 설명합니다. 이 기능은 Next.js 서버 컴포넌트, 서버 액션, 그리고 보안 강화를 위한 서버 세션 쿠키를 사용하여 구현되었습니다.
 
-구현 순서 및 파일 설명
+User Order History Page
+
+This document explains the entire process of implementing a page where users can view their order history. The feature is implemented using Next.js server components, server actions, and secure server-managed session cookies.
+
+⸻
+
+# 구현 순서 및 파일 설명
+
+Implementation Steps and File Descriptions
+
+⸻
 
 1단계: 데이터베이스 스키마 확장
-
 가장 먼저, 주문에 어떤 상품들이 포함되었는지 저장하기 위해 데이터베이스 구조를 확장했습니다.
 
+Step 1: Extend Database Schema
+First, extend the database structure to store which products are included in an order.
+
+⸻
+
 파일: prisma/schema.prisma
-
 내용:
-
-OrderItem 모델을 새로 생성하여 주문된 개별 상품(상품 ID, 이름, 가격, 수량)을 저장합니다.
-
+OrderItem 모델을 새로 생성하여 주문된 개별 상품(상품 ID, 이름, 가격, 수량)을 저장
 기존 Order 모델에 items OrderItem[] 필드를 추가하여, 하나의 주문이 여러 개의 상품을 가질 수 있도록 1:N 관계를 설정했습니다.
+npx prisma migrate dev 명령어로 데이터베이스에 변경사항을 적용
 
-npx prisma migrate dev 명령어로 데이터베이스에 변경사항을 적용했습니다.
+File: prisma/schema.prisma
+Content:
+Create a new OrderItem model to store individual products in an order (product ID, name, price, quantity).
+Add an items OrderItem[] field to the existing Order model, establishing a 1:N relationship so that a single order can have multiple products.
+Apply the database changes using the command npx prisma migrate dev.
+
+⸻
 
 2단계: 주문 생성 시 상품 목록 저장
-
 결제 시 생성되는 주문 데이터에 상품 목록이 포함되도록 API 로직을 수정했습니다.
 
+Step 2: Save Product List When Creating Orders
+Modify the API logic to include the product list in the order data created during checkout.
+
+⸻
+
 파일: app/api/payment/route.ts
-
 내용:
-
-prisma.order.create 함수 내부에 Prisma의 "중첩 쓰기(nested write)" 기능인 items: { create: ... } 로직을 추가했습니다.
-
+prisma.order.create 함수 내부에 Prisma의 “중첩 쓰기(nested write)” 기능인 items: { create: … } 로직을 추가했습니다.
 이를 통해 Order가 생성될 때, 클라이언트로부터 받은 cartItems 배열을 바탕으로 OrderItem 레코드들이 동시에 생성되어 데이터베이스에 저장됩니다.
 
-3단계: 인증 방식 개선 (서버 세션 쿠키 도입)
+File: app/api/payment/route.ts
+Content:
+Add the Prisma nested write logic items: { create: ... } inside prisma.order.create.
+This ensures that when an Order is created, OrderItem records are simultaneously created in the database based on the cartItems array received from the client.
 
+⸻
+
+3단계: 인증 방식 개선 (서버 세션 쿠키 도입)
 서버 액션에서 사용자를 안전하게 인증하기 위해, 기존의 단기 ID 토큰 방식에서 서버가 직접 관리하는 장기 세션 쿠키 방식으로 전환했습니다.
 
+Step 3: Improve Authentication (Introduce Server Session Cookies)
+To securely authenticate users in server actions, switch from the short-lived ID token method to a server-managed long-term session cookie method.
+
+⸻
+
 생성된 파일: lib/auth/actions.ts
-
 내용:
-
 setAuthCookie: 클라이언트의 ID 토큰을 받아, 서버만 접근할 수 있는 안전한 httpOnly 세션 쿠키를 생성하는 서버 액션입니다.
-
 clearAuthCookie: 로그아웃 시 서버에 생성된 모든 인증 관련 쿠키를 삭제하는 서버 액션입니다.
 
+Created File: lib/auth/actions.ts
+Content:
+setAuthCookie: A server action that receives the client’s ID token and creates a secure httpOnly session cookie accessible only by the server.
+clearAuthCookie: A server action that deletes all authentication-related cookies on logout.
+
+⸻
+
 수정된 파일: @/context/auth.tsx
-
 내용:
-
 AuthProvider의 useEffect 훅을 수정하여, 사용자가 로그인/로그아웃할 때마다 setAuthCookie와 clearAuthCookie를 각각 호출하도록 변경했습니다.
 
-4단계: Firebase와 Prisma 사용자 정보 동기화
+Modified File: @/context/auth.tsx
+Content:
+Update the useEffect hook in AuthProvider to call setAuthCookie and clearAuthCookie each time the user logs in or out.
 
-데이터베이스 마이그레이션 후 발생하는 "User not found" 오류를 해결하기 위해, 두 데이터베이스 간의 사용자 정보를 동기화하는 로직을 추가했습니다.
+⸻
+
+4단계: Firebase와 Prisma 사용자 정보 동기화
+데이터베이스 마이그레이션 후 발생하는 “User not found” 오류를 해결하기 위해, 두 데이터베이스 간의 사용자 정보를 동기화하는 로직을 추가했습니다.
+
+Step 4: Synchronize Firebase and Prisma User Information
+To resolve the “User not found” error after database migration, add logic to synchronize user information between the two databases.
+
+⸻
 
 생성된 파일: lib/user/actions.ts
-
 내용:
+findOrCreateUser 서버 액션을 생성했습니다.
+이 함수는 Firebase uid를 기준으로 Prisma 데이터베이스에 사용자가 있는지 확인하고, 없으면 새로 생성하는 역할(Upsert)을 합니다.
 
-findOrCreateUser 서버 액션을 생성했습니다. 이 함수는 Firebase uid를 기준으로 Prisma 데이터베이스에 사용자가 있는지 확인하고, 없으면 새로 생성하는 역할(Upsert)을 합니다.
+Created File: lib/user/actions.ts
+Content:
+Create a findOrCreateUser server action.
+This function checks whether a user exists in the Prisma database based on the Firebase UID, and if not, creates a new user (Upsert).
+
+⸻
 
 수정된 파일: @/context/auth.tsx
-
 내용:
-
 loginWithGoogle, loginWithEmail 함수 내부에 로그인 성공 직후 findOrCreateUser를 호출하는 로직을 추가하여, 항상 Prisma DB에 최신 사용자 정보가 있도록 보장했습니다.
 
-5단계: 주문 목록 조회 서버 액션 생성
+Modified File: @/context/auth.tsx
+Content:
+Add logic in loginWithGoogle and loginWithEmail to call findOrCreateUser immediately after a successful login, ensuring the Prisma DB always has up-to-date user information.
 
+⸻
+
+5단계: 주문 목록 조회 서버 액션 생성
 인증된 사용자가 자신의 주문 목록을 안전하게 조회할 수 있는 서버 액션을 만들었습니다.
 
+Step 5: Create Server Action to Retrieve Order List
+Create a server action that allows authenticated users to safely retrieve their order list.
+
+⸻
+
 생성된 파일: app/account/order/action.ts
-
 내용:
-
 getOrders 서버 액션을 생성했습니다. 이 함수는 다음을 수행합니다.
-
 브라우저 쿠키에서 session 쿠키를 읽습니다.
-
 auth.verifySessionCookie로 쿠키를 검증하여 사용자를 인증합니다.
-
 Prisma를 사용하여 인증된 사용자의 모든 주문(Order)과 각 주문에 포함된 상품 목록(items) 및 결제 정보(payment)를 함께 조회합니다.
 
-6단계: UI 구현 (서버/클라이언트 컴포넌트 분리)
+Created File: app/account/order/action.ts
+Content:
+Create a getOrders server action. This function:
+Reads the session cookie from the browser.
+Verifies the cookie using auth.verifySessionCookie to authenticate the user.
+Uses Prisma to fetch all orders for the authenticated user, including the items in each order and payment information.
 
+⸻
+
+6단계: UI 구현 (서버/클라이언트 컴포넌트 분리)
 초기 로딩 성능과 코드 유지보수성을 극대화하기 위해 페이지와 UI를 두 개의 컴포넌트로 분리하여 구현했습니다.
 
+Step 6: Implement UI (Separate Server/Client Components)
+To maximize initial loading performance and maintainability, implement the page using two separate components.
+
+⸻
+
 생성된 파일: app/orders/page.tsx (서버 컴포넌트)
-
 내용:
-
 페이지가 로드될 때 서버에서 직접 getOrders 서버 액션을 호출합니다.
-
 인증에 실패하면 로그인 페이지로 리디렉션하고, 성공하면 조회된 orders 데이터를 아래 클라이언트 컴포넌트에 props로 전달합니다.
 
+Created File: app/orders/page.tsx (Server Component)
+Content:
+When the page loads, call the getOrders server action directly on the server.
+If authentication fails, redirect to the login page; if successful, pass the retrieved orders data as props to the client component below.
+
+⸻
+
 생성된 파일: app/orders/_components/OrderList.tsx (클라이언트 컴포넌트)
+내용:
+‘use client’로 선언되어 브라우저에서 실행됩니다.
+부모로부터 받은 orders 데이터를 바탕으로 각 주문의 번호, 상품 목록 테이블, 총액 등을 화면에 렌더링하는 역할만 담당합니다.
+
+Created File: app/orders/_components/OrderList.tsx (Client Component)
+Content:
+Declared with 'use client' to run in the browser.
+Responsible only for rendering each order’s number, product list table, total amount, etc., based on the orders data received from the parent component.
+
+
+
+## 주문 목록에 상품 이미지 및 링크 추가
+## Feature: Add Product Images and Links to Order List
+사용자가 주문 내역 페이지에서 구매한 상품을 시각적으로 쉽게 식별하고, 해당 상품의 상세 페이지로 바로 이동할 수 있도록 대표 이미지와 링크를 표시하는 기능을 추가했습니다.
+
+A feature has been added to display a representative image and link for each product in the order history page, allowing users to easily identify purchased products visually and navigate directly to the product detail page.
+
+⸻
+
+# 구현 순서 및 파일 설명
+# Implementation Steps and File Descriptions
+
+⸻
+
+1단계: 데이터베이스 스키마 확장
+Step 1: Extend Database Schema
+
+⸻
+
+수정된 파일: prisma/schema.prisma
+Modified File: prisma/schema.prisma
 
 내용:
+Content:
 
-'use client'로 선언되어 브라우저에서 실행됩니다.
+OrderItem 모델에 imageUrl: String? 필드를 추가했습니다. 필드를 선택적(?)으로 설정하여, 과거에 이미지가 없던 주문 데이터와의 호환성을 유지했습니다.
+Added an imageUrl: String? field to the OrderItem model. The field is optional (?) to maintain compatibility with past order data that does not include images.
 
-부모로부터 받은 orders 데이터를 바탕으로 각 주문의 번호, 상품 목록 테이블, 총액 등을 화면에 렌더링하는 역할만 담당합니다.
+터미널에서 `npx prisma migrate dev –name add_image_url_to_order_item` 명령어를 실행하여 실제 데이터베이스에 변경사항을 적용했습니다.
+Applied the changes to the database by running the command `npx prisma migrate dev --name add_image_url_to_order_item` in the terminal.
+
+⸻
+
+2단계: 결제 데이터 매핑 로직 수정
+Step 2: Modify Checkout Data Mapping Logic
+
+수정된 파일: lib/checkout.ts
+Modified File: lib/checkout.ts
+
+내용:
+handleCheckout 함수 내부에서 cartItems를 API 요청 본문에 맞게 매핑하는 mappedCartItems 로직을 수정했습니다.
+각 item 객체에 images 배열(상품의 전체 이미지 URL 목록)을 포함시켜 서버로 전달하도록 했습니다.
+Content:
+Updated the mappedCartItems logic inside the handleCheckout function to map cartItems according to the API request body.Included an images array (full list of product image URLs) in each item object to be sent to the server.
+
+⸻
+
+3단계: 주문 생성 시 이미지 URL 저장
+Step 3: Save Image URL When Creating Orders
+
+수정된 파일: app/api/payment/route.ts
+Modified File: app/api/payment/route.ts
+
+내용: 
+Content:
+prisma.order.create 함수 내부, items를 생성하는 로직을 수정했습니다.
+cartItems의 각 item에 포함된 images 배열의 첫 번째 요소(item.images[0])를 OrderItem의 imageUrl 필드에 저장하도록 했습니다. 이미지가 없는 경우를 대비해 null을 저장하는 방어 로직도 추가했습니다.
+Updated the logic that creates items inside the prisma.order.create function.
+Saved the first element of the images array from each cartItem (item.images[0]) into the OrderItem’s imageUrl field. Added a fallback logic to store null if no image exists.
+
+⸻
+
+4단계: UI 컴포넌트에 이미지 및 링크 렌더링
+Step 4: Render Images and Links in UI Component
+
+수정된 파일: app/orders/_components/OrderList.tsx
+Modified File: app/orders/_components/OrderList.tsx
+
+내용:
+Content:
+OrderItem의 TypeScript 타입 정의에 imageUrl: string | null과 productId: string 속성을 추가했습니다.
+next/image 컴포넌트를 사용하여 item.imageUrl 경로의 이미지를 표시했습니다. 이미지가 null일 경우에는 기본 플레이스홀더 UI가 보이도록 처리했습니다.
+next/link 컴포넌트를 사용하여 상품 이미지와 상품명에 /products/${item.productId} 경로로 이동하는 링크를 추가했습니다.
+Added imageUrl: string | null and productId: string properties to the OrderItem TypeScript type.
+Displayed the image from item.imageUrl using the next/image component, showing a default placeholder UI if the image is null. Added links on the product image and name using next/link to navigate to /products/${item.productId}.

@@ -12,6 +12,7 @@ import {
 import { createContext, useState, useEffect, useContext, ReactNode } from "react"
 import { doc, setDoc, getDoc } from "firebase/firestore"
 import { UserProfile } from "@/types/user"
+import { findOrderUser } from "@/lib/user/actions"
 
 interface ParsedToken {
     isAdmin?: boolean;
@@ -95,6 +96,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                     },
                     points: 0, // 초기 적립 포인트 0
                 })
+                // ✅ 3. 로그인 성공 후, findOrCreateUser 서버 액션을 호출하여
+                // Prisma DB에 사용자 정보를 생성하거나 업데이트합니다.
+                await findOrderUser({
+                    firebaseUID: user.uid,
+                    email: user.email!, // email은 non-null임을 보장
+                    name: user.displayName,
+                    points: 0,
+                });
                 console.log('New user created in Firestore:', user.uid);
             } else {
                 // 기존 사용자일 경우 정보 업데이트 (필요하다면)

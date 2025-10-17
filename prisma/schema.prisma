@@ -20,6 +20,7 @@ model User {
   name String?
   orders Order[]
   createdAt DateTime @default(now())
+  points Float @default(0)
 }
 
 model Order {
@@ -30,6 +31,17 @@ model Order {
   status String @default("pending")
   createdAt DateTime @default(now())
   payment Payment?
+  items OrderItem[]
+}
+
+model OrderItem {
+id String @id @default(cuid())
+order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+orderId String
+productId String
+productName String
+price Float  // 구매 시점의 가격
+quantity Int // 구매한 수량
 }
 
 model Payment {

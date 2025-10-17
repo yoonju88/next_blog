@@ -48,6 +48,7 @@ export default function AddSaleDialog({ open, onClose, selectedIds, defaultSaleP
 
             }, token)
             toast.success('Sale applied to selected products ✅')
+            window.dispatchEvent(new CustomEvent('saleUpdated'));
         } catch {
             toast.error('Failed to apply sale ❌')
         }

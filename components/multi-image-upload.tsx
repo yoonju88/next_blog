@@ -5,7 +5,7 @@ import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea
 // npm i @hello-pangea/dnd
 import Image from "next/image";
 import { Badge } from "./ui/badge";
-import { MoveIcon, XIcon } from "lucide-react";
+import { MoveIcon, UploadIcon, XIcon } from "lucide-react";
 
 export type ImageUpload = {
     id?: string;
@@ -55,22 +55,6 @@ export default function MultiImageUpload({
 
     return (
         <div className="w-full max-x-3xl m-auto p-4">
-            <input
-                type='file'
-                ref={uploadInputRef}
-                multiple
-                accept="image/*"
-                className="hidden"
-                onChange={handleInputChange}
-            />
-            <Button
-                type="button"
-                onClick={() => uploadInputRef?.current?.click()}
-                className="w-full"
-                variant="outline"
-            >
-                Upload Images
-            </Button>
             <DragDropContext onDragEnd={handleDragEnd}>
                 <Droppable
                     droppableId="property-images"
@@ -138,6 +122,23 @@ export default function MultiImageUpload({
                     )}
                 </Droppable>
             </DragDropContext>
+            <input
+                type='file'
+                ref={uploadInputRef}
+                multiple
+                accept="image/*"
+                className="hidden"
+                onChange={handleInputChange}
+            />
+            <Button
+                type="button"
+                onClick={() => uploadInputRef?.current?.click()}
+                className="max-w-md mx-auto mt-4 w-full flex gap-2"
+                variant="default"
+            >
+                <UploadIcon />
+                Upload Images
+            </Button>
         </div >
     )
 }

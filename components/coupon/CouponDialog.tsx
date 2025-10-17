@@ -75,7 +75,7 @@ export default function CouponFormDialog({
                     <DialogTitle>{editingCoupon ? "Edit Coupon" : "Create New Coupon"}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                    <div>
+                    <div className="space-y-2">
                         <Label htmlFor="code">Coupon Code</Label>
                         <Input
                             id="code"
@@ -84,7 +84,7 @@ export default function CouponFormDialog({
                             placeholder="SAVE10"
                         />
                     </div>
-                    <div>
+                    <div className="space-y-2">
                         <Label htmlFor="description">Description</Label>
                         <Textarea
                             id="description"
@@ -94,7 +94,7 @@ export default function CouponFormDialog({
                         />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
-                        <div>
+                        <div className="space-y-2">
                             <Label htmlFor="type">Type</Label>
                             <Select
                                 value={formData.type}
@@ -108,7 +108,7 @@ export default function CouponFormDialog({
                                 </SelectContent>
                             </Select>
                         </div>
-                        <div>
+                        <div className="space-y-2">
                             <Label htmlFor="discount">Discount</Label>
                             <Input
                                 id="discount"
@@ -118,9 +118,8 @@ export default function CouponFormDialog({
                             />
                         </div>
                     </div>
-
                     {formData.type === 'percentage' && (
-                        <div>
+                        <div className="space-y-2">
                             <Label htmlFor="maxDiscount">Max Discount (€)</Label>
                             <Input
                                 id="maxDiscount"
@@ -130,8 +129,7 @@ export default function CouponFormDialog({
                             />
                         </div>
                     )}
-
-                    <div>
+                    <div className="space-y-2">
                         <Label htmlFor="minAmount">Minimum Order (€)</Label>
                         <Input
                             id="minAmount"
@@ -140,8 +138,7 @@ export default function CouponFormDialog({
                             onChange={(e) => setFormData({ ...formData, minAmount: parseFloat(e.target.value) || undefined })}
                         />
                     </div>
-
-                    <div>
+                    <div className="space-y-2">
                         <Label htmlFor="usageLimit">Usage Limit</Label>
                         <Input
                             id="usageLimit"
@@ -150,9 +147,8 @@ export default function CouponFormDialog({
                             onChange={(e) => setFormData({ ...formData, usageLimit: parseInt(e.target.value) || 0 })}
                         />
                     </div>
-
                     <div className="grid grid-cols-2 gap-4">
-                        <div>
+                        <div className="space-y-2">
                             <Label htmlFor="validFrom">Valid From</Label>
                             <Input
                                 id="validFrom"
@@ -161,7 +157,7 @@ export default function CouponFormDialog({
                                 onChange={(e) => setFormData({ ...formData, validFrom: new Date(e.target.value) })}
                             />
                         </div>
-                        <div>
+                        <div className="space-y-2">
                             <Label htmlFor="validUntil">Valid Until</Label>
                             <Input
                                 id="validUntil"
@@ -172,8 +168,8 @@ export default function CouponFormDialog({
                         </div>
                     </div>
 
-                    <div className="flex justify-end gap-2">
-                        <Button variant="outline" onClick={() => onOpenChangeAction(false)}>Cancel</Button>
+                    <div className="flex justify-center gap-4 mt-6">
+                        <Button variant="default" onClick={() => onOpenChangeAction(false)} className="bg-primary/80 text-white">Cancel</Button>
                         <Button onClick={handleSubmit}>{editingCoupon ? "Update" : "Create"}</Button>
                     </div>
                 </div>

@@ -14,4 +14,6 @@ export type OrderItem = {
     productName: string
     price: number;
     quantity: number;
+    imageUrl: string | null;
+    productId: string
 }

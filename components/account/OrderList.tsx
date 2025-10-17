@@ -3,13 +3,14 @@ import { Order } from '@/types/order'
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
-    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
+import Image from 'next/image';
+import imageUrlFormatter from '@/lib/imageUrlFormatter';
+import Link from 'next/link';
 
 interface OrderListProps {
     orders: Order[]
@@ -25,6 +26,7 @@ export default function OrderList({ orders }: OrderListProps) {
             </div>
         );
     }
+    console.log(orders[0].items)
     return (
         <div className="container mx-auto max-w-4xl p-4 sm:p-6">
             <div className="space-y-10">
@@ -51,6 +53,7 @@ export default function OrderList({ orders }: OrderListProps) {
                             <Table>
                                 <TableHeader>
                                     <TableRow>
+                                        <TableHead> </TableHead>
                                         <TableHead>Product Name</TableHead>
                                         <TableHead className="text-center">Quantity</TableHead>
                                         <TableHead className="text-right">Price</TableHead>
@@ -60,7 +63,27 @@ export default function OrderList({ orders }: OrderListProps) {
                                 <TableBody>
                                     {order.items.map((item) => (
                                         <TableRow key={item.id}>
-                                            <TableCell className="font-medium">{item.productName}</TableCell>
+                                            <TableCell>
+                                                <Link href={`/property/${item.productId}`}>
+                                                    {item.imageUrl ? (
+                                                        <div className="relative w-16 h-16">
+                                                            <Image
+                                                                src={item.imageUrl.startsWith('http') ? item.imageUrl : imageUrlFormatter(item.imageUrl)}
+                                                                alt={item.productName}
+                                                                fill
+                                                                className="object-cover"
+                                                            />
+                                                        </div>
+                                                    ) : (
+                                                        <div className="w-16 h-16 bg-gray-100 rounded" />
+                                                    )}
+                                                </Link>
+                                            </TableCell>
+                                            <TableCell className="font-medium">
+                                                <Link href={`/property/${item.productId}`}>
+                                                    {item.productName}
+                                                </Link>
+                                            </TableCell>
                                             <TableCell className="text-center">{item.quantity}</TableCell>
                                             <TableCell className="text-right">{item.price.toFixed(2)} €</TableCell>
                                             <TableCell className="text-right">{(item.price * item.quantity).toFixed(2)} €</TableCell>

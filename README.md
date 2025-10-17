@@ -663,7 +663,7 @@ Response: Upon success, it returns a JSON object with a success message and a 20
 
 4. 클라이언트 UI 갱신 (React Context)
 Client-Side UI Update (React Context)
- (File: @/context/CartContext.tsx)
+(File: @/context/CartContext.tsx)
 
 갱신 신호 전송: 클라이언트는 API로부터 성공 응답을 받으면, useCart() 훅에서 가져온 refreshCart() 함수를 호출합니다.
 Sending a Refresh Signal: When the client receives a success response from the API, it calls the refreshCart() function obtained from the useCart() hook.
@@ -676,3 +676,119 @@ Data Re-fetching: The useEffect hook in CartContext includes refreshTrigger in i
 
 UI 리렌더링: setCartItems([])가 호출되면서 Context가 관리하는 cartItems 상태가 업데이트되고, 이 상태를 구독하는 모든 UI 컴포넌트(예: 장바구니 아이콘, 사이드 모달)가 자동으로 리렌더링되어 빈 장바구니 상태를 화면에 즉시 반영합니다.
 UI Rerendering: As setCartItems([]) is called, the cartItems state managed by the Context is updated. All UI components subscribing to this state (e.g., the cart icon, side modal) automatically re-render, immediately reflecting the empty cart status on the screen.
+
+
+## 오더 리스트 처리 작업 과정
+1.백엔드 API 엔드포인트 생성 (/api/orders)
+Prisma를 사용해 현재 로그인된 유저의 주문 내역을 DB에서 조회합니다.
+조회된 주문 내역에 포함된 상품 ID들을 이용해 Firestore에서 해당 상품들의 상세 정보(이름, 이미지 등)를 가져옵니다.
+두 데이터를 조합하여 프론트엔드에 최종 데이터를 전송합니다.
+
+2. 프론트엔드 페이지 생성 (account/orders)
+Next.js 페이지 컴포넌트를 만듭니다.
+페이지가 로드될 때 위에서 만든 /api/orders API를 호출하여 주문 데이터를 받아옵니다.
+받아온 데이터를 기반으로 UI를 렌더링하고, 로딩 및 에러 상태를 처리합니다.
+
+
+
+기능: 사용자 주문 목록 페이지
+
+이 문서는 사용자가 자신의 주문 내역을 확인할 수 있는 페이지를 구현하는 전체 과정을 설명합니다. 이 기능은 Next.js 서버 컴포넌트, 서버 액션, 그리고 보안 강화를 위한 서버 세션 쿠키를 사용하여 구현되었습니다.
+
+구현 순서 및 파일 설명
+
+1단계: 데이터베이스 스키마 확장
+
+가장 먼저, 주문에 어떤 상품들이 포함되었는지 저장하기 위해 데이터베이스 구조를 확장했습니다.
+
+파일: prisma/schema.prisma
+
+내용:
+
+OrderItem 모델을 새로 생성하여 주문된 개별 상품(상품 ID, 이름, 가격, 수량)을 저장합니다.
+
+기존 Order 모델에 items OrderItem[] 필드를 추가하여, 하나의 주문이 여러 개의 상품을 가질 수 있도록 1:N 관계를 설정했습니다.
+
+npx prisma migrate dev 명령어로 데이터베이스에 변경사항을 적용했습니다.
+
+2단계: 주문 생성 시 상품 목록 저장
+
+결제 시 생성되는 주문 데이터에 상품 목록이 포함되도록 API 로직을 수정했습니다.
+
+파일: app/api/payment/route.ts
+
+내용:
+
+prisma.order.create 함수 내부에 Prisma의 "중첩 쓰기(nested write)" 기능인 items: { create: ... } 로직을 추가했습니다.
+
+이를 통해 Order가 생성될 때, 클라이언트로부터 받은 cartItems 배열을 바탕으로 OrderItem 레코드들이 동시에 생성되어 데이터베이스에 저장됩니다.
+
+3단계: 인증 방식 개선 (서버 세션 쿠키 도입)
+
+서버 액션에서 사용자를 안전하게 인증하기 위해, 기존의 단기 ID 토큰 방식에서 서버가 직접 관리하는 장기 세션 쿠키 방식으로 전환했습니다.
+
+생성된 파일: lib/auth/actions.ts
+
+내용:
+
+setAuthCookie: 클라이언트의 ID 토큰을 받아, 서버만 접근할 수 있는 안전한 httpOnly 세션 쿠키를 생성하는 서버 액션입니다.
+
+clearAuthCookie: 로그아웃 시 서버에 생성된 모든 인증 관련 쿠키를 삭제하는 서버 액션입니다.
+
+수정된 파일: @/context/auth.tsx
+
+내용:
+
+AuthProvider의 useEffect 훅을 수정하여, 사용자가 로그인/로그아웃할 때마다 setAuthCookie와 clearAuthCookie를 각각 호출하도록 변경했습니다.
+
+4단계: Firebase와 Prisma 사용자 정보 동기화
+
+데이터베이스 마이그레이션 후 발생하는 "User not found" 오류를 해결하기 위해, 두 데이터베이스 간의 사용자 정보를 동기화하는 로직을 추가했습니다.
+
+생성된 파일: lib/user/actions.ts
+
+내용:
+
+findOrCreateUser 서버 액션을 생성했습니다. 이 함수는 Firebase uid를 기준으로 Prisma 데이터베이스에 사용자가 있는지 확인하고, 없으면 새로 생성하는 역할(Upsert)을 합니다.
+
+수정된 파일: @/context/auth.tsx
+
+내용:
+
+loginWithGoogle, loginWithEmail 함수 내부에 로그인 성공 직후 findOrCreateUser를 호출하는 로직을 추가하여, 항상 Prisma DB에 최신 사용자 정보가 있도록 보장했습니다.
+
+5단계: 주문 목록 조회 서버 액션 생성
+
+인증된 사용자가 자신의 주문 목록을 안전하게 조회할 수 있는 서버 액션을 만들었습니다.
+
+생성된 파일: app/account/order/action.ts
+
+내용:
+
+getOrders 서버 액션을 생성했습니다. 이 함수는 다음을 수행합니다.
+
+브라우저 쿠키에서 session 쿠키를 읽습니다.
+
+auth.verifySessionCookie로 쿠키를 검증하여 사용자를 인증합니다.
+
+Prisma를 사용하여 인증된 사용자의 모든 주문(Order)과 각 주문에 포함된 상품 목록(items) 및 결제 정보(payment)를 함께 조회합니다.
+
+6단계: UI 구현 (서버/클라이언트 컴포넌트 분리)
+
+초기 로딩 성능과 코드 유지보수성을 극대화하기 위해 페이지와 UI를 두 개의 컴포넌트로 분리하여 구현했습니다.
+
+생성된 파일: app/orders/page.tsx (서버 컴포넌트)
+
+내용:
+
+페이지가 로드될 때 서버에서 직접 getOrders 서버 액션을 호출합니다.
+
+인증에 실패하면 로그인 페이지로 리디렉션하고, 성공하면 조회된 orders 데이터를 아래 클라이언트 컴포넌트에 props로 전달합니다.
+
+생성된 파일: app/orders/_components/OrderList.tsx (클라이언트 컴포넌트)
+
+내용:
+
+'use client'로 선언되어 브라우저에서 실행됩니다.
+
+부모로부터 받은 orders 데이터를 바탕으로 각 주문의 번호, 상품 목록 테이블, 총액 등을 화면에 렌더링하는 역할만 담당합니다.

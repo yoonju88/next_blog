@@ -39,14 +39,14 @@ export default function Nav() {
 
     const navLinkClass = (href: string, query?: { key: string; value: string }) =>
         cn(
-            "relative inline-block uppercase text-sm text-foreground hover:text-primary transition-all duration-300 px-1 py-1",
+            "relative inline-block lg:uppercase lg:text-sm text-[12px] text-foreground hover:text-primary transition-all duration-300 px-0.5 py-1",
             "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-full after:bg-primary after:origin-center after:transition-transform after:duration-300",
             isActive(href, query) ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"
         )
 
     return (
         <header className="p-8">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between lg:flex-row flex-col gap-6">
                 <h1 className='text-3xl text-primary font-bold'>
                     <Link href="/">
                         CosCorée
@@ -59,13 +59,13 @@ export default function Nav() {
                                 <NavigationMenuItem>
                                     <NavigationMenuTrigger className="uppercase text-sm">
                                         <span className={cn(
-                                            "relative inline-block uppercase text-sm text-foreground hover:text-primary transition-all duration-300 px-1 py-1",
+                                            "relative inline-block lg:uppercase lg:text-sm text-[12px] text-foreground hover:text-primary transition-all duration-300 px-1 py-1",
                                             "after:content-[''] after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-full after:bg-primary after:origin-center after:transition-transform after:duration-300",
                                             pathname === "/property" && !searchParams.toString() ? "after:scale-x-100" : "after:scale-x-0 hover:after:scale-x-100"
                                         )}>Shop</span>
                                     </NavigationMenuTrigger>
                                     <NavigationMenuContent >
-                                        <ul className="grid gap-2 md:w-[500px] lg:w-[600px] lg:grid-cols-[.75fr_1fr]">
+                                        <ul className="grid gap-2 w-full lg:w-[600px] lg:grid-cols-[.75fr_1fr] grid-cols-[.55fr_1fr] mx-auto">
                                             {/* 왼쪽 이미지 + 설명 */}
                                             <li className="row-span-3">
                                                 <NavigationMenuLink asChild>
@@ -82,9 +82,9 @@ export default function Nav() {
                                                             />
                                                         </div>
                                                         <div className="mb-1 text-lg font-medium">All Products</div>
-                                                        <p className="text-muted-foreground text-sm leading-tight">
+                                                        {/* <p className="text-muted-foreground text-sm leading-tight">
                                                             Browse our full range of skincare, makeup, and sun care products.
-                                                        </p>
+                                                        </p> */}
                                                     </Link>
                                                 </NavigationMenuLink>
                                             </li>

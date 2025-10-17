@@ -76,6 +76,7 @@ export default async function PropertyPage({
     if (token) {
         verifiedToken = await auth.verifyIdToken(token)
     }
+    // console.log("Breadcrumb에 전달된 property 객체:", property);
 
     return (
         <div className="w-full py-24">
@@ -84,7 +85,7 @@ export default async function PropertyPage({
                     <BackButton />
                     <div className="border-r h-3 border-gray-400 mr-3" />
                     <Breadcrumbs items={[{
-                        href: "/property/SkinCare",
+                        href: `/property?category=${property.category.toLowerCase().replace(' ', '')}`,
                         label: `${property.category}`
                     }, {
                         label: `${property.subCategory}`

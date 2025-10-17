@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { handleCheckout } from "./action";
+import { handleCheckout } from "@/lib/checkout";
 import { toast } from "sonner"
 
 

@@ -36,8 +36,8 @@ export default function SlideImages({
             </CarouselContent>
             {images.length > 1 && (
                 <>
-                    <CarouselPrevious className="translate-x-12 size-12" />
-                    <CarouselNext className="-translate-x-12 size-12" />
+                    <CarouselPrevious className="translate-x-14 size-10" />
+                    <CarouselNext className="-translate-x-14 size-10" />
                 </>
             )}
         </Carousel>

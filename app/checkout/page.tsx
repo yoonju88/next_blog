@@ -144,12 +144,7 @@ export default function CheckoutPage() {
             />
             {/* 결제 버튼 */}
             <div className="pt-6">
-                <CheckoutButton
-                    cartItems={cartItems}
-                    couponCode={appliedCoupon?.code}
-                    discount={discount}
-                    usedPoints={usedPoints}
-                />
+                <CheckoutButton />
             </div>
         </main>
     )

@@ -89,6 +89,9 @@ export async function POST(req: NextRequest) {
                         productName: item.name,
                         price: item.price,
                         quantity: item.quantity,
+                        imageUrl: Array.isArray(item.images) && item.images.length > 0
+                            ? item.images[0]
+                            : null,
                     })),
                 },
                 payment: {
@@ -103,7 +106,7 @@ export async function POST(req: NextRequest) {
                 },
             },
         })
-        console.log("DEBUG 10: Order created:", order.id);
+        //console.log(JSON.stringify(cartItems))
         return NextResponse.json({
             url: session.url,
             orderId: order.id

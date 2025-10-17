@@ -1,5 +1,5 @@
 'use client'
-import { removeToken } from "@/context/actions"
+import { clearAuthCookie } from "@/lib/auth/actions"
 import { useAuth } from "@/context/auth"
 import React, { useState } from 'react'
 import { FirebaseError } from "firebase/app";
@@ -41,7 +41,7 @@ export default function DeleteAccountButton() {
                 )
                 await deleteUserFavourites()
                 await deleteUser(auth.user)
-                await removeToken()
+                await clearAuthCookie()
                 toast.success('', { description: "Your current was deleted successfully." });
             } catch (e: unknown) {
                 if (e instanceof FirebaseError) {

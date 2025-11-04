@@ -57,7 +57,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                                     id: (product as { id: string }).id,
                                     property: {
                                         ...item.property,
-                                        id: (product as { id: string }).idㅜ
+                                        id: (product as { id: string }).id
                                     }
                                 }
                             })

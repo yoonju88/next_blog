@@ -27,7 +27,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
                         // 🔹 productId 추출 (id 또는 property.id 둘 다 체크)
                         const productIds = cart
                             .map((item: any) => item.productId || item.id || item.property?.id)
-                            .filter(Boolean)
+                            .filter(Boolean) as string[];
 
                         if (productIds.length === 0) {
                             setCartItems([])
@@ -43,25 +43,25 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
                         const productMap = new Map(productsInDb.map((p: any) => [p.id, p]))
 
+
                         // 🔹 DB에 존재하는 상품만 유지하고, productId 명시적 설정
                         const cartWithExistingProducts = cart
                             .map((item: any) => {
                                 const productId = item.productId || item.id || item.property?.id
                                 const product = productMap.get(productId)
-
-                                if (!product) return null
+                                if (!product || typeof product !== 'object' || !('id' in product)) return null
 
                                 return {
                                     ...item,
-                                    productId: product.id, // 🔥 명시적으로 설정
-                                    id: product.id,
+                                    productId: (product as { id: string }).id, // 🔥 명시적으로 설정
+                                    id: (product as { id: string }).id,
                                     property: {
                                         ...item.property,
-                                        id: product.id
+                                        id: (product as { id: string }).idㅜ
                                     }
                                 }
                             })
-                            .filter(Boolean)
+                            .filter((item: null): item is typeof item => item !== null);
 
                         if (cartWithExistingProducts.length !== cart.length) {
                             console.log("🔥 DB에 없는 상품 자동 제거됨")

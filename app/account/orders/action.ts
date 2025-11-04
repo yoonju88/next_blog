@@ -32,7 +32,11 @@ export async function getOrders() {
             },
         });
         if (!userWithOrders) {
-            throw new Error('User not found');
+            // 유저 자체가 없는 경우
+            return {
+                success: false,
+                error: 'No user found. Please log in or register.'
+            };
         }
         // 4. 주문 목록 반환
         return {
@@ -40,7 +44,7 @@ export async function getOrders() {
             orders: JSON.parse(JSON.stringify(userWithOrders.orders))
         };
     } catch (error: any) {
-        console.error('Failed to get orders:', error.message);
+        console.error('Failed to get orders:', error?.message ?? error);
         // 인증 오류와 일반 오류를 구분하여 메시지 반환
         const errorMessage = error.code?.startsWith('auth/')
             ? 'Authentication failed. Please log in again.'

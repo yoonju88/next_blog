@@ -47,6 +47,13 @@ export default async function AdminDashboard({
                 <Button
                     asChild
                 >
+                    <Link href="/admin-dashboard/orders">
+                        Orders
+                    </Link>
+                </Button>
+                <Button
+                    asChild
+                >
                     <Link href="/admin-dashboard/delivery">
                         Analyse
                     </Link>

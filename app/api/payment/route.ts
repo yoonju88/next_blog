@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from 'stripe'
 import { auth } from "@/firebase/server";
 
+
 // Ensure Node.js runtime (Prisma is not supported on the Edge runtime)
 export const runtime = "nodejs";
 export const dynamic = 'force-dynamic'
 
 console.log("Node.js runtime active")
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient, Prisma, Product } from '@prisma/client'
 
 
 const prisma = new PrismaClient({
@@ -52,11 +53,43 @@ export async function POST(req: NextRequest) {
         const totalDiscountAmount = (discount || 0) + (pointsUsed || 0);
         const finalAmount = Math.max(totalSubtotal - totalDiscountAmount, 0)
         //console.log("DEBUG 6: Total amount:", finalAmount);
+        const productIds = cartItems
+            .map((item: any) => item.productId) // <-- (1) 오타 수정 (porductId -> productId)
+            .filter(Boolean);                   // <-- (2) 'undefined', 'null' 등 필터
+
+        // (3) 유효한 ID가 하나도 없는 경우
+        if (productIds.length === 0) {
+            return NextResponse.json(
+                { message: `Your cart contains no valid items.` },
+                { status: 400 }
+            );
+        }
+        console.log("Incoming productIds:", productIds)
+        const productsInDb = await prisma.product.findMany({
+            where: { id: { in: productIds } },
+            select: { id: true },
+            skip: 0,
+            take: productIds.length,
+        });
+        console.log("Products found in DB:", productsInDb)
+
+        const productIdsInDb = new Set(productsInDb.map(p => p.id));
+        // cartItems에서 추출한 유효한 ID 목록(productIds)과 DB에 실제 있는 ID 목록(productIdsInDb)을 비교
+        const missingProductIds = productIds.filter((id: string) => !productIdsInDb.has(id));
+
+        if (missingProductIds.length > 0) {
+            console.warn(`[Pre-check Failed] Products not found: ${missingProductIds.join(', ')}`);
+            return NextResponse.json(
+                { message: `One or more products (${missingProductIds[0]}) could not be found. Please refresh your cart.` },
+                { status: 400 } // 400 Bad Request
+            );
+        }
         // 4. Stripe Line Items 구성
         // Stripe는 음수 unit_amount를 허용하지 않으므로 최종 금액 단일 라인으로 청구합니다.
         if (finalAmount <= 0) {
             throw new Error("Final amount must be at least €0.01 after discounts/points.");
         }
+
         const lineItems: any[] = [{
             price_data: {
                 currency: 'eur',
@@ -77,40 +110,83 @@ export async function POST(req: NextRequest) {
         })
         //console.log("DEBUG 8: Stripe session created:", session.id);
         //console.log("DEBUG 9: Creating order in DB...");
-        // 6. Prisma Order 생성 (DB 저장)
-        const order = await prisma.order.create({
-            data: {
-                userId: user.id,
-                totalAmount: finalAmount,
-                status: 'pending',
-                items: {
-                    create: cartItems.map((item: any) => ({
-                        productId: item.productId,
-                        productName: item.name,
-                        price: item.price,
-                        quantity: item.quantity,
-                        imageUrl: Array.isArray(item.images) && item.images.length > 0
-                            ? item.images[0]
-                            : null,
-                    })),
-                },
-                payment: {
-                    create: {
-                        provider: 'stripe',
-                        amount: finalAmount,
-                        status: 'unpaid',
-                        stripeSessionId: session.id,
-                        couponCode: couponCode || null,
-                        pointsUsed: pointsUsed || 0,
+        // --- 재고 확인 및 주문 생성 트랜잭션 ---
+        const requestItems = cartItems.map((item: any) => ({
+            id: item.productId,
+            quantity: item.quantity,
+        })).filter(item => item.id && item.quantity > 0)
+
+        const order = await prisma.$transaction(async (tx) => {
+            // 5-1. 주문할 상품들의 현재 재고를 확인합니다. (최적화)
+            const idsToLock = requestItems.map(i => i.id)
+            const productsToLock = await tx.$queryRaw<Product[]>`
+                SELECT * FROM "Product"
+                WHERE id IN (${Prisma.join(idsToLock)})
+                FOR UPDATE
+            `
+
+            // 5-2. 재고가 충분한지 확인합니다.
+            for (const item of requestItems) {
+                const product = productsToLock.find((p) => p.id === item.id);
+                if (!product) {
+                    // Pre-check에서 확인했지만, 트랜잭션 안전을 위해 한 번 더 확인
+                    throw new Error(`Product with ID ${item.id} not found.`);
+                }
+                if (product.stock < item.quantity) {
+                    throw new Error(
+                        `Not enough stock for ${product.name}. Available: ${product.stock}, Requested: ${item.quantity}`
+                    );
+                }
+            }
+
+            // 6. Prisma Order 생성 (DB 저장)
+            const createOrder = await tx.order.create({
+                data: {
+                    userId: user.id,
+                    totalAmount: finalAmount,
+                    status: 'pending',
+                    items: {
+                        create: cartItems.map((item: any) => ({
+                            productId: item.productId,
+                            productName: item.name,
+                            price: item.price,
+                            quantity: item.quantity,
+                            imageUrl: Array.isArray(item.images) && item.images.length > 0
+                                ? item.images[0]
+                                : null,
+                        })),
+                    },
+                    payment: {
+                        create: {
+                            provider: 'stripe',
+                            amount: finalAmount,
+                            status: 'unpaid',
+                            stripeSessionId: session.id,
+                            couponCode: couponCode || null,
+                            pointsUsed: pointsUsed || 0,
+                        },
                     },
                 },
-            },
+            })
+            // 5-4. 재고를 차감합니다.
+            for (const item of requestItems) {
+                await tx.product.update({
+                    where: { id: item.id },
+                    data: {
+                        stock: {
+                            decrement: item.quantity
+                        }
+                    }
+                });
+            }
+            console.log(`✅ Stock updated and Order ${createOrder.id} created successfully.`);
+            //console.log(JSON.stringify(cartItems))
+            return createOrder
         })
-        //console.log(JSON.stringify(cartItems))
         return NextResponse.json({
             url: session.url,
-            orderId: order.id
-        })
+            order // 트랜잭션에서 반환된 값
+        });
     } catch (error: any) {
         console.error("💥 Payment Error:", error)
         return NextResponse.json(

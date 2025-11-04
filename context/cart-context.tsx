@@ -9,14 +9,11 @@ import { doc, setDoc, getDoc, arrayUnion, arrayRemove, updateDoc } from 'firebas
 
 const CartContext = createContext<CartContextType | undefined>(undefined)
 
-
 export function CartProvider({ children }: { children: ReactNode }) {
     const { user } = useAuth()
     const [cartItems, setCartItems] = useState<CartItem[]>([])
-    // 이 값이 변경되면 장바구니 데이터 로딩을 강제합니다.
     const [refreshTrigger, setRefreshTrigger] = useState(0)
 
-    // 1. useEffect 훅이 user와 refreshTrigger의 변경을 감지하고, 그에 따라 loadCartItems를 호출합니다.
     useEffect(() => {
         const loadCartItems = async () => {
             if (user) {
@@ -25,43 +22,86 @@ export function CartProvider({ children }: { children: ReactNode }) {
                     const userDoc = await getDoc(userRef)
                     if (userDoc.exists()) {
                         const userData = userDoc.data()
-                        setCartItems(userData.cart || [])
+                        const cart = userData.cart || []
+
+                        // 🔹 productId 추출 (id 또는 property.id 둘 다 체크)
+                        const productIds = cart
+                            .map((item: any) => item.productId || item.id || item.property?.id)
+                            .filter(Boolean)
+
+                        if (productIds.length === 0) {
+                            setCartItems([])
+                            return
+                        }
+
+                        // 🔹 DB에서 실제 상품 정보 가져오기
+                        const productsInDb = await fetch('/api/products', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ ids: productIds })
+                        }).then(res => res.json())
+
+                        const productMap = new Map(productsInDb.map((p: any) => [p.id, p]))
+
+                        // 🔹 DB에 존재하는 상품만 유지하고, productId 명시적 설정
+                        const cartWithExistingProducts = cart
+                            .map((item: any) => {
+                                const productId = item.productId || item.id || item.property?.id
+                                const product = productMap.get(productId)
+
+                                if (!product) return null
+
+                                return {
+                                    ...item,
+                                    productId: product.id, // 🔥 명시적으로 설정
+                                    id: product.id,
+                                    property: {
+                                        ...item.property,
+                                        id: product.id
+                                    }
+                                }
+                            })
+                            .filter(Boolean)
+
+                        if (cartWithExistingProducts.length !== cart.length) {
+                            console.log("🔥 DB에 없는 상품 자동 제거됨")
+                            await setDoc(userRef, { cart: cartWithExistingProducts }, { merge: true })
+                        }
+
+                        setCartItems(cartWithExistingProducts)
                     } else {
                         setCartItems([])
                     }
                 } catch (error) {
-                    console.error("Error loading cart items:", error);
-                    setCartItems([]);
+                    console.error("Error loading cart items:", error)
+                    setCartItems([])
                 }
             } else {
-                // 2. user가 없으면 무한 호출 대신, 장바구니를 그냥 비웁니다.
                 setCartItems([])
             }
         }
-
         loadCartItems()
     }, [user, refreshTrigger])
 
-    //장바구니 갱신을 강제하는 함수
     const refreshCart = useCallback(() => {
         setRefreshTrigger(prev => prev + 1)
-        console.log("Cart refresh trigger updated.");
+        console.log("Cart refresh trigger updated.")
     }, [])
 
     const addToCart = async (property: Property, quantityInput?: number) => {
-        const quantity = !quantityInput || isNaN(quantityInput) || quantityInput < 1 ? 1 : quantityInput;
+        const quantity = !quantityInput || isNaN(quantityInput) || quantityInput < 1 ? 1 : quantityInput
 
         const newItem = {
             id: property.id,
+            productId: property.id, // 🔥 명시적으로 추가
             property,
             quantity,
             name: property.name,
             price: property.price,
-            images: property.images || [],  // images 배열도 함께 저장합니다.
+            images: property.images || [],
             createdAt: new Date().toISOString()
-
         }
-        // 1. 로컬 상태에 추가
+
         setCartItems(prev => {
             const existing = prev.find(item => item.property.id === property.id)
             if (existing) {
@@ -73,16 +113,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
             }
             return [...prev, newItem]
         })
-        // 2. 파이어스토어 유저 데이터에 저장
+
         if (user) {
             const userRef = doc(db, 'users', user.uid)
             const userDoc = await getDoc(userRef)
             if (userDoc.exists()) {
                 const userData = userDoc.data()
-                const existingItemIndex = userData.cart?.findIndex((item: any) => item.productId === property.id)
+                const existingItemIndex = userData.cart?.findIndex(
+                    (item: any) => (item.productId || item.id) === property.id
+                )
                 if (existingItemIndex > -1) {
-                    const updatedCart = [...userData.cart];
-                    updatedCart[existingItemIndex].quantity += quantity;
+                    const updatedCart = [...userData.cart]
+                    updatedCart[existingItemIndex].quantity += quantity
                     await setDoc(userRef, { cart: updatedCart }, { merge: true })
                 } else {
                     await updateDoc(userRef, {
@@ -101,7 +143,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
             const userDoc = await getDoc(userRef)
             if (userDoc.exists()) {
                 const userData = userDoc.data()
-                const itemToRemove = userData.cart.find((item: CartItem) => item.property.id === propertyId)
+                const itemToRemove = userData.cart.find(
+                    (item: CartItem) => item.property.id === propertyId
+                )
                 if (itemToRemove) {
                     await updateDoc(userRef, {
                         cart: arrayRemove(itemToRemove)
@@ -187,33 +231,33 @@ export function useCart() {
 }
 
 export function useUserPoints(userId?: string) {
-    const [points, setPoints] = useState<number>(0);
+    const [points, setPoints] = useState<number>(0)
 
     useEffect(() => {
         if (!userId) {
-            setPoints(0);
-            return;
+            setPoints(0)
+            return
         }
 
         const fetchPoints = async () => {
             try {
-                const userRef = doc(db, "users", userId);
-                const userSnap = await getDoc(userRef);
+                const userRef = doc(db, "users", userId)
+                const userSnap = await getDoc(userRef)
 
                 if (userSnap.exists()) {
-                    const data = userSnap.data();
-                    setPoints(typeof data.points === "number" ? data.points : 0);
+                    const data = userSnap.data()
+                    setPoints(typeof data.points === "number" ? data.points : 0)
                 } else {
-                    setPoints(0);
+                    setPoints(0)
                 }
             } catch (error) {
-                console.error("Error fetching user points:", error);
-                setPoints(0);
+                console.error("Error fetching user points:", error)
+                setPoints(0)
             }
-        };
+        }
 
-        fetchPoints();
-    }, [userId]);
+        fetchPoints()
+    }, [userId])
 
-    return points;
+    return points
 }

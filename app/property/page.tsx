@@ -41,6 +41,27 @@ export default async function PropertyPage({ searchParams }: { searchParams: Pro
         pagination: { pageSize: 8 },
     });
 
+    // 🔥 Firebase 상품들을 Prisma에 동기화
+    if (properties.length > 0) {
+        try {
+            await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/products`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    products: properties.map(p => ({
+                        id: p.id,
+                        name: p.name,
+                        price: p.onSale && p.salePrice ? p.salePrice : p.price,
+                        images: p.images || [],
+                        stock: 50 // Firebase에 재고 필드가 있다면 p.stock 사용
+                    }))
+                })
+            });
+        } catch (error) {
+            console.error("Failed to sync products:", error);
+        }
+    }
+
     const filteredProperties = properties
         .filter(p => !sale || p.onSale) // sale 필터
         .sort((a, b) => (sort === "best" ? (b.soldQuantity || 0) - (a.soldQuantity || 0) : 0));

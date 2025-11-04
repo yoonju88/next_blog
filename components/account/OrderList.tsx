@@ -11,6 +11,7 @@ import {
 import Image from 'next/image';
 import imageUrlFormatter from '@/lib/imageUrlFormatter';
 import Link from 'next/link';
+import EmptyList from '@/components/EmptyList';
 
 interface OrderListProps {
     orders: Order[]
@@ -19,11 +20,12 @@ export default function OrderList({ orders }: OrderListProps) {
 
     if (!orders || orders.length === 0) {
         return (
-            <div className="container mx-auto max-w-4xl p-4 sm:p-6">
-                <div className="text-center bg-gray-50 p-10 rounded-lg">
-                    <p className="text-gray-500">You have no orders yet.</p>
-                </div>
-            </div>
+            <EmptyList
+                title="No Orders Yet"
+                description="You haven't placed any orders. Start exploring our products and add them to your cart!"
+                buttonHref='/'
+                buttonText="Return to Home"
+            />
         );
     }
     console.log(orders[0].items)

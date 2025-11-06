@@ -28,7 +28,6 @@ export default function OrderList({ orders }: OrderListProps) {
             />
         );
     }
-    console.log(orders[0].items)
     return (
         <div className="container mx-auto max-w-4xl p-4 sm:p-6">
             <div className="space-y-10">

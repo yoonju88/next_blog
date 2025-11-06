@@ -5,7 +5,10 @@ const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
     try {
-        const { products } = await req.json();
+        const data = await req.json();
+
+        // 데이터가 배열이 아니면 배열로 변환
+        const products = Array.isArray(data) ? data : [data];
 
         // Firebase 상품들을 Prisma에 upsert
         for (const product of products) {

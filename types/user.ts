@@ -1,19 +1,25 @@
+export interface Address {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+}
+
+export interface Preferences {
+    categories?: string[];
+    notifications?: boolean;
+};
+
 export interface UserProfile {
     displayName?: string;
+    firstName?: string;
+    lastName?: string;
+    email?: string;
     photoURL?: string;
-    address?: {
-        street: string;
-        city: string;
-        state: string;
-        zipCode: string;
-        country: string;
-    };
     phoneNumber?: string;
     birthDate?: string;
-    preferences?: {
-        categories?: string[];
-        notifications?: boolean;
-    };
+    address?: Address;
     points?: number;
-    email?: string;
+    preferences?: Preferences;
 }

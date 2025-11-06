@@ -47,6 +47,12 @@ export async function GET(req: NextRequest) {
                 where: { id: payment.orderId },
                 data: { status: 'completed' }
             });
+            // 유저 포인트 적립
+            const pointsToAdd = Math.floor(payment.amount / 100); // 
+            await prisma.user.update({
+                where: { id: payment.order.userId },
+                data: { points: { increment: pointsToAdd } }
+            });
 
             return NextResponse.json({
                 success: true,

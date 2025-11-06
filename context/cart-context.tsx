@@ -229,7 +229,7 @@ export function useCart() {
     }
     return context
 }
-
+/*
 export function useUserPoints(userId?: string) {
     const [points, setPoints] = useState<number>(0)
 
@@ -260,4 +260,4 @@ export function useUserPoints(userId?: string) {
     }, [userId])
 
     return points
-}
+}*/

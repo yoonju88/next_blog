@@ -21,7 +21,7 @@ export async function addUserPoints(userId: string, points: number) {
 }
 
 // 포인트 차감
-export async function useUserPoints(userId: string, points: number) {
+export async function usedUserPoints(userId: string, points: number) {
     return prisma.user.update({
         where: { id: userId },
         data: { points: { decrement: points } },

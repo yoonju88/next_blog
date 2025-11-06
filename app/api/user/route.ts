@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/firebase/server";
-import { addUserPoints, useUserPoints, getUserPoints } from '../../account/action';
+import { addUserPoints, deductUserPoints, getUserPoints } from '../../account/action';
 
 export async function POST(req: NextRequest) {
     try {
@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
         }
 
         if (action === "usePoints") {
-            const user = await useUserPoints(userId, amount);
+            const user = await deductUserPoints(userId, amount);
             return NextResponse.json({ success: true, points: user.points });
         }
 

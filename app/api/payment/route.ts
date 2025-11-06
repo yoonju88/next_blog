@@ -64,14 +64,13 @@ export async function POST(req: NextRequest) {
                 { status: 400 }
             );
         }
-        console.log("Incoming productIds:", productIds)
+
         const productsInDb = await prisma.product.findMany({
             where: { id: { in: productIds } },
             select: { id: true },
             skip: 0,
             take: productIds.length,
         });
-        console.log("Products found in DB:", productsInDb)
 
         const productIdsInDb = new Set(productsInDb.map(p => p.id));
         // cartItems에서 추출한 유효한 ID 목록(productIds)과 DB에 실제 있는 ID 목록(productIdsInDb)을 비교
@@ -106,7 +105,10 @@ export async function POST(req: NextRequest) {
             mode: 'payment',
             // 💡 세금, 배송비 등 추가 옵션을 나중에 여기에 추가 가능
             success_url: `${origin}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${origin}/payment/cancel`
+            cancel_url: `${origin}/payment/cancel`,
+            metadata: {
+                userId: user.id
+            }
         })
         //console.log("DEBUG 8: Stripe session created:", session.id);
         //console.log("DEBUG 9: Creating order in DB...");

@@ -11,7 +11,6 @@ import UpdateProfileForm from './update-profile-form';
 import { Input } from '@/components/ui/input';
 
 export default async function Account() {
-
     const cookieStore = await cookies();
     const token = cookieStore.get("firebaseAuthToken")?.value
     //console.log(token)
@@ -46,7 +45,6 @@ export default async function Account() {
                         <UpdatePasswordForm />
                     )}
                 </div>
-
                 <UpdateProfileForm
                     initialData={{
                         displayName: decodedToken.name || '',
@@ -60,8 +58,9 @@ export default async function Account() {
                             country: ''
                         },
                         phoneNumber: decodedToken.phone_number || '',
-                        birthDate: decodedToken.birth_date || ''
+                        birthDate: decodedToken.birth_date || '',
                     }}
+                    userId={(await user).uid}
                 />
             </CardContent>
             <div className="border-foreground/20 border-t-1" />

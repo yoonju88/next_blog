@@ -35,7 +35,6 @@ export default function OrderList({ orders }: OrderListProps) {
                 {orders.map((order) => {
                     // 각 주문별 총 상품 수량을 계산합니다.
                     const totalQuantity = order.items.reduce((sum, item) => sum + item.quantity, 0);
-
                     return (
                         <div key={order.id} className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
 
@@ -46,7 +45,7 @@ export default function OrderList({ orders }: OrderListProps) {
                                     Ordered on: {new Date(order.createdAt).toLocaleDateString()}
                                 </p>
                                 <p className="text-sm text-gray-500 mt-1">
-                                    Payment satatus : <span className='text-green-500 '>{order.status}</span>
+                                    Payment satatus : <span className='text-green-500 capitalize'>{order.status}</span>
                                 </p>
                             </div>
 

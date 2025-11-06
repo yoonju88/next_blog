@@ -1,7 +1,7 @@
 'use client'
 import { useState, useMemo } from "react"
 import { useAuth } from "@/context/auth";
-import { useCart, useUserPoints } from "@/context/cart-context"
+import { useCart } from "@/context/cart-context"
 import { getCouponByCode, validateCoupon, calculateDiscount } from '@/lib/coupons'
 import { Coupon } from '@/types/coupon'
 import { calculateShippingFee } from "@/lib/shipping"
@@ -11,11 +11,13 @@ import PointInput from "@/components/cart/PointInput";
 import SummaryPayment from "@/components/cart/SummaryPayment";
 import CheckoutButton from "./checkoutButton";
 import { toast } from "sonner"
+import { useUserPoints } from '@/lib/user/useUserPoints'
 
 export default function CheckoutPage() {
     const { user } = useAuth();
+    const [refreshPoints, setRefreshPoints] = useState(0);
+    const userPoints = useUserPoints(user?.uid, refreshPoints)
     const { cartItems, totalItems, totalPrice, updateQuantity, removeFromCart, clearCart } = useCart();
-    const userPoints = useUserPoints(user?.uid);
     const [couponCode, setCouponCode] = useState("");
     const [discount, setDiscount] = useState(0);
     const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
@@ -55,7 +57,6 @@ export default function CheckoutPage() {
             }, 0),
         [cartItems]
     );
-
 
     const totalDiscount = totalWithSaleDiscount + discount + usedPoints + shippingFee;
 
@@ -112,6 +113,12 @@ export default function CheckoutPage() {
         setCouponStatus("idle");
     };
 
+    const handlePaymentSuccess = () => {
+        // 결제 성공 후 포인트 훅 재호출
+        setRefreshPoints(prev => prev + 1)
+        toast.success("Payment completed! Points updated.")
+    }
+
     return (
         <main className="max-w-4xl mx-auto p-8 space-y-8">
             <h1 className="text-3xl font-bold mb-6">Checkout</h1>
@@ -144,7 +151,11 @@ export default function CheckoutPage() {
             />
             {/* 결제 버튼 */}
             <div className="pt-6">
-                <CheckoutButton />
+                <CheckoutButton
+                    couponCode={appliedCoupon?.code}
+                    discount={discount}
+                    pointsUsed={userPoints}
+                />
             </div>
         </main>
     )

@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/auth'
 import { useCart } from "@/context/cart-context"
+import { toast } from 'sonner'
+
 
 export default function PaymentSuccessPage() {
     const searchParams = useSearchParams()
@@ -29,18 +31,17 @@ export default function PaymentSuccessPage() {
 
         const verifyPaymentAndClearCart = async () => {
             try {
-                // 2. 결제 확인 API 호출
+                // 1. 결제 확인 API 호출
                 const res = await fetch(`/api/payment/verify?session_id=${sessionId}`)
                 const data = await res.json()
 
                 if (!res.ok || !data.success) {
                     throw new Error(data.message || 'Payment Verification failed')
                 }
-                setStatus('✅ Payment successful! Your order has been confirmed.')
+                setStatus('Payment successful! Your order has been confirmed.')
                 setError(false)
 
-                // 3. 장바구니 비우기 API 호출 (결제 확인 성공 후 실행)
-                // 토큰 만료 문제를 방지하기 위해 true 플래그로 토큰을 새로고침
+                // 2. 장바구니 비우기 API 호출 (결제 확인 성공 후 실행)
                 const idToken = await currentUser.getIdToken(true);
                 const cartClearRes = await fetch('/api/cart', {
                     method: 'DELETE',
@@ -58,10 +59,21 @@ export default function PaymentSuccessPage() {
                     const errorText = await cartClearRes.text();
                     console.error('Failed to clear cart:', errorText);
                 }
+                // 3. 포인트 갱신 성공 메시지
+                toast.success('Payment completed! Points have been updated.', {
+                    duration: 3000,
+                    description: 'Check your account to see your new points balance.'
+                })
+                // 4. 3초 후 주문 내역 페이지로 이동
+                setTimeout(() => {
+                    router.push('/account/orders')
+                }, 3000)
+
             } catch (err) {
                 console.error('Verification error:', err)
                 setStatus('⚠️ An error occurred during verification.')
                 setError(true)
+                toast.error('Payment verification failed')
             } finally { setLoading(false) }
         }
         verifyPaymentAndClearCart();

@@ -9,27 +9,17 @@ import { toast } from "sonner"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/firebase/client"
 import PickCalenderDate from '@/components/account/pickCalenderDate'
+import { useUserPoints } from "@/lib/user/useUserPoints"
+import { UserProfile } from "@/types/user"
+
+type FormData = Omit<UserProfile, 'preferences'>
 
 interface UpdateProfileFormProps {
-    initialData: {
-        displayName: string;
-        lastName: string;
-        firstName: string;
-        address: {
-            street: string;
-            city: string;
-            state: string;
-            zipCode: string;
-            country: string;
-        };
-        phoneNumber: string;
-        birthDate: string;
-        userPoint?: number;
-        userEmail?: string;
-    }
+    initialData: FormData;
+    userId: string
 }
 
-const defaultFormData = {
+const defaultFormData: FormData = {
     displayName: '',
     lastName: '',
     firstName: '',
@@ -42,15 +32,35 @@ const defaultFormData = {
     },
     phoneNumber: '',
     birthDate: '',
-    userPoint: 0,
-    userEmail: ''
+    points: 0,
+    email: ''
 }
 
-export default function UpdateProfileForm({ initialData }: UpdateProfileFormProps) {
+export default function UpdateProfileForm({ initialData, userId }: UpdateProfileFormProps) {
     const auth = useAuth()
     const [isLoading, setIsLoading] = useState(false)
-    const [formData, setFormData] = useState({ ...defaultFormData, ...initialData })
+    const [refreshTrigger, setRefreshTrigger] = useState(0)
+    const userPoints = useUserPoints(userId, refreshTrigger)
+
+    const [formData, setFormData] = useState<FormData>({
+        ...defaultFormData,
+        ...initialData,
+        points: userPoints
+    })
     const [userData, setUserData] = useState<any>(null)
+
+    // userPoints가 변경되면 formData의 points도 업데이트
+    useEffect(() => {
+        setFormData(prev => ({
+            ...prev,
+            points: userPoints
+        }))
+    }, [userPoints])
+
+    // 컴포넌트 마운트 시 포인트 한 번 갱신
+    useEffect(() => {
+        setRefreshTrigger(prev => prev + 1)
+    }, [])
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -65,22 +75,15 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
                     setUserData(data);
                     // 기존 데이터가 있으면 폼 데이터 업데이트
                     setFormData(prev => ({
-                        ...prev,
-                        displayName: data.displayName || prev.displayName,
-                        lastName: data.lastName || prev.lastName,
-                        firstName: data.firstName || prev.firstName,
-                        address: data.address || prev.address,
-                        phoneNumber: data.phoneNumber || prev.phoneNumber,
-                        birthDate: data.birthDate || prev.birthDate,
-                        userPoint: data.points || 0,
-                        userEmail: data.email || ''
+                        ...defaultFormData,
+                        ...data,
+                        points: prev.points
                     }));
                 }
             } catch (error) {
                 console.error("Error fetching user data:", error);
             }
         };
-
         fetchUserData();
     }, [auth?.user]);
 
@@ -91,9 +94,9 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
         setIsLoading(true)
         try {
             await auth.updateUserProfile(formData)
-            toast.success("프로필이 성공적으로 업데이트되었습니다!")
+            toast.success("Profile updated successfully!")
         } catch (error) {
-            toast.error("프로필 업데이트 중 오류가 발생했습니다.")
+            toast.error("An error occurred while updating the profile.")
             console.error("Profile update error:", error)
         } finally {
             setIsLoading(false)
@@ -118,6 +121,7 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
             }))
         }
     }
+
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -235,8 +239,9 @@ export default function UpdateProfileForm({ initialData }: UpdateProfileFormProp
                 <Input
                     id="userPoint"
                     name="userPoint"
-                    value={formData.userPoint}
+                    value={formData.points.toLocaleString()}
                     disabled
+                    className="bg-foreground/10"
                 />
             </div>
             <Button type="submit" disabled={isLoading}>

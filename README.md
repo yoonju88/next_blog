@@ -1045,3 +1045,99 @@ run Script :
 node --loader ts-node/esm scripts/makeAdminByUID.ts
 ```
 
+## 🚀 Admin Order Management
+This feature introduces a secure, server-driven page at /admin/orders where administrators can view, filter, and manage all customer orders.
+
+# How it Works: Data Flow & Component Structure
+Here is the step-by-step flow of how data is fetched and displayed, from the database to the user's screen.
+
+1. Data Foundation (Prisma & Types)
+prisma/schema.prisma: The User model is updated with an isAdmin: Boolean field to handle authorization.
+types/order.ts: Defines all TypeScript structures for the data, such as Order, Payment, OrderUser, and the API response type GetOrdersResponse.
+types/adminOrderList.ts: Defines the AdminOrderListProps used by the page component.
+
+2. Server-Side Logic & API 
+This feature uses a reusable core function for data access, which is then exposed in two ways: as a Server Action and as a REST API.
+
+app/admin/orders/action.ts:
+Contains the core Server Action getAllOrders().
+
+This function is the single source of truth for fetching data. It is responsible for:
+Verifying the user's session cookie (auth.verifySessionCookie).
+Checking the database to ensure the user has the isAdmin flag set to true.
+Using Prisma to query the database for all orders, including related user, payment, and items.
+Calculating aggregate statistics (total revenue, total orders, etc.).
+
+api/admin/orders/route.ts:
+This file imports the getAllOrders() function from action.ts.
+It wraps the action in a standard Next.js Route Handler, creating a GET /api/admin/orders REST API endpoint.
+This makes the admin data accessible for client-side fetching (e.g., using SWR/React Query) or for use by external applications.
+
+3. Page Rendering (Server Component Entrypoint)
+
+app/admin/orders/page.tsx:
+This is the main Server Component for the /admin/orders route.
+It calls getAllOrders() directly on the server to fetch the initial data.
+It handles redirects (e.g., to /login or /) if the user is not authenticated or not an admin.
+It renders the StatsCard components with the aggregate data.
+It passes the full orders list down to the client wrapper.
+
+4. Client-Side State Management (Context)
+
+context/FilterContext.tsx:
+Creates the global React Context for managing the filter state.
+Provides the FilterProvider and the useFilters hook to share state between the filter bar and the order list.
+
+app/admin/orders/AdminOrderListClient.tsx:
+A simple Client Component Wrapper whose only job is to wrap AdminOrderList with the FilterProvider. This isolates the client-side state from the server-rendered page.
+
+5. Main UI Logic (Client Component)
+
+components/admin/AdminOrderList.tsx:
+The primary Client Component that manages the interactive UI.
+It receives the full orders list as props from the server.
+It uses the useFilters() hook to get the current filter values (status, user, dates).
+It uses useMemo to perform all client-side filtering and pagination based on the context state, preventing unnecessary re-renders.
+It manages local state for pagination (currentPage) and expanding orders (expandedOrders).
+
+6. UI Building Blocks (Client Components)
+
+This component is supported by several reusable child components:
+components/admin/StatsCard.tsx: Displays a single statistic (e.g., "Total Revenue").
+components/admin/FilterBar.tsx: Renders the dropdowns and date inputs. When a user changes a value, it calls setStatus, setUser, etc., to update the FilterContext.
+components/admin/OrderHeader.tsx: Renders the summary for a single order.
+components/admin/OrderDetails.tsx: Renders the expanded view of an order (items, payment details).
+components/admin/Pagination.tsx: Renders the "Next" and "Prev" buttons and page numbers.
+
+⚙️ 어드민 주문 페이지 작동 순서
+이 시스템은 **"서버에서 모든 데이터를 한 번에 가져오고, 필터링은 클라이언트에서 처리"**하는 방식으로 작동합니다.
+(요청) 어드민 유저가 /admin/orders 페이지에 접속합니다.
+(서버) app/admin/orders/page.tsx (서버 컴포넌트)가 요청을 받습니다.
+(서버) page.tsx는 app/admin/orders/action.ts에 있는 getAllOrders() 서버 액션을 직접 await로 호출합니다.
+(서버) getAllOrders() 액션이 실행됩니다.
+유저의 세션 쿠키를 확인합니다. (인증)
+DB에서 유저의 isAdmin 플래그를 확인합니다. (권한)
+(통과 시) Prisma를 사용해 DB에서 모든 주문 데이터와 통계(총매출 등)를 가져옵니다.
+(서버) page.tsx는 getAllOrders()로부터 받은 데이터를 받습니다.
+통계 데이터로 StatsCard 컴포넌트를 렌더링합니다.
+
+**전체 주문 목록(orders)**을 AdminOrderListClient 컴포넌트에 props로 내려줍니다.
+
+(클라이언트) app/admin/orders/AdminOrderListClient.tsx가 렌더링됩니다.
+이 컴포넌트는 context/FilterContext.tsx의 **FilterProvider**로 하위 컴포넌트들을 감쌉니다.
+(클라이언트) components/admin/AdminOrderList.tsx가 렌더링됩니다.
+부모로부터 받은 **전체 주문 목록(orders)**을 props로 가지고 있습니다.
+useFilters() 훅을 통해 FilterContext의 상태(초기값: 'all', 'all', '', ...)를 읽어옵니다.
+useMemo를 사용해 "전체 주문 목록"을 "현재 필터 상태" 기준으로 필터링합니다.
+FilterBar와 Pagination, 그리고 필터링된 주문 목록을 화면에 그립니다.
+
+🧐 유저가 필터를 변경할 때 (예: 'User' 검색)
+(클라이언트) 유저가 FilterBar의 'User' 인풋에 "John"을 입력합니다.
+(클라이언트) FilterBar의 onChange 이벤트가 setUser("John")을 호출합니다.
+(클라이언트) FilterContext의 user 상태가 "John"으로 변경됩니다.
+(클라이언트) AdminOrderList 컴포넌트가 FilterContext의 변경을 감지하고 리렌더링(re-render)됩니다.
+(클라이언트) AdminOrderList의 useMemo가 다시 실행됩니다.
+props로 가지고 있던 **"전체 주문 목록"**을 다시 반복합니다.
+"John"이라는 이름/이메일이 포함된 주문만 남기고 필터링합니다.
+
+(클라이언트) 화면이 갱신되어 "John"의 주문만 표시됩니다. (서버 API 호출 X)

@@ -953,3 +953,95 @@ next/image 컴포넌트를 사용하여 item.imageUrl 경로의 이미지를 표
 next/link 컴포넌트를 사용하여 상품 이미지와 상품명에 /products/${item.productId} 경로로 이동하는 링크를 추가했습니다.
 Added imageUrl: string | null and productId: string properties to the OrderItem TypeScript type.
 Displayed the image from item.imageUrl using the next/image component, showing a default placeholder UI if the image is null. Added links on the product image and name using next/link to navigate to /products/${item.productId}.
+
+
+### 📖Admin Mode & Prisma Setup Guide
+
+1. Update Prisma Schema
+
+Add isAdmin field to the User model in prisma/schema.prisma:
+
+```bash
+model User {
+  id          String   @id @default(cuid())
+  firebaseUID String   @unique
+  email       String   @unique
+  name        String?
+  orders      Order[]
+  createdAt   DateTime @default(now())
+  points      Float    @default(0)
+  isAdmin     Boolean  @default(false)  // ← Newly added
+}
+```
+
+2. Run Database Migration
+```bash
+npx prisma migrate dev --name add_isAdmin_to_user
+```
+
+3. Make Existing User an Admin (by Firebase UID)
+
+scripts/makeAdminByUID.ts:
+```bash
+const { PrismaClient } = require("@prisma/client");
+
+const prisma = new PrismaClient();
+
+async function makeAdminByUID(firebaseUID) {
+  try {
+    const updated = await prisma.user.update({
+      where: { firebaseUID },
+      data: { isAdmin: true },
+    });
+    console.log("✅ Updated user to admin:", updated);
+  } catch (error) {
+    console.error("❌ Failed to update user:", error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+
+// 🔹 Replace with the Firebase UID of the admin user
+const adminUID = "PUT_FIREBASE_UID_HERE";
+
+makeAdminByUID(adminUID);
+```
+
+```bash
+npx ts-node scripts/makeAdminByUID.ts
+```
+
+After running, the user’s isAdmin field in the database will be true.
+Using Firebase UID ensures safety even if the email changes.
+
+4. Node.js + ES Modules Setup (Optional)
+
+package.json
+```bash
+{
+  "name": "next_blog",
+  "version": "1.0.0",
+  "type": "module",
+  ...
+}
+```
+
+tsconfig.json
+```bash
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "strict": true
+  }
+}
+```
+
+run Script :
+
+```bash 
+node --loader ts-node/esm scripts/makeAdminByUID.ts
+```
+

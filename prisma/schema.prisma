@@ -21,6 +21,7 @@ model User {
   orders Order[]
   createdAt DateTime @default(now())
   points Float @default(0)
+  isAdmin Boolean @default(false)
 }
 
 model Order {
@@ -29,6 +30,7 @@ model Order {
   userId String
   totalAmount Float
   status String @default("pending")
+  shippingAddress Json?
   createdAt DateTime @default(now())
   payment Payment?
   items OrderItem[]

@@ -3,7 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Package } from 'lucide-react';
 
-import FilterBar from './filterBar';
+import FilterBar from './FilterBar';
 import OrderHeader from './OrderHeader';
 import OrderDetails from './OrderDetails';
 import Pagination from './Pagination';

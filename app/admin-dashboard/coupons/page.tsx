@@ -12,7 +12,7 @@ export default async function CouponsPage() {
             <Breadcrumbs
                 items={[
                     { href: "/admin-dashboard", label: "Dashboard" },
-                    { href: "/admin-dashboard/coupons", label: "Coupons" },
+                    { href: "", label: "Coupons" },
                 ]}
             />
             <h1 className="text-3xl font-bold">Coupon Management</h1>

@@ -1,11 +1,12 @@
 import { Payment } from "./payment"
-import { UserProfile } from "./user"
+import { Address } from "./user"
 
 // 간소화된 User 정보 (주문에서 사용)
 export type OrderUser = {
     name: string | null;
     email: string;
     firebaseUID?: string;
+    address: Address;
 }
 
 export type Order = {

@@ -95,7 +95,7 @@ export default function AdminOrderList({ orders }: AdminOrderListProps) {
     }
 
     return (
-        <div className="mt-12">
+        <div className="mt-12 w-full">
             <FilterBar
             />
             <div className="divide-y divide-gray-200 rounded-lg border-gray-200 border">
@@ -107,13 +107,13 @@ export default function AdminOrderList({ orders }: AdminOrderListProps) {
                         <OrderHeader
                             order={order}
                             isExpanded={expandedOrders.has(order.id)}
-                            toggleOrder={toggleOrder}
-                            getStatusColor={getStatusColor}
+                            toggleOrderAction={toggleOrder}
+                            getStatusColorAction={getStatusColor}
                         />
                         {expandedOrders.has(order.id) &&
                             <OrderDetails
                                 order={order}
-                                getPaymentStatusColor={getPaymentStatusColor}
+                                getPaymentStatusColorAction={getPaymentStatusColor}
                             />
                         }
                     </div>

@@ -11,7 +11,7 @@ interface StatsCardProps {
 
 export default function StatsCard({ title, value, bgColor = 'bg-gray-100', children }: StatsCardProps) {
   return (
-    <div className="flex items-center justify-between rounded-lg shadow-md py-4 px-6 border border-gray-200">
+    <div className="flex items-center justify-between rounded-lg shadow-md py-4 px-6 border border-gray-200 lg:w-[30%] w-full">
       <div>
         <p className="text-sm text-foreground mb-1">{title}</p>
         <p className="text-3xl font-bold text-foreground">{value}</p>

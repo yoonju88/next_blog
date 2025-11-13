@@ -1,5 +1,7 @@
 'use client'
 import React from 'react';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { Button } from '../ui/button';
 
 interface PaginationProps {
     currentPage: number;
@@ -10,11 +12,14 @@ interface PaginationProps {
 export default function Pagination({ currentPage, totalPages, goToPage }: PaginationProps) {
     return (
         <div className="flex justify-center items-center gap-2 p-4">
-            <button
+            <Button
                 onClick={() => goToPage(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="px-3 py-1 rounded border bg-gray-100 disabled:opacity-50"
-            >Prev</button>
+                className="px-2 py-1 rounded border disabled:opacity-50"
+            >
+                <ChevronLeftIcon />
+
+            </Button>
 
             {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                 <button
@@ -24,11 +29,13 @@ export default function Pagination({ currentPage, totalPages, goToPage }: Pagina
                 >{page}</button>
             ))}
 
-            <button
+            <Button
                 onClick={() => goToPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
                 className="px-3 py-1 rounded border bg-gray-100 disabled:opacity-50"
-            >Next</button>
+            >
+                <ChevronRightIcon />
+            </Button>
         </div>
     );
 }

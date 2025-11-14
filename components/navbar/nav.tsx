@@ -47,7 +47,7 @@ export default function Nav() {
     return (
         <header className="p-8">
             <div className="flex items-center justify-between lg:flex-row flex-col gap-6">
-                <h1 className='text-3xl text-primary font-bold'>
+                <h1 className='text-3xl text-foreground font-bold'>
                     <Link href="/">
                         CosCorée
                     </Link>

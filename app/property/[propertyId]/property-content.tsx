@@ -26,9 +26,9 @@ type Props = {
 }
 
 const InfoRow = ({ label, value }: { label: string; value: string }) => (
-    <div className="flex border-t border-muted-foreground py-4 w-full">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="ml-auto text-muted-foreground">{value}</span>
+    <div className="flex border-t border-muted-foreground py-4 w-full items-center">
+        <span className="text-muted-foreground whitespace-nowrap w-[25%]">{label}</span>
+        <span className="ml-auto text-muted-foreground text-right w-[75%]">{value}</span>
     </div>
 )
 
@@ -52,8 +52,8 @@ export default function PropertyContent({
     const hasUserReview = !!userReview
 
     return (
-        <section className='w-[100%] px-10'>
-            <div className="container mx-auto">
+        <section className='w-[100%] lg:px-10 px-0'>
+            <div className="mx-auto">
                 <div className="flex flex-wrap lg:flex-nowrap">
                     <div className="lg:basis-1/2 lg:min-w-0 lg:max-w-1/2 w-full">
                         {!!property?.images && (
@@ -63,7 +63,7 @@ export default function PropertyContent({
                             />
                         )}
                     </div>
-                    <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mb-6 lg:mb-0 relative">
+                    <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mb-6 lg:mb-0 relative lg:px-0 px-4 lg:mt-0 mt-10">
                         <h2 className="text-muted-foreground title-font tracking-widest uppercase mb-2">{property.brand}</h2>
                         <h1 className="text-4xl title-font font-medium mb-2">{property.name}</h1>
                         <h3 className="text-primary tracking-widest mb-6 font-semibold">{property.subTitle}</h3>

@@ -19,7 +19,7 @@ export default async function MyFavourites({
     searchParams?: Promise<Record<string, string | undefined>>
 }) {
     const searchParamsValue = await searchParams
-    const pageSize = 3;
+    const pageSize = 4;
     const favourites = await getUserFavourites();
     const allFavouritesIds = favourites.propertyIds || []
 
@@ -55,9 +55,9 @@ export default async function MyFavourites({
     }
 
     return (
-        <div className='text-center'>
-            <h1 className="text-4xl font-semibold mb-10 mt-10">My Favourites</h1>
-            <div className="grid gap-6 lg:grid-cols-3 md:grid-cols-2 grid-cols-1">
+        <div className='text-center py-24 w-full'>
+            <h1 className="text-3xl font-semibold mb-10 mt-10">My Favourites</h1>
+            <div className="grid gap-4 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 mx-auto">
                 {paginatedFavourites.map((property) => {
                     const mainImage = Array.isArray(property.images) && property.images.length > 0
                         ? imageUrlFormatter(property.images[0])
@@ -65,10 +65,10 @@ export default async function MyFavourites({
 
                     const PropertyId = property.id
                     return (
-                        <Card key={PropertyId} className="flex flex-col-2 overflow-hidden mt-10 w-[350px] border-none pt-0">
+                        <Card key={PropertyId} className="flex flex-col-2 overflow-hidden mt-10 border-none pt-0">
                             <CardHeader className="px-0">
                                 <CardTitle >
-                                    <div className="relative flex flex-col justify-center items-center w-full h-[220px] overflow-hidden">
+                                    <div className="relative flex flex-col justify-center items-center w-full h-[250px] overflow-hidden">
                                         <Link href={`/property/${PropertyId}`} >
                                             <Image
                                                 src={mainImage}
@@ -87,24 +87,24 @@ export default async function MyFavourites({
                                             className="absolute top-4 left-4"
                                         />
                                     </div>
-                                    <h4 className="text-foreground/50 mt-6 mb-2 px-4 uppercase text-sm">{property.brand}</h4>
-                                    <h3 className="text-base text-foreground px-4 mb-4 uppercase">{property.name}</h3>
-                                    <CardDescription className="px-4">
-                                        <p className="text-base">
-                                            {/* <span className="line-through pr-2">
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent className="px-4 space-y-4">
+                                <h4 className="text-foreground/50 mb-2 px-4 uppercase text-sm">{property.brand}</h4>
+                                <h3 className="text-base text-foreground px-4 mb-2 capital">{property.name}</h3>
+                                <CardDescription className="px-4">
+                                    <p className="text-base">
+                                        {/* <span className="line-through pr-2">
                                                     {property.price} €
                                                 </span>
                                                 <span className=" text-white px-2 py-1 bg-primary rounded-lg text-sm ">
                                                     Club -5%
                                                 </span> */}
-                                            <span className="text-primary font-bold text-lg pl-2">
-                                                {property.price} €
-                                            </span>
-                                        </p>
-                                    </CardDescription>
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="px-4 space-y-6">
+                                        <span className="text-primary font-bold text-lg pl-2">
+                                            {property.price} €
+                                        </span>
+                                    </p>
+                                </CardDescription>
                                 <div className='flex flex-col gap-6'>
                                     <SelectedQuantity item={property} />
                                 </div>

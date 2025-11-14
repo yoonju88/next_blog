@@ -34,7 +34,7 @@ export default function PropertyTab({
 
     return (
         <div className="relative mb-4 ">
-            <div className="flex justify-center text-center gap-x-4 max-w-[80%] mx-auto">
+            <div className="flex justify-center text-center gap-x-4 w-full mx-auto">
                 {Tabs.map(tab => (
                     <button
                         key={tab}

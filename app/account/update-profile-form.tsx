@@ -244,7 +244,7 @@ export default function UpdateProfileForm({ initialData, userId }: UpdateProfile
                     className="bg-foreground/10"
                 />
             </div>
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading} className="text-primary">
                 {isLoading ? "Saving..." : "Update Profile"}
             </Button>
         </form>

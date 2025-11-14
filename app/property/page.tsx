@@ -81,7 +81,7 @@ export default async function PropertyPage({ searchParams }: { searchParams: Pro
     }
 
     return (
-        <div className='container w-full'>
+        <div className='w-full'>
             <h1 className="text-center text-foreground/80 py-10 mt-10 text-3xl font-semibold uppercase">
                 {title}
             </h1>
@@ -97,13 +97,13 @@ export default async function PropertyPage({ searchParams }: { searchParams: Pro
                     />
                 </Suspense>
             </div>
-            <div className="px-4">
+            <div>
                 {filteredProperties.length === 0 ? (
                     <h2 className="text-center text-muted-foreground py-10 text-4xl">
                         No products found...
                     </h2>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         {filteredProperties.map((property) => (
                             <PropertyCard
                                 key={property.id}

@@ -61,7 +61,7 @@ export default function AuthButtons() {
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                            <Link href="/reviews" >
+                            <Link href="/account/reviews" >
                                 My reviews
                             </Link>
                         </DropdownMenuItem>

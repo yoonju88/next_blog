@@ -12,10 +12,10 @@ import {
 } from "@/components/ui/popover"
 
 type Props = {
-    onDateSelect?: (date: Date) => void
+    onDateSelectAction?: (date: Date) => void
 }
 
-export default function PickCalenderDate({ onDateSelect }: Props) {
+export default function PickCalenderDate({ onDateSelectAction }: Props) {
     const [open, setOpen] = React.useState(false)
     const [date, setDate] = React.useState<Date | undefined>(undefined)
 
@@ -27,7 +27,7 @@ export default function PickCalenderDate({ onDateSelect }: Props) {
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                     <Button
-                        variant="default"
+                        variant="secondary"
                         id="date"
                         className="w-full justify-between font-normal bg-background border-1 border-foreground/10"
                     >
@@ -44,7 +44,7 @@ export default function PickCalenderDate({ onDateSelect }: Props) {
                             if (!selectedDate) return
                             setDate(selectedDate)
                             setOpen(false)
-                            onDateSelect?.(selectedDate)
+                            onDateSelectAction?.(selectedDate)
                         }}
                     />
                 </PopoverContent>

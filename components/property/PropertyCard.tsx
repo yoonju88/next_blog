@@ -16,8 +16,8 @@ export default function PropertyCard({ property, actionButton }: Props) {
         : "/fallback.jpg"
 
     return (
-        <div className="w-full sm:min-w-[300px]" key={property.id}>
-            <div className="relative w-full h-[400px] group overflow-hidden">
+        <div className="w-full">
+            <div className="relative w-full min-w-[250px] h-[400px] group overflow-hidden">
                 <Link href={`/property/${property.id}`} className="block w-full h-full">
                     <div className='relative w-full h-full'>
                         <Image

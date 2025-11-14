@@ -10,7 +10,7 @@ export default function BackButton() {
         <Button
             variant="link"
             onClick={() => router.back()}
-            className="group hover:no-underline hover:font-semibold text-md"
+            className="group hover:no-underline hover:font-semibold text-sm"
         >
             <ArrowLeftIcon /> Return
         </Button>

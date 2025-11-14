@@ -13,7 +13,7 @@ import Image from "next/image"
 import { Avatar } from "@/components/ui/avatar"
 import SlideImages from "@/components/carousel"
 import { useAuth } from "@/context/auth"
-import RemoveReviewButton from "@/app/reviews/remove-review-button"
+import RemoveReviewButton from "@/app/account/reviews/remove-review-button"
 
 type Review = {
     id: string;

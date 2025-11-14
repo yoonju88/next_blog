@@ -11,7 +11,7 @@ export default async function odersPage() {
     const orders = orderData.orders
 
     return (
-        <div className='w-[90%] mt-20'>
+        <div className=' w-full mx-auto mt-20'>
             <h1 className="text-3xl font-bold mb-8 text-center">My Orders</h1>
             <OrderList orders={orders} />
         </div>

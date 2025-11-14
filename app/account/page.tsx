@@ -29,48 +29,52 @@ export default async function Account() {
     )
 
     return (
-        <Card className='py-10 px-4 w-[450px] sm:w-[600px] border-foreground/20'>
-            <CardHeader>
-                <CardTitle className="text-3xl font-bold">
-                    My Account
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-4">
-                <div className="space-y-2">
-                    <Label>Email</Label>
-                    <Input type="email" value={decodedToken.email} disabled />
-                </div>
-                <div>
-                    {!!isPasswordProvider && (
-                        <UpdatePasswordForm />
-                    )}
-                </div>
-                <UpdateProfileForm
-                    initialData={{
-                        displayName: decodedToken.name || '',
-                        lastName: decodedToken.lastName || '',
-                        firstName: decodedToken.fistName || '',
-                        address: decodedToken.address || {
-                            street: '',
-                            city: '',
-                            state: '',
-                            zipCode: '',
-                            country: ''
-                        },
-                        phoneNumber: decodedToken.phone_number || '',
-                        birthDate: decodedToken.birth_date || '',
-                    }}
-                    userId={(await user).uid}
-                />
-            </CardContent>
-            <div className="border-foreground/20 border-t-1" />
-            {!decodedToken.admin && (
-                <CardFooter className='flex flex-col items-start'>
-                    <h2 className='text-red-500 text-xl font-semibold mb-2'>Would you like to delete your account? </h2>
-                    <DeleteAccountButton />
-                </CardFooter>
-            )}
+        <div className="py-24">
+            <Card className='py-10 w-[450px] sm:w-[600px] border-foreground/10'>
+                <CardHeader>
+                    <CardTitle className="text-3xl font-bold">
+                        My Account
+                    </CardTitle>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-4">
+                    <div className="space-y-2">
+                        <Label>Email</Label>
+                        <Input type="email" value={decodedToken.email} disabled />
+                    </div>
+                    <div>
+                        {!!isPasswordProvider && (
+                            <UpdatePasswordForm />
+                        )}
+                    </div>
+                    <UpdateProfileForm
+                        initialData={{
+                            displayName: decodedToken.name || '',
+                            lastName: decodedToken.lastName || '',
+                            firstName: decodedToken.fistName || '',
+                            address: decodedToken.address || {
+                                street: '',
+                                city: '',
+                                state: '',
+                                zipCode: '',
+                                country: ''
+                            },
+                            phoneNumber: decodedToken.phone_number || '',
+                            birthDate: decodedToken.birth_date || '',
+                        }}
+                        userId={(await user).uid}
+                    />
+                </CardContent>
 
-        </Card>
+                {!decodedToken.admin && (
+                    <>
+                        <div className="border-foreground/20 border-t-1" />
+                        <CardFooter className='flex flex-col items-start'>
+                            <h2 className='text-red-500 text-xl font-semibold mb-2'>Would you like to delete your account? </h2>
+                            <DeleteAccountButton />
+                        </CardFooter>
+                    </>
+                )}
+            </Card>
+        </div>
     )
 }

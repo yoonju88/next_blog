@@ -16,10 +16,10 @@ const buttonVariants = cva(
         outline:
           "border-foreground bg-background hover:shadow-md hover:bg-accent transition-all duration-300 hover:text-primary dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+          "bg-gray-100 text-secondary-foreground shadow-xs hover:bg-secondary/80",
         ghost:
           "hover:bg-gray-100/20 shadow-sm shadow-foreground/30 dark:hover:bg-accent/50  hover:shadow-inner transition-all duration-300",
-        link: "text-primary underline-offset-4 hover:underline",
+        calendar: "text-foreground/50 hover:bg-gray-100",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

@@ -19,12 +19,12 @@ export default function ItemSection({ data, title, link }: itemsProps) {
 
     return (
         <section>
-            <h1 className="text-foreground text-4xl text-center font-bold">
+            <h1 className="text-foreground text-3xl text-center font-bold">
                 <Link href={link}>
                     {title}
                 </Link>
             </h1>
-            <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mt-20'>
+            <div className='grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 lg:gap-4 md:gap-4 gap-16 mt-20'>
                 {data.map((item) => (
                     <PropertyCard
                         key={item.id}
@@ -35,7 +35,7 @@ export default function ItemSection({ data, title, link }: itemsProps) {
                                 className={`shrink-0 rounded-2xl bg-gray-100 shadow-sm shadow-foreground/20 p-1 hover:shadow-inner ${hoverEffect}`}
                             >
                                 <Link href={`/property/${item.id}`}>
-                                    <ChevronRight className="w-5 h-5" />
+                                    <ChevronRight className="w-5 h-5 text-primary" />
                                 </Link>
                             </button>
                         }

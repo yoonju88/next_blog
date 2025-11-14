@@ -48,9 +48,9 @@ export default async function ReviewsPage({
     }
 
     return (
-        <section className="w-full mx-auto container px-10 py-10">
-            <h1 className="font-title font-semibold text-3xl mb-10">Your Review list.</h1>
-            <div className="grid md:grid-cols-2 grid-cols-1 items-center gap-10 ">
+        <section className="w-full mx-auto py-24">
+            <h1 className="font-title font-semibold text-3xl mb-10 text-center">Your Review list.</h1>
+            <div className="grid lg:grid-cols-2 grid-cols-1 items-center gap-4">
                 {paginatedReviews.map((review) => {
                     const createdAtDate = review.createdAt
                         ? new Date(review.createdAt.seconds * 1000)
@@ -59,9 +59,8 @@ export default async function ReviewsPage({
                         ? formatDistanceToNow(createdAtDate, { addSuffix: true })
                         : '';
                     const images = review.images || [];
-
                     return (
-                        <div key={review.id} className="relative w-full flex py-4 px-4 bg-white rounded-xl border-1 border-foreground/20 shadow-sm shadow-foreground/20">
+                        <div key={review.id} className="relative w-full flex py-4 px-4 bg-white rounded-lg shadow-sm shadow-foreground/20">
                             <div className="flex flex-col w-[80%] text-gray-800 space-y-2">
                                 <div className="flex gap-4 items-center">
                                     <div className="p-4 bg-gray-300 rounded-2xl relative overflow-hidden">
@@ -71,7 +70,9 @@ export default async function ReviewsPage({
                                     </div>
                                     <h3 className="font-semibold ">{review.userName}</h3>
                                 </div>
-                                <p className="font-semibold text-primary">Product Name : {review.propertyName}</p>
+                                <p className="font-semibold text-primary">
+                                    Product Name : {review.propertyName}
+                                </p>
                                 <div className="flex gap-2 items-center text-sm">
                                     <p className="font-semibold text-primary">{review.rating}/5</p>
                                     <p className="capitalize text-gray-600">{relativeTime}</p>

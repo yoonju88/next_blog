@@ -81,7 +81,7 @@ export default async function PropertyPage({
     return (
         <div className="w-full py-24">
             <div className="w-full mb-4">
-                <div className="flex items-center pl-12  min-w-[200px]">
+                <div className="flex items-center lg:pl-12 pl-4 min-w-[200px]">
                     <BackButton />
                     <div className="border-r h-3 border-gray-400 mr-3" />
                     <Breadcrumbs items={[{

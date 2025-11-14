@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SingleImageUpload } from "@/components/admin/singleImageUpload";
 import { Input } from "@/components/ui/input";
+import imageDisplayUrlFormatter from "@/lib/imageDisplayUrlFormatter";
 
 
 export default function MenuImageUploadForm() {
@@ -135,13 +136,7 @@ export default function MenuImageUploadForm() {
                                         onImageChangeAction={(image) => {
                                             form.setValue("menuImage", image);
                                         }}
-                                        urlFormatter={(image) =>
-                                            image.file
-                                                ? image.url
-                                                : image.url?.startsWith("http")
-                                                    ? image.url
-                                                    : `https://firebasestorage.googleapis.com/v0/b/yoonju-blog.firebasestorage.app/o/${encodeURIComponent(image.url ?? "")}?alt=media`
-                                        }
+                                        urlFormatterAction={imageDisplayUrlFormatter}
                                         buttonName="Select Menu Image"
                                         displayWidth="w-full max-w-lg h-64"
                                         inputId="menu-image-upload"

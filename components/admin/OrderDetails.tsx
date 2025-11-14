@@ -3,7 +3,7 @@ import React from 'react';
 import { CreditCard } from 'lucide-react';
 import { Order } from '@/types/order';
 import Image from 'next/image';
-import imageUrlFormatter from '@/lib/imageUrlFormatter';
+import storagePathToUrl from '@/lib/storagePathToUrl';
 
 interface OrderDetailsProps {
     order: Order;
@@ -17,7 +17,7 @@ export default function OrderDetails({ order, getPaymentStatusColorAction }: Ord
                 <h3 className="font-semibold text-gray-900">Order Items:</h3>
                 {order.items.map(item => (
                     <div key={item.id} className="flex items-center gap-4 bg-gray-50 rounded-lg p-3">
-                        {item.imageUrl && <Image src={imageUrlFormatter(item.imageUrl)} alt={item.productName} width="100" height="100" className="w-14 h-14 object-cover rounded-sm" />}
+                        {item.imageUrl && <Image src={storagePathToUrl(item.imageUrl)} alt={item.productName} width="100" height="100" className="w-14 h-14 object-cover rounded-sm" />}
                         <div className="flex-1">
                             <h4 className="font-medium text-gray-900">{item.productName}</h4>
                             <p className="text-sm text-gray-600">Qty: {item.quantity} × €{item.price.toFixed(2)}</p>

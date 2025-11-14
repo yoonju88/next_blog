@@ -7,7 +7,7 @@ import { EyeIcon, PencilIcon, PlusCircleIcon } from 'lucide-react';
 import Link from 'next/link';
 import numeral from "numeral";//npm install numeral , npm install @types/numeral
 import Image from 'next/image';
-import imageUrlFormatter from '@/lib/imageUrlFormatter';
+import storagePathToUrl from '@/lib/storagePathToUrl';
 import AddSaleDialog from '@/components/sales/AddSaleDialog';
 
 export type Property = {
@@ -107,7 +107,7 @@ export default function PropertyTable({
                                     <TableCell>
                                         {property.images && property.images.length > 0 ? (
                                             <Image
-                                                src={imageUrlFormatter(property.images[0])}
+                                                src={storagePathToUrl(property.images[0])}
                                                 alt="main image"
                                                 width="90"
                                                 height="90"

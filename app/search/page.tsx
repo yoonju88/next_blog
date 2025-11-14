@@ -2,7 +2,7 @@
 
 import { collection, query, where, getDocs } from 'firebase/firestore'
 import { db } from '@/firebase/client'
-import imageUrlFormatter from '@/lib/imageUrlFormatter'
+import storagePathToUrl from '@/lib/storagePathToUrl'
 import PropertyCard from '@/components/property/PropertyCard'
 import EmptyList from '@/components/home/EmptyList'
 import { useState, useEffect } from 'react'
@@ -108,7 +108,7 @@ export default function SearchPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {properties.map((property) => {
                     const mainImage = Array.isArray(property.images) && property.images.length > 0
-                        ? imageUrlFormatter(property.images[0])
+                        ? storagePathToUrl(property.images[0])
                         : '/fallback.jpg'
 
                     return (

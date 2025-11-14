@@ -1,5 +1,5 @@
 import Image from "next/image";
-import imageUrlFormatter from '@/lib/imageUrlFormatter';
+import storagePathToUrl from '@/lib/storagePathToUrl';
 import { Button } from "../ui/button";
 import { Minus, Plus, Trash2 } from "lucide-react";
 
@@ -28,7 +28,7 @@ export default function CartItem({ item, updateQuantity, removeFromCart }: CartI
         <div className="flex gap-4 py-4 border-b border-gray-200">
             <div className="relative w-15 h-15">
                 <Image
-                    src={imageUrlFormatter(item.property.images[0])}
+                    src={storagePathToUrl(item.property.images[0])}
                     alt={item.property.name}
                     fill
                     className="object-cover rounded-md"

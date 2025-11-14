@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ImageUpload } from "@/types/image";
 import { Input } from "../ui/input";
-import imageUrlFormatter from "@/lib/imageUrlFormatter";
 import Image from "next/image";
 import { UploadIcon, XIcon } from "lucide-react";
 
@@ -12,7 +11,7 @@ import { UploadIcon, XIcon } from "lucide-react";
 interface SingleImageUploadProps {
     image: ImageUpload | null;
     onImageChangeAction: (image: ImageUpload) => void;
-    urlFormatter: (image: ImageUpload) => string;
+    urlFormatterAction: (image: ImageUpload) => string;
     buttonName: string;
     displayWidth: string;
     inputId?: string;
@@ -22,7 +21,7 @@ interface SingleImageUploadProps {
 export function SingleImageUpload({
     image,
     onImageChangeAction,
-    urlFormatter,
+    urlFormatterAction,
     buttonName,
     displayWidth,
     inputId,
@@ -31,11 +30,11 @@ export function SingleImageUpload({
 
     useEffect(() => {
         if (image) {
-            setPreviewUrl(urlFormatter(image));
+            setPreviewUrl(urlFormatterAction(image));
         } else {
             setPreviewUrl(null);
         }
-    }, [image, urlFormatter]);
+    }, [image, urlFormatterAction]);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];

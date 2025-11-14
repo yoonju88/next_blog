@@ -3,7 +3,7 @@ import EmptyList from '@/components/EmptyList'
 import { getUserReviews } from '@/lib/reviews'
 import { redirect } from 'next/navigation';
 import Image from 'next/image';
-import imageUrlFormatter from '@/lib/imageUrlFormatter';
+import storagePathToUrl from '@/lib/storagePathToUrl';
 import { formatDistanceToNow } from 'date-fns'
 import {
     Carousel,
@@ -88,7 +88,7 @@ export default async function ReviewsPage({
                                                     <CarouselItem key={image}>
                                                         <div className="relative h-[150px] w-full">
                                                             <Image
-                                                                src={imageUrlFormatter(image)}
+                                                                src={storagePathToUrl(image)}
                                                                 alt={`Image ${index + 1}`}
                                                                 fill
                                                                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

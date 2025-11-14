@@ -7,7 +7,7 @@ import {
     CarouselPrevious
 } from '@/components/ui/carousel';
 import Image from 'next/image';
-import imageUrlFormatter from '@/lib/imageUrlFormatter';
+import storagePathToUrl from '@/lib/storagePathToUrl';
 
 export default function SlideImages({
     images,
@@ -24,7 +24,7 @@ export default function SlideImages({
                         <CarouselItem key={image + index}>
                             <div className={`relative ${imageH} w-full`}>
                                 <Image
-                                    src={imageUrlFormatter(image)}
+                                    src={storagePathToUrl(image)}
                                     alt={`Image ${index + 1}`}
                                     fill
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

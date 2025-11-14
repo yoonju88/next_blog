@@ -9,7 +9,7 @@ import {
     TableRow,
 } from "@/components/ui/table"
 import Image from 'next/image';
-import imageUrlFormatter from '@/lib/imageUrlFormatter';
+import storagePathToUrl from '@/lib/storagePathToUrl';
 import Link from 'next/link';
 import EmptyList from '@/components/EmptyList';
 
@@ -68,7 +68,7 @@ export default function OrderList({ orders }: OrderListProps) {
                                                     {item.imageUrl ? (
                                                         <div className="relative w-16 h-16">
                                                             <Image
-                                                                src={item.imageUrl.startsWith('http') ? item.imageUrl : imageUrlFormatter(item.imageUrl)}
+                                                                src={item.imageUrl.startsWith('http') ? item.imageUrl : storagePathToUrl(item.imageUrl)}
                                                                 alt={item.productName}
                                                                 fill
                                                                 className="object-cover"

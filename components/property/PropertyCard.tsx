@@ -1,7 +1,7 @@
 'use client'
 import Image from "next/image"
 import Link from "next/link"
-import imageUrlFormatter from '@/lib/imageUrlFormatter';
+import storagePathToUrl from '@/lib/storagePathToUrl';
 import { Property } from "@/types/property";
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
 export default function PropertyCard({ property, actionButton }: Props) {
     const hoverEffect = "transition-all duration-300"
     const mainImage = Array.isArray(property.images) && property.images.length > 0
-        ? imageUrlFormatter(property.images[0])
+        ? storagePathToUrl(property.images[0])
         : "/fallback.jpg"
 
     return (

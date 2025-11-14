@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import imageUrlFormatter from '@/lib/imageUrlFormatter';
+import storagePathToUrl from '@/lib/storagePathToUrl';
 
 interface CartItemType {
     id: string;
@@ -28,7 +28,7 @@ export const CheckoutCartList = ({ cartItems }: CheckoutCartListProps) => {
                     className="flex items-center justify-between gap-4 border-b border-gray-200 py-3">
                     <div className="relative w-15 h-15">
                         <Image
-                            src={imageUrlFormatter(item.property.images[0])}
+                            src={storagePathToUrl(item.property.images[0])}
                             alt={item.property.name}
                             fill
                             className="rounded object-cover"

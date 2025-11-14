@@ -3,7 +3,7 @@ import { getPropertiesById } from '@/lib/properties'
 import { redirect } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Image from 'next/image'
-import imageUrlFormatter from '@/lib/imageUrlFormatter';
+import storagePathToUrl from '@/lib/storagePathToUrl';
 import RemoveFavouriteButton from './remove-favourite'
 import ProductStatusBadge from '@/components/Product-status-badge'
 import Link from 'next/link'
@@ -60,7 +60,7 @@ export default async function MyFavourites({
             <div className="grid gap-4 lg:grid-cols-4 md:grid-cols-2 sm:grid-cols-1 mx-auto">
                 {paginatedFavourites.map((property) => {
                     const mainImage = Array.isArray(property.images) && property.images.length > 0
-                        ? imageUrlFormatter(property.images[0])
+                        ? storagePathToUrl(property.images[0])
                         : '/fallback.jpg';
 
                     const PropertyId = property.id

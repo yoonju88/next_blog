@@ -80,7 +80,7 @@ export default function MultiImageUpload({
                                                 <div className="bg-gray-100 rounded-lg flex items-center overflow-hidden gap-4">
                                                     <div className="size-16 relative">
                                                         <Image
-                                                            src={urlFormatter ? urlFormatter(image) : image.url}
+                                                            src={urlFormatterAction ? urlFormatterAction(image) : image.url}
                                                             alt={`item image${index}`}
                                                             fill
                                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"

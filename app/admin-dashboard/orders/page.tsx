@@ -4,6 +4,8 @@ import AdminOrderListClient from "./AdminOrderListClient"
 import StatsCard from "@/components/admin/StatsCard";
 import { Breadcrumbs } from "@/components/ui/breadcrumb";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminOrdersPage() {
     const result = await getAllOrders()
     // 인증 실패 시 로그인 페이지로 리디렉션

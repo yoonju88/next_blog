@@ -20,6 +20,7 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-gray-100/20 shadow-sm shadow-foreground/30 dark:hover:bg-accent/50  hover:shadow-inner transition-all duration-300",
         calendar: "text-foreground/50 hover:bg-gray-100",
+        link: "text-foreground/50 ",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

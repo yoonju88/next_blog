@@ -32,6 +32,13 @@ export default async function AdminDashboard({
                 <Button
                     asChild
                 >
+                    <Link href="/admin-dashboard/menu-image">
+                        Menu image
+                    </Link>
+                </Button>
+                <Button
+                    asChild
+                >
                     <Link href="/admin-dashboard/properties">
                         Products
                     </Link>

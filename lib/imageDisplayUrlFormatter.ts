@@ -1,9 +1,5 @@
 import storagePathToUrl from './storagePathToUrl';
-
-interface ImageUpload {
-    url: string;
-    file?: File;
-}
+import { ImageUpload } from '@/types/image';
 
 export default function imageDisplayUrlFormatter(image: ImageUpload): string {
     const imageUrl = image.url ?? "";

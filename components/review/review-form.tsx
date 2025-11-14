@@ -7,11 +7,13 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
-import MultiImageUpload, { ImageUpload } from '@/components/multi-image-upload'
+import MultiImageUpload from '@/components/multi-image-upload'
 import { reviewSchema } from '@/validation/reviewSchema'
 import { Star } from 'lucide-react';
 import { Input } from '../ui/input';
 import Image from 'next/image';
+import { ImageUpload } from '@/types/image';
+import imageDisplayUrlFormatter from '@/lib/imageDisplayUrlFormatter';
 
 type Props = {
     handleSubmitAction: (data: z.infer<typeof reviewSchema>) => void;
@@ -141,14 +143,7 @@ export default function ReviewForm({
                                         form.setValue("images", images)
                                     }}
                                     images={field.value}
-                                    urlFormatter={(image) => {
-                                        // 새로 업로드한 이미지라면 미리보기 URL 사용
-                                        if (image.file) return image.url;
-                                        // 서버에서 가져온 이미지라면 그대로 사용
-                                        if (image.url?.startsWith("http")) return image.url;
-                                        // 혹시 상대 경로라면 firebase storage URL로 변환
-                                        return `https://firebasestorage.googleapis.com/v0/b/yoonju-blog.firebasestorage.app/o/${encodeURIComponent(image.url ?? "")}?alt=media`;
-                                    }}
+                                    urlFormatterAction={imageDisplayUrlFormatter}
                                 />
                             </FormControl>
                             <FormMessage />

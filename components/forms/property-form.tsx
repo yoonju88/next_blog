@@ -11,6 +11,7 @@ import { Textarea } from '../ui/textarea'
 import { Button } from '../ui/button'
 import MultiImageUpload from '../multi-image-upload'
 import { ImageUpload } from '@/types/image'
+import imageDisplayUrlFormatter from '@/lib/imageDisplayUrlFormatter'
 
 type Props = {
     submitButtonLabel: React.ReactNode;
@@ -392,14 +393,7 @@ export default function PropertyForm({
                                     form.setValue("images", images)
                                 }}
                                 images={field.value}
-                                urlFormatter={(image) => {
-                                    // 새로 업로드한 이미지라면 미리보기 URL 사용
-                                    if (image.file) return image.url;
-                                    // 서버에서 가져온 이미지라면 그대로 사용
-                                    if (image.url?.startsWith("http")) return image.url;
-                                    // 혹시 상대 경로라면 firebase storage URL로 변환
-                                    return `https://firebasestorage.googleapis.com/v0/b/yoonju-blog.firebasestorage.app/o/${encodeURIComponent(image.url ?? "")}?alt=media`;
-                                }}
+                                urlFormatterAction={imageDisplayUrlFormatter}
                             />
                         </FormControl>
                         <FormMessage />

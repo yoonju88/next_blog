@@ -5,6 +5,8 @@ export const bannerImageSchema = z.object({
         z.object({
             id: z.string(),
             url: z.string(),
+            alt: z.string().min(1, "Alt text is required"),
+            path: z.string().optional(),
             file: z
                 .instanceof(File)
                 .optional()
@@ -20,6 +22,8 @@ export const bannerImageSchema = z.object({
         z.object({
             id: z.string(),
             url: z.string(),
+            alt: z.string().min(1, "Alt text is required"),
+            path: z.string().optional(),
             file: z
                 .instanceof(File)
                 .optional()

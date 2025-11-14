@@ -6,23 +6,18 @@ import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea
 import Image from "next/image";
 import { Badge } from "./ui/badge";
 import { MoveIcon, UploadIcon, XIcon } from "lucide-react";
-
-export type ImageUpload = {
-    id?: string;
-    url?: string;
-    file?: File;
-}
+import { ImageUpload } from "@/types/image";
 
 type Props = {
     images?: ImageUpload[];
     onImagesChangeAction: (images: ImageUpload[]) => void;
-    urlFormatter: (image: ImageUpload) => string;
+    urlFormatterAction: (image: ImageUpload) => string;
 }
 
 export default function MultiImageUpload({
     images = [],
     onImagesChangeAction,
-    urlFormatter,
+    urlFormatterAction,
 }: Props
 ) {
 
@@ -33,6 +28,7 @@ export default function MultiImageUpload({
             return {
                 id: `${Date.now()}-${i}-${file.name}`,
                 url: URL.createObjectURL(file),
+                alt: "",
                 file
             }
         })
@@ -66,7 +62,7 @@ export default function MultiImageUpload({
                             ref={provided.innerRef}
                         >
                             {images.map((image, index) => {
-                                const formattedUrl = urlFormatter(image);
+                                const formattedUrl = urlFormatterAction(image);
                                 //console.log("🔍 Formatted image URL:", formattedUrl); // ✅ 요기!
                                 return (
                                     < Draggable

@@ -6,17 +6,13 @@ import { DragDropContext, Draggable, Droppable, DropResult } from "@hello-pangea
 import Image from "next/image";
 import { Badge } from "../ui/badge";
 import { MoveIcon, XIcon } from "lucide-react";
-
-export type ImageUpload = {
-    id?: string;
-    url?: string;
-    file?: File;
-}
+import { ImageUpload } from "@/types/image";
+import { Input } from "../ui/input";
 
 type Props = {
     images?: ImageUpload[];
     onImagesChangeAction: (images: ImageUpload[]) => void;
-    urlFormatter: (image: ImageUpload) => string;
+    urlFormatterAction: (image: ImageUpload) => string;
     buttonName: string;
     displayWidth: string;
     inputId: string;
@@ -26,7 +22,7 @@ type Props = {
 export default function BannerMultiImageUpload({
     images = [],
     onImagesChangeAction,
-    urlFormatter,
+    urlFormatterAction,
     buttonName,
     displayWidth,
     inputId,
@@ -38,10 +34,11 @@ export default function BannerMultiImageUpload({
     const uploadInputRef = useRef<HTMLInputElement | null>(null)
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = Array.from(e.target.files || [])
-        const newImages = files.map((file, i) => {
+        const newImages: ImageUpload[] = files.map((file, i) => {
             return {
                 id: `${Date.now()}-${i}-${file.name}`,
                 url: URL.createObjectURL(file),
+                alt: "",
                 file
             }
         })
@@ -59,6 +56,13 @@ export default function BannerMultiImageUpload({
     // 이미지 업로드 리스트에서 삭제
     const handleDelete = (id: string) => {
         const updatedImages = images.filter((image) => image.id !== id)
+        onImagesChangeAction(updatedImages)
+    }
+
+    const handleAltChange = (id: string, alt: string) => {
+        const updatedImages = images.map((image) =>
+            image.id === id ? { ...image, alt } : image
+        )
         onImagesChangeAction(updatedImages)
     }
 
@@ -93,7 +97,7 @@ export default function BannerMultiImageUpload({
                             ref={provided.innerRef}
                         >
                             {images.map((image, index) => {
-                                const formattedUrl = urlFormatter(image);
+                                const formattedUrl = urlFormatterAction(image);
                                 //console.log("🔍 Formatted image URL:", formattedUrl); // ✅ 요기!
                                 return (
                                     < Draggable
@@ -111,8 +115,8 @@ export default function BannerMultiImageUpload({
                                                 <div className="bg-gray-100  rounded-lg flex items-center overflow-hidden gap-4 mt-6">
                                                     <div className={`${displayWidth} relative`}>
                                                         <Image
-                                                            src={urlFormatter ? urlFormatter(image) : image.url}
-                                                            alt={`item image${index}`}
+                                                            src={formattedUrl}
+                                                            alt={image.alt || `Image ${index + 1}`}
                                                             fill
                                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                             className='object-cover'
@@ -127,6 +131,13 @@ export default function BannerMultiImageUpload({
                                                                 Main
                                                             </Badge>
                                                         }
+                                                        <Input
+                                                            type="text"
+                                                            placeholder="Enter alt text..."
+                                                            value={image.alt || ""}
+                                                            onChange={(e) => handleAltChange(image.id, e.target.value)}
+                                                            className="w-full"
+                                                        />
                                                     </div>
                                                     <div className="flex items-center gap-2 absolute top-14 right-8">
                                                         <button

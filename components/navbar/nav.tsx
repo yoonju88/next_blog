@@ -19,11 +19,18 @@ import CartSheet from '../cart/cart-sheet'
 import { useState } from 'react'
 import ListItem from './ListItem'
 import Image from 'next/image'
+import { ImageDataType } from '@/types/image'
 
-export default function Nav() {
+interface NavProps {
+    // ✅ Prop의 이름과 구조가 { menuImage: ... } 형태와 일치해야 합니다.
+    menuImage: ImageDataType | null;
+}
+
+export default function Nav({ menuImage }: NavProps) {
     const pathname = usePathname()
     const searchParams = useSearchParams()
     const [open, setOpen] = useState(false)
+
 
     const isActive = (href: string, query?: { key: string; value: string }): boolean => {
         if (href === '/') {
@@ -71,20 +78,27 @@ export default function Nav() {
                                                 <NavigationMenuLink asChild>
                                                     <Link
                                                         href="/property"
-                                                        className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-gradient-to-b p-6 no-underline outline-none focus:shadow-md select-none"
+                                                        className="from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-gradient-to-b p-4 no-underline outline-none focus:shadow-md select-none"
                                                     >
-                                                        <div className="relative w-full h-32 mb-4">
-                                                            <Image
-                                                                src="/banner/skincare-banner.jpg"
-                                                                alt="Shop Banner"
-                                                                fill
-                                                                className="object-cover rounded-md"
-                                                            />
+                                                        <div className="relative w-full h-30">
+                                                            {menuImage && menuImage.url ? (
+                                                                <Image
+                                                                    src={menuImage.url}
+                                                                    alt={menuImage.alt}
+                                                                    fill
+                                                                    className="object-cover absolute rounded-md"
+                                                                />
+                                                            ) : (
+                                                                // 데이터가 없을 때 표시할 대체 UI (정적 이미지 또는 텍스트)
+                                                                <div className="flex items-center justify-center w-full h-full bg-gray-100 rounded-md text-gray-500">
+                                                                    Menu Image Not Set
+                                                                </div>
+                                                            )}
                                                         </div>
                                                         <div className="mb-1 text-lg font-medium">All Products</div>
-                                                        {/* <p className="text-muted-foreground text-sm leading-tight">
+                                                        <p className="text-muted-foreground text-[12px] leading-tight">
                                                             Browse our full range of skincare, makeup, and sun care products.
-                                                        </p> */}
+                                                        </p>
                                                     </Link>
                                                 </NavigationMenuLink>
                                             </li>

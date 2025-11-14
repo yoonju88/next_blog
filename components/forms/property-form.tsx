@@ -9,8 +9,8 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
 import { Button } from '../ui/button'
-import MultiImageUpload, { ImageUpload } from '../multi-image-upload'
-import { Label } from '../ui/label'
+import MultiImageUpload from '../multi-image-upload'
+import { ImageUpload } from '@/types/image'
 
 type Props = {
     submitButtonLabel: React.ReactNode;

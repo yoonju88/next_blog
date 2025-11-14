@@ -225,7 +225,7 @@ export default function UpdateProfileForm({ initialData, userId }: UpdateProfile
                 </div>
                 <div className="space-y-2">
                     <PickCalenderDate
-                        onDateSelect={(date) => {
+                        onDateSelectAction={(date) => {
                             setFormData(prev => ({
                                 ...prev,
                                 birthDate: date.toISOString().split('T')[0]

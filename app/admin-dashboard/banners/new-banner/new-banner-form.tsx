@@ -20,16 +20,21 @@ export default function NewBannerForm() {
         if (!token) { return; }
 
         const uploadImage = async (
-            image: { id: string; file?: File },
+            image: z.infer<typeof bannerImageSchema>["webImages"][0] | z.infer<typeof bannerImageSchema>["mobileImages"][0],
             bannerId: string,
             idx: number
-        ): Promise<{ id: string; url: string, path: string }> => {
+        ): Promise<{ id: string; url: string, alt: string, path: string }> => {
             if (!image.file) throw new Error("No file to upload");
             const path = `banners/${bannerId}/${Date.now()}-${idx}-${image.file.name}`;
             const storageRef = ref(storage, path);
             await uploadBytes(storageRef, image.file);
             const url = await getDownloadURL(storageRef);
-            return { id: image.id, url, path }
+            return {
+                id: image.id,
+                url,
+                alt: image.alt || `Image ${idx + 1}`,
+                path
+            };
         }
 
         // 먼저 배너 문서만 생성 (빈 상태)
@@ -39,26 +44,20 @@ export default function NewBannerForm() {
             return;
         }
         const bannerId = tempBannerResponse.bannerId;
-        const uploadWebImages: { id: string; url: string; path: string; }[] = [];
-        const uploadMobileImages: { id: string; url: string; path: string; }[] = [];
+        // 2. 이미지 업로드
+        const uploadedWebImages = await Promise.all(
+            data.webImages.map((img, idx) => uploadImage(img, bannerId, idx))
+        );
 
-
-        // 이미지 업로드 후 URL 추출
-        for (let i = 0; i < data.webImages.length; i++) {
-            const uploaded = await uploadImage(data.webImages[i] as { id: string; file?: File }, bannerId, i);
-            uploadWebImages.push(uploaded);
-        }
-
-        for (let i = 0; i < data.mobileImages.length; i++) {
-            const uploaded = await uploadImage(data.mobileImages[i] as { id: string; file?: File }, bannerId, i);
-            uploadMobileImages.push(uploaded);
-        }
+        const uploadedMobileImages = await Promise.all(
+            data.mobileImages.map((img, idx) => uploadImage(img, bannerId, idx))
+        );
         // URL이 포함된 상태로 배너 문서 업데이트
         await saveBannerImages(
             {
                 bannerId,
-                webImages: uploadWebImages,
-                mobileImages: uploadMobileImages
+                webImages: uploadedWebImages,
+                mobileImages: uploadedMobileImages
             }, token
         )
         toast.success("Success! Banner images uploaded.")

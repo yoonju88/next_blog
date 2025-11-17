@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import Stripe from "stripe";
 import { PrismaClient } from "@prisma/client";
+import { consumeCouponServer } from '@/lib/coupon.server'
 
 export const runtime = "nodejs";
 export const dynamic = 'force-dynamic';
@@ -36,6 +37,12 @@ export async function GET(req: NextRequest) {
                     { status: 404 }
                 );
             }
+
+            // 결제 성공시 쿠폰 소모
+            if (payment.couponCode) {
+                await consumeCouponServer(payment.couponCode)
+            }
+
             // Payment 상태 업데이트
             await prisma.payment.update({
                 where: { stripeSessionId: sessionId },

@@ -84,6 +84,15 @@ export default function CheckoutPage() {
                 toast.error("Invalid coupon code");
                 return;
             }
+
+            if (!coupon.isActive || coupon.usedCount > 0) {
+                setDiscount(0)
+                setAppliedCoupon(null)
+                setCouponStatus("error")
+                toast.error("This coupon has already been used")
+                return
+            }
+
             const validation = validateCoupon(coupon, totalPrice);
 
             if (!validation.isValid) {

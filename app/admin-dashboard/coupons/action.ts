@@ -1,4 +1,3 @@
-// ✅ app/actions/coupon.ts
 'use server'
 import { auth } from '@/firebase/server'
 import { firestore } from '@/firebase/server'

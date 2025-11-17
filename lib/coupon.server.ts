@@ -7,7 +7,7 @@ export async function getActionPromoCoupon(): Promise<Coupon | null> {
     const now = new Date()
 
     const snapshot = await firestore
-        .collection("coupon")
+        .collection("coupons")
         .where('isActive', '==', true)
         .get()
 

@@ -3,7 +3,7 @@ import BannersClient from '@/components/home-banner/Banners';
 import ItemSection from "@/components/home/ItemSection";
 import PropertyCard from "@/components/property/PropertyCard";
 import { getOnSaleProperties, getRecentProperties } from "@/lib/properties";
-import Link from "next/link";
+import EventCouponBanner from "@/components/home/EventCouponBanner";
 
 
 export default async function Home() {
@@ -20,21 +20,24 @@ export default async function Home() {
   );
 
   return (
-    <div className="w-full flex flex-col gap-50">
-      <BannersClient
-        webImages={allWebImages}
-        mobileImages={allMobileImages}
-      />
-      <ItemSection
-        data={recentItems}
-        title="New Arrivals"
-        link="/property?sort=newest"
-      />
-      <ItemSection
-        data={saleItems}
-        title="On sale"
-        link="/property?sale=true"
-      />
+    <div className="w-full flex flex-col">
+      <EventCouponBanner />
+      <div className="w-full flex flex-col gap-50">
+        <BannersClient
+          webImages={allWebImages}
+          mobileImages={allMobileImages}
+        />
+        <ItemSection
+          data={recentItems}
+          title="New Arrivals"
+          link="/property?sort=newest"
+        />
+        <ItemSection
+          data={saleItems}
+          title="On sale"
+          link="/property?sale=true"
+        />
+      </div>
     </div >
   );
 }

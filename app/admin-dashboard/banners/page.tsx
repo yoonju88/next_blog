@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
 export default async function BannerPage() {
-
     const webImages = await getWebBanners();
     const mobileImages = await getMobileBanners();
 
@@ -37,7 +36,6 @@ export default async function BannerPage() {
                 <h1 className="text-3xl font-black uppercase text-foreground "> Banner Images manage</h1>
             </div >
             <div className="mt-10">
-
                 {webImages.length === 0 && mobileImages.length === 0 ? (
                     <Button>
                         <Link
@@ -63,9 +61,7 @@ export default async function BannerPage() {
                         />
                     </>
                 )}
-
             </div>
-
         </>
     )
 }

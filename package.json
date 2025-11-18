@@ -16,8 +16,7 @@
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
     "@hookform/resolvers": "^5.0.1",
-    "@prisma/client": "^6.17.1",
-    "@prisma/extension-accelerate": "^2.0.2",
+    "@prisma/client": "6.17.1",
     "@radix-ui/react-alert-dialog": "^1.1.11",
     "@radix-ui/react-avatar": "^1.1.7",
     "@radix-ui/react-collapsible": "^1.1.11",
@@ -66,7 +65,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.1",
-    "prisma": "^6.17.0",
+    "prisma": "6.17.0",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"

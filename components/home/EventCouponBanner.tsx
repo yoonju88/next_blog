@@ -6,13 +6,16 @@ export default async function EventCouponBanner() {
     if (!coupon) return null;
 
     return (
-        <div className="bg-foreground/80 p-3 text-center font-semibold h-[40px] flex justify-center items-center">
-            <p className="absolute whitespace-nowrap animate-marquee text-white">
-                Get 10% off your first order with code
-                <span className="font-extrabold text-md p-2">
-                    {coupon.code}
-                </span>
-            </p>
+        <div className="relative overflow-hidden bg-gray-800 h-[45px] flex items-center">
+            <div className="flex animate-marquee whitespace-nowrap text-white uppercase">
+                {[...Array(4)].map((_, i) => (
+                    <div key={i} className="flex items-center text-white uppercase px-8">
+                        Get <span className="font-extrabold text-2xl pl-1">10% off </span>
+                        your first order with code
+                        <span className="font-extrabold text-2xl px-2 animate-pulse">{coupon.code}</span>
+                    </div>
+                ))}
+            </div>
         </div>
-    );
+    )
 }

@@ -59,8 +59,8 @@ export default function CouponList({ initialCoupons }: CouponListProps) {
     }
 
     return (
-        <div className="space-y-4">
-            <div className="flex justify-end">
+        <div className="space-y-4 mt-8">
+            <div className="flex justify-start mb-10">
                 <Button onClick={() => { setEditingCoupon(null); setIsDialogOpen(true) }}>
                     <Plus className="h-4 w-4 mr-2" /> Create Coupon
                 </Button>

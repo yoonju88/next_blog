@@ -17,7 +17,7 @@ export default function BannersList({
     return (
         <>
             <div className="mt-10">
-                <h1 className="mb-10 text-2xl text-primary font-bold uppercase">Web Banner Images</h1>
+
                 {!!webImages && (
                     <BannerCarousel
                         images={webImagesObj}
@@ -27,9 +27,10 @@ export default function BannersList({
                         height={600}
                     />
                 )}
+                <h2 className="mt-4 text-lg text-primary capitalize text-center">Banner Image for Web</h2>
                 <div className='border-t-1 border-primary/50 pb-12 mt-14' />
                 <div className="flex items-center justify-center flex-col mb-14">
-                    <h1 className="mb-10 text-2xl text-primary font-bold uppercase">Mobile Banner Images</h1>
+
                     <div className="w-xl h-xl">
                         {!!mobileImages && (
                             <BannerCarousel
@@ -41,6 +42,7 @@ export default function BannersList({
                             />
                         )}
                     </div>
+                    <h2 className="mt-4 text-lg text-primary capitalize">Banner Images for Mobile</h2>
                 </div>
                 <div className='border-t-1 border-primary/50' />
                 {!webImages && !mobileImages && (

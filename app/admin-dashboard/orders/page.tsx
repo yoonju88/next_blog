@@ -1,8 +1,7 @@
 import { getAllOrders } from "./action";
 import { redirect } from "next/navigation";
 import AdminOrderListClient from "./AdminOrderListClient"
-import StatsCard from "@/components/admin/StatsCard";
-import { Breadcrumbs } from "@/components/ui/breadcrumb";
+import StatsCard from "@/components/admin/StatsCard"
 
 export const dynamic = "force-dynamic";
 
@@ -60,13 +59,7 @@ export default async function AdminOrdersPage() {
 
     return (
         <div className="space-y-6">
-            <Breadcrumbs
-                items={[
-                    { href: "/admin-dashboard", label: "Dashboard" },
-                    { href: "", label: "Orders" },
-                ]}
-            />
-            <h1 className="text-3xl font-bold mb-10 text-left">Order Management</h1>
+            <h1>Order Management</h1>
             <div className="flex justify-center lg:gap-10 gap-6 flex-wrap ">
                 {statsData.map((stat) => (
                     <StatsCard

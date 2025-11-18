@@ -125,7 +125,11 @@
   p,h1,h2,h3,h4,h5{
     @apply text-foreground
   }
+  h1 { 
+    @apply text-3xl font-black uppercase text-foreground;
+  }
 }
+
 
 @keyframes marquee {
     0% { transform: translateX(0%); }

@@ -18,27 +18,11 @@ export default async function EditProperty({ params }: { params: Promise<{ prope
     }
 
     return (
-        <div>
-            <Breadcrumbs items={[
-                {
-                    href: "/admin-dashboard",
-                    label: "Dashboard"
-                },
-                {
-                    href: "/admin-dashboard/properties",
-                    label: "Products"
-                },
-                {
-                    label: "Edit Property"
-                }
-            ]}
-            />
-            <Card className='mt-5 w-full sm:w-[100vh]'>
-                <CardHeader>
-                    <CardTitle className='text-3xl font-bold flex justify-between'>
-                        Edit property
-                        <DeletePropertyButton propertyId={propertyId} images={property.images ?? []} />
-                    </CardTitle>
+        <>
+            <h1>Edit Property</h1>
+            <Card className='mt-10 w-full'>
+                <CardHeader className="flex justify-end">
+                    <DeletePropertyButton propertyId={propertyId} images={property.images ?? []} />
                 </CardHeader>
                 <CardContent>
                     <EditPropertyForm
@@ -67,6 +51,6 @@ export default async function EditProperty({ params }: { params: Promise<{ prope
                     />
                 </CardContent>
             </Card>
-        </div>
+        </>
     )
 }

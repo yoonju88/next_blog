@@ -1,5 +1,4 @@
 import React from 'react'
-import { Breadcrumbs } from '@/components/ui/breadcrumb'
 import { getBannerById } from '../action';
 import DeleteBannerButton from './delete-banner-button';
 import BannersTab from './bannersTab';
@@ -26,33 +25,18 @@ export default async function EditBanners({
     //console.log("mobileImages", mobileImages);
 
     return (
-        <div>
-            <Breadcrumbs items={[
-                {
-                    href: "/admin-dashboard",
-                    label: "Dashboard",
-                },
-                {
-                    href: "/admin-dashboard/banners",
-                    label: "Banners",
-                },
-                {
-                    label: "Edit Banners"
-                }
-            ]}
+        <>
+            <h1 className="mb-8"> Edit Banner Images</h1>
+            <DeleteBannerButton
+                bannerId={bannersData.id}
+                name='Delete all images'
+                webImages={webImageUrls}
+                mobileImages={mobileImageUrls}
             />
-            <div className='mt-14'>
-                <DeleteBannerButton
-                    bannerId={bannersData.id}
-                    name='Delete all images'
-                    webImages={webImageUrls}
-                    mobileImages={mobileImageUrls}
-                />
-                <BannersTab
-                    webImages={webImages}
-                    mobileImages={mobileImages}
-                />
-            </div>
-        </div>
+            <BannersTab
+                webImages={webImages}
+                mobileImages={mobileImages}
+            />
+        </>
     )
 }

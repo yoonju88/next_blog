@@ -74,7 +74,7 @@ export function SingleImageUpload({
                         size="sm"
                         variant="link"
                         onClick={handleRemove}
-                        className="absolute top-2 right-2  text-foreground"
+                        className="absolute top-2 right-2 text-foreground"
                     >
                         <XIcon />
                     </Button>

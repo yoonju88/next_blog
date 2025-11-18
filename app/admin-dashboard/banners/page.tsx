@@ -1,5 +1,4 @@
 import React from 'react'
-import { Breadcrumbs } from '@/components/ui/breadcrumb'
 import BannersList from './banner-list'
 import { getWebBanners, getMobileBanners, getAllBanners } from './action';
 import { Edit2 } from 'lucide-react';
@@ -22,19 +21,7 @@ export default async function BannerPage() {
 
     return (
         <>
-            <Breadcrumbs items={[
-                {
-                    href: "/admin-dashboard",
-                    label: "Dashboard",
-                },
-                {
-                    label: "Banners",
-                },
-            ]}
-            />
-            <div className="mt-14">
-                <h1 className="text-3xl font-black uppercase text-foreground "> Banner Images manage</h1>
-            </div >
+            <h1> Banner Images</h1>
             <div className="mt-10">
                 {webImages.length === 0 && mobileImages.length === 0 ? (
                     <Button>

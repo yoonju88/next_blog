@@ -14,57 +14,13 @@ export default async function AdminDashboard({
 
     return (
         <div>
-            <Breadcrumbs items={[
-                {
-                    label: "Dashboard",
-                },
-            ]}
-            />
             <h1 className="text-4xl font-bold mt-6">Admin Dashboard</h1>
             <div className="flex gap-4 mt-6">
-                <Button
-                    asChild
-                >
-                    <Link href="/admin-dashboard/banners">
-                        Banners
-                    </Link>
-                </Button>
-                <Button
-                    asChild
-                >
-                    <Link href="/admin-dashboard/menu-image">
-                        Menu image
-                    </Link>
-                </Button>
-                <Button
-                    asChild
-                >
-                    <Link href="/admin-dashboard/properties">
-                        Products
-                    </Link>
-                </Button>
-                <Button
-                    asChild
-                >
-                    <Link href="/admin-dashboard/coupons">
-                        <Tag className="h-4 w-4 mr-2" />
-                        Coupons
-                    </Link>
-                </Button>
-                <Button
-                    asChild
-                >
-                    <Link href="/admin-dashboard/orders">
-                        Orders
-                    </Link>
-                </Button>
-                <Button
-                    asChild
-                >
-                    <Link href="/admin-dashboard/delivery">
-                        Analyse
-                    </Link>
-                </Button>
+                <p>  오늘의 주문 수 </p>
+                <p>  오늘의 매출 </p>
+                <p>  이번주 매출  </p>
+                <p>  신규회원  </p>
+                <p> 방문자수  </p>
             </div>
 
         </div >

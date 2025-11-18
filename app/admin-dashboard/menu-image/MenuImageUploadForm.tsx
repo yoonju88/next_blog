@@ -117,13 +117,13 @@ export default function MenuImageUploadForm() {
                                     <Input
                                         placeholder="Enter image description..."
                                         {...field}
+                                        className="lg:w-100 w-full "
                                     />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )}
                     />
-
                     <FormField
                         control={form.control}
                         name="menuImage"
@@ -150,7 +150,7 @@ export default function MenuImageUploadForm() {
 
                 <Button
                     type="submit"
-                    className="w-full"
+                    className="lg:w-100 w-full"
                     disabled={isUploading}
                 >
                     {isUploading ? "Uploading..." : "Upload Image"}

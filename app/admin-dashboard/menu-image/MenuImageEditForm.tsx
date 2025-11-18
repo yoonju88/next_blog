@@ -135,7 +135,6 @@ export default function MenuImageEditForm({ image }: { image: ImageDataType }) {
             <form onSubmit={form.handleSubmit(handleUpdate)} className="space-y-6">
                 <fieldset disabled={isUpdating || isDeleting}>
                     <div className="mb-6">
-                        <h3 className="text-md font-semibold mb-2">Uploaded Image</h3>
                         <div className="relative w-full max-w-lg h-64 border rounded-lg overflow-hidden">
                             <Image
                                 src={image.url}
@@ -144,7 +143,7 @@ export default function MenuImageEditForm({ image }: { image: ImageDataType }) {
                                 className="object-cover"
                             />
                         </div>
-                        <p className="text-sm text-foreground/80 text-center mt-2"> {image.alt} </p>
+                        <p className="text-sm text-foreground/80 mt-2 text-left"> Image info : {image.alt} </p>
                     </div>
                     <FormField
                         control={form.control}
@@ -156,6 +155,7 @@ export default function MenuImageEditForm({ image }: { image: ImageDataType }) {
                                     <Input
                                         placeholder="Enter image description..."
                                         {...field}
+                                        className="lg:w-127 md:w-127 w-full"
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -166,7 +166,7 @@ export default function MenuImageEditForm({ image }: { image: ImageDataType }) {
                 <div className="flex gap-4 mb-2">
                     <Button
                         type="submit"
-                        className="flex-1"
+                        className="flex"
                         disabled={isUpdating || isDeleting}
                     >
                         {isUpdating ? "Updating..." : "Update Image"}

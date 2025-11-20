@@ -15,12 +15,13 @@ export default async function AdminDashboard({
     return (
         <div>
             <h1 className="text-4xl font-bold mt-6">Admin Dashboard</h1>
-            <div className="flex gap-4 mt-6">
-                <p>  오늘의 주문 수 </p>
-                <p>  오늘의 매출 </p>
-                <p>  이번주 매출  </p>
-                <p>  신규회원  </p>
-                <p> 방문자수  </p>
+            <p className="text-lg text-red-500/80 mt-4"> This page is not available yet. Development is in progress. </p>
+            <div className="flex gap-4 mt-6 text-lg uppercase font-semibold text-foreground/70">
+                <p > Today’s Orders</p>
+                <p> Today’s Revenue</p>
+                <p> This Week’s Revenue</p>
+                <p>New Members</p>
+                <p>Visitors</p>
             </div>
 
         </div >

@@ -44,6 +44,12 @@ export default function OrderHeader({ order, isExpanded, toggleOrderAction, getS
                             </span>
                         </div>
                     )}
+                    {typeof order.user.points === 'number' && (
+                        <div className="flex items-center gap-2 text-sm">
+                            <Gift className="h-4 w-4" />
+                            <span>Current Points: {order.user.points.toFixed(2)}</span>
+                        </div>
+                    )}
                     <div className="flex items-center gap-2 text-sm">
                         <Calendar className="h-4 w-4" />
                         <span>{new Date(order.createdAt).toLocaleDateString('en-EU', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
@@ -55,7 +61,7 @@ export default function OrderHeader({ order, isExpanded, toggleOrderAction, getS
                     </span>
                     <p className="text-2xl font-bold text-gray-900">€{order.totalAmount.toFixed(2)}</p>
                     {order.earnedPoints && order.earnedPoints > 0 && (
-                        <div className="flex items-center gap-1.5 text-sm text-blue-600">
+                        <div className="flex items-center gap-1.5 text-sm text-foreground/80">
                             <Gift className="h-4 w-4" />+{order.earnedPoints} pts
                         </div>
                     )}

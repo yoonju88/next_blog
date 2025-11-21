@@ -50,7 +50,7 @@ export default function PropertyTable({
     const goToPage = (pageNumber: number) => {
         const newParams = new URLSearchParams(searchParams.toString())
         newParams.set('page', pageNumber.toString())
-        router.push(`/admin-dashboard?${newParams.toString()}`)
+        router.push(`/admin-dashboard/properties?${newParams.toString()}`)
     }
 
     const getDisplayPrice = (property) =>

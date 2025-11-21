@@ -9,12 +9,14 @@ interface CheckoutButtonProps {
     couponCode?: string;
     discount?: number;
     pointsUsed?: number;
+    onPaymentSuccessAction?: () => void;
 }
 
 export default function CheckoutButton({
     couponCode,
     discount,
-    pointsUsed
+    pointsUsed,
+    onPaymentSuccessAction,
 }: CheckoutButtonProps) {
     const [loading, setLoading] = useState(false)
     const { cartItems } = useCart()
@@ -26,8 +28,28 @@ export default function CheckoutButton({
             toast.error("Your cart is empty")
             return
         }
+
+        const cartItemsForPayment = cartItems.map(item => ({
+            productId: item.productId || item.property?.id || item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            images: item.images
+        }));
+
+        const invalidItems = cartItemsForPayment.filter(item => !item.productId);
+        if (invalidItems.length > 0) {
+            toast.error("Some items in your cart are missing product information");
+            console.error("Invalid cart items:", invalidItems);
+            setLoading(false);
+            return;
+        }
+
         try {
-            await handleCheckout(cartItems, couponCode, discount, pointsUsed)
+            await handleCheckout(cartItemsForPayment, couponCode, discount, pointsUsed)
+            if (onPaymentSuccessAction) {
+                onPaymentSuccessAction()
+            }
         } catch (err: any) {
             console.error("Checkout error:", err)
             toast.error("Payment Failed", {

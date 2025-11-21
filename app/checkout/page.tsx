@@ -125,6 +125,8 @@ export default function CheckoutPage() {
     const handlePaymentSuccess = () => {
         // 결제 성공 후 포인트 훅 재호출
         setRefreshPoints(prev => prev + 1)
+        setUsedPoints(0)
+        handleRemoveCoupon()
         toast.success("Payment completed! Points updated.")
     }
 
@@ -163,7 +165,8 @@ export default function CheckoutPage() {
                 <CheckoutButton
                     couponCode={appliedCoupon?.code}
                     discount={discount}
-                    pointsUsed={userPoints}
+                    pointsUsed={usedPoints}
+                    onPaymentSuccessAction={handlePaymentSuccess}
                 />
             </div>
         </main>

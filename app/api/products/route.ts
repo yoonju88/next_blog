@@ -5,35 +5,81 @@ const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
     try {
-        const data = await req.json();
+        const body = await req.json();
+        const { products, productIds } = body;
 
-        // 데이터가 배열이 아니면 배열로 변환
-        const products = Array.isArray(data) ? data : [data];
+        if (productIds && Array.isArray(productIds)) {
+            if (productIds.length === 0) {
+                return NextResponse.json([]);
+            }
 
-        // Firebase 상품들을 Prisma에 upsert
-        for (const product of products) {
-            await prisma.product.upsert({
-                where: { id: product.id }, // Firebase ID 그대로 사용
-                update: {
-                    name: product.name,
-                    price: product.price,
-                    stock: product.stock || 999, // Firebase에 stock이 없으면 충분한 재고 설정
-                    images: product.images || [],
-                },
-                create: {
-                    id: product.id, // Firebase ID를 Prisma에도 동일하게 사용
-                    name: product.name,
-                    price: product.price,
-                    stock: product.stock || 999,
-                    images: product.images || [],
+            const foundProducts = await prisma.product.findMany({
+                where: {
+                    id: {
+                        in: productIds
+                    }
                 }
             });
+
+            return NextResponse.json(foundProducts);
         }
-        console.log(`✅ Synced ${products.length} products to Prisma`);
-        return NextResponse.json({
-            success: true,
-            count: products.length
-        });
+
+        // products 배열로 upsert하는 경우 (상품 생성/수정)
+        if (products && Array.isArray(products)) {
+            if (products.length === 0) {
+                return NextResponse.json({
+                    success: true,
+                    message: 'No products to process',
+                    products: []
+                });
+            }
+
+            const results = [];
+
+            for (const product of products) {
+                const { id: productId, name, price, stock, images } = product;
+
+                if (!productId || typeof productId !== 'string') {
+                    console.error('Invalid productId:', productId, 'for product:', product);
+                    throw new Error(`Invalid or missing productId for product: ${name || 'unknown'}`);
+                }
+
+                if (!name || price === undefined || stock === undefined) {
+                    throw new Error(`Missing required fields for product ${productId}`);
+                }
+
+                const validImages = Array.isArray(images) ? images : [];
+
+                const result = await prisma.product.upsert({
+                    where: { id: productId },
+                    update: {
+                        name,
+                        price: Number(price),
+                        stock: Number(stock),
+                        images: validImages
+                    },
+                    create: {
+                        id: productId,
+                        name,
+                        price: Number(price),
+                        stock: Number(stock),
+                        images: validImages
+                    },
+                });
+
+                results.push(result);
+            }
+
+            return NextResponse.json({
+                success: true,
+                message: `${results.length} products processed`,
+                products: results
+            });
+        }
+        return NextResponse.json(
+            { message: 'Either products array or productIds array is required' },
+            { status: 400 }
+        );
     } catch (error) {
         console.error("Error fetching products:", error);
         return NextResponse.json([], { status: 500 });

@@ -4,6 +4,7 @@ import BrandFilter from '@/components/property/brand-filter'
 import PropertyCard from '@/components/property/PropertyCard';
 import AddToCartButton from '@/components/cart/add-to-cart-button';
 import { Suspense } from 'react';
+import PropertyPagination from '@/components/property/PropertyPagination';
 
 type PropertyPageProps = {
     brand?: string | string[]
@@ -11,6 +12,7 @@ type PropertyPageProps = {
     skinType?: string | string[]
     sale?: string
     sort?: string
+    page?: string
 }
 
 function normalizeCategory(input: string | null): "Skin Care" | "Make Up" | "Sun Care" | null {
@@ -27,18 +29,19 @@ function normalizeCategory(input: string | null): "Skin Care" | "Make Up" | "Sun
 }
 
 export default async function PropertyPage({ searchParams }: { searchParams: Promise<PropertyPageProps> }) {
-    const { brand, category: rawCategory, skinType, sale, sort } = await searchParams;
+    const { brand, category: rawCategory, skinType, sale, sort, page } = await searchParams;
     const category = normalizeCategory(typeof rawCategory === "string" ? rawCategory : null);
 
+    const currentPage = Number.isFinite(Number(page)) && Number(page) > 0 ? Number(page) : 1;
 
-    const { data: properties } = await getProperties({
+    const { data: properties, totalPages } = await getProperties({
         filters: {
             brand: typeof brand === "string" ? brand : null,
             category,
             skinType: typeof skinType === "string" ? skinType : null
         },
         sort: sort as "newest" | "best",
-        pagination: { pageSize: 8 },
+        pagination: { pageSize: 8, page: currentPage },
     });
 
     // 🔥 Firebase 상품들을 Prisma에 동기화
@@ -103,19 +106,32 @@ export default async function PropertyPage({ searchParams }: { searchParams: Pro
                         No products found...
                     </h2>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 space-y-24">
-                        {filteredProperties.map((property) => (
-                            <PropertyCard
-                                key={property.id}
-                                property={property}
-                                actionButton={
-                                    <AddToCartButton property={property} key={property.id}>
-                                        <ShoppingBagIcon />
-                                    </AddToCartButton>
-                                }
-                            />
-                        ))}
-                    </div>
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 space-y-24">
+                            {filteredProperties.map((property) => (
+                                <PropertyCard
+                                    key={property.id}
+                                    property={property}
+                                    actionButton={
+                                        <AddToCartButton property={property} key={property.id}>
+                                            <ShoppingBagIcon />
+                                        </AddToCartButton>
+                                    }
+                                />
+                            ))}
+                        </div>
+                        <PropertyPagination
+                            currentPage={currentPage}
+                            totalPages={totalPages}
+                            query={{
+                                brand: typeof brand === "string" ? brand : undefined,
+                                category: typeof rawCategory === "string" ? rawCategory : undefined,
+                                skinType: typeof skinType === "string" ? skinType : undefined,
+                                sale: sale,
+                                sort: sort,
+                            }}
+                        />
+                    </>
                 )}
             </div>
         </div>

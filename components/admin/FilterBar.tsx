@@ -87,11 +87,6 @@ export default function FilterBar() {
                     />
                 </div>
             </div >
-            {/* <div className="w-full flex justify-center mb-4">
-                <Button onClick={handleSearch} className="mt-4">
-                    Search
-                </Button>
-            </div> */}
         </div>
     );
 }

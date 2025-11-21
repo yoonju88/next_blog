@@ -43,6 +43,14 @@ export async function GET(req: NextRequest) {
                 await consumeCouponServer(payment.couponCode)
             }
 
+            if (payment.status === 'paid') {
+                return NextResponse.json({
+                    success: true,
+                    message: 'Payment already verified',
+                    paymentStatus: session.payment_status
+                })
+            }
+
             // Payment 상태 업데이트
             await prisma.payment.update({
                 where: { stripeSessionId: sessionId },
@@ -55,12 +63,14 @@ export async function GET(req: NextRequest) {
                 data: { status: 'completed' }
             });
             // 유저 포인트 적립
-            const pointsToAdd = Math.floor(payment.amount / 100); // 
+            const pointsEarned = Math.max(0, payment.amount * 0.01);
+            const pointsSpent = payment.pointsUsed || 0;
+            const netPoints = Math.max(pointsEarned - pointsSpent, -pointsSpent);
             await prisma.user.update({
                 where: { id: payment.order.userId },
-                data: { points: { increment: pointsToAdd } }
+                data: { points: { increment: netPoints } }
             });
-
+            //console.log(`Updated points for user ${payment.order.userId}: +${pointsEarned} - ${pointsSpent}`)
             return NextResponse.json({
                 success: true,
                 message: 'Payment verified successfully',

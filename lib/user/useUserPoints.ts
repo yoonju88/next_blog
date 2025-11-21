@@ -1,10 +1,28 @@
 'use client'
 import { useState, useEffect } from "react"
 
-
 export function useUserPoints(userId?: string, refreshTrigger: number = 0) {
     const [points, setPoints] = useState<number>(0)
     const [loading, setLoading] = useState<boolean>(true)
+    const [eventTrigger, setEventTrigger] = useState(0)
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return
+
+        const handlePointsUpdated = (event: Event) => {
+            const customEvent = event as CustomEvent<{ userId?: string }>
+            const targetUserId = customEvent.detail?.userId
+
+            if (!targetUserId || targetUserId === userId) {
+                setEventTrigger(prev => prev + 1)
+            }
+        }
+
+        window.addEventListener('userPointsUpdated', handlePointsUpdated as EventListener)
+        return () => {
+            window.removeEventListener('userPointsUpdated', handlePointsUpdated as EventListener)
+        }
+    }, [userId])
 
     useEffect(() => {
         if (!userId) {
@@ -26,6 +44,6 @@ export function useUserPoints(userId?: string, refreshTrigger: number = 0) {
             }
         };
         fetchPoints()
-    }, [userId, refreshTrigger])
+    }, [userId, refreshTrigger, eventTrigger])
     return points
 }

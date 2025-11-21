@@ -59,12 +59,19 @@ export default function PaymentSuccessPage() {
                     const errorText = await cartClearRes.text();
                     console.error('Failed to clear cart:', errorText);
                 }
-                // 3. 포인트 갱신 성공 메시지
+                // 3. 다른 페이지에 포인트 갱신 알림
+                if (typeof window !== 'undefined') {
+                    window.dispatchEvent(new CustomEvent('userPointsUpdated', {
+                        detail: { userId: currentUser.uid }
+                    }))
+                }
+
+                // 4. 포인트 갱신 성공 메시지
                 toast.success('Payment completed! Points have been updated.', {
                     duration: 3000,
                     description: 'Check your account to see your new points balance.'
                 })
-                // 4. 3초 후 주문 내역 페이지로 이동
+                // 5. 3초 후 주문 내역 페이지로 이동
                 setTimeout(() => {
                     router.push('/account/orders')
                 }, 3000)

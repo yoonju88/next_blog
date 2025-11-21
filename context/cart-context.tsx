@@ -38,8 +38,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
                         const productsInDb = await fetch('/api/products', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ ids: productIds })
+                            body: JSON.stringify({ productIds })
                         }).then(res => res.json())
+
+                        if (!Array.isArray(productsInDb)) {
+                            console.warn("Invalid response from /api/products:", productsInDb)
+                            setCartItems([])
+                            return
+                        }
 
                         const productMap = new Map(productsInDb.map((p: any) => [p.id, p]))
 
@@ -53,7 +59,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
                                 return {
                                     ...item,
-                                    productId: (product as { id: string }).id, // 🔥 명시적으로 설정
+                                    productId: (product as { id: string }).id,
                                     id: (product as { id: string }).id,
                                     property: {
                                         ...item.property,
@@ -229,35 +235,3 @@ export function useCart() {
     }
     return context
 }
-/*
-export function useUserPoints(userId?: string) {
-    const [points, setPoints] = useState<number>(0)
-
-    useEffect(() => {
-        if (!userId) {
-            setPoints(0)
-            return
-        }
-
-        const fetchPoints = async () => {
-            try {
-                const userRef = doc(db, "users", userId)
-                const userSnap = await getDoc(userRef)
-
-                if (userSnap.exists()) {
-                    const data = userSnap.data()
-                    setPoints(typeof data.points === "number" ? data.points : 0)
-                } else {
-                    setPoints(0)
-                }
-            } catch (error) {
-                console.error("Error fetching user points:", error)
-                setPoints(0)
-            }
-        }
-
-        fetchPoints()
-    }, [userId])
-
-    return points
-}*/

@@ -14,34 +14,15 @@ export async function handleCheckout(
         if (!user) { throw new Error('You must log in before checkout.') }
 
         // Firebase 토큰 발급
-        const token = await user.getIdToken()
+        const token = await user?.getIdToken()
         //console.log(process.env.STRIPE_SECRET_KEY)
-
-        // ✅ 2. 서버에 보낼 데이터를 API 스키마에 맞게 최종적으로 매핑합니다.
-        // CartContext에서 오는 '평평한' 구조를 그대로 사용합니다.
-        const mappedCartItems = cartItems.map((item: any) => ({
-            productId: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            images: item.images || [], // images 배열도 포함
-        }));
-
-
-        // 3. 결제 요청 데이터 구성
-        const payload = {
-            firebaseToken: token,
-            cartItems: mappedCartItems,
-            couponCode: couponCode || null,
-            discount: discount || 0,
-            pointsUsed: pointsUsed || 0,
-        };
+        const body = { cartItems, couponCode, discount, pointsUsed, firebaseToken: token };
 
         // 서버로 결제 세션 생성 요청
         const res = await fetch("/api/payment", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
+            body: JSON.stringify(body),
         });
 
         // 응답이 HTML(리다이렉트/에러 페이지)일 수도 있으므로 content-type 확인

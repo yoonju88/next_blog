@@ -85,7 +85,7 @@ export default function AdminOrderList({ orders }: AdminOrderListProps) {
 
     if (orders.length === 0) {
         return (
-            <div className="bg-white rounded-lg shadow-md border border-gray-200 p-12 text-center" >
+            <div className="bg-background rounded-lg shadow-md border border-gray-200 p-12 text-center" >
                 <Package className="h-16 w-16 mx-auto mb-4 opacity-30 text-gray-400" />
                 <p className="text-lg text-gray-500" >
                     No orders found
@@ -102,7 +102,7 @@ export default function AdminOrderList({ orders }: AdminOrderListProps) {
                 {currentOrders.map(order => (
                     <div
                         key={order.id}
-                        className="hover:bg-gray-50 transition-colors"
+                        className="hover:bg-foreground/5 transition-colors"
                     >
                         <OrderHeader
                             order={order}

@@ -103,7 +103,7 @@ export default async function PropertyPage({ searchParams }: { searchParams: Pro
                         No products found...
                     </h2>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 space-y-24">
                         {filteredProperties.map((property) => (
                             <PropertyCard
                                 key={property.id}

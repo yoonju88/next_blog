@@ -70,25 +70,58 @@ export const getRecentProperties = async (): Promise<Property[]> => {
     return recentProperties;
 }
 
+export const addOrUpdateProperty = async (property: any) => {
+    const now = new Date(); // 현재 시각
+    const docRef = firestore.collection('properties').doc(property.id);
+
+    await docRef.set(
+        {
+            ...property,
+            updated: now, // 🔹 반드시 현재 시각으로 세팅
+            created: property.created || now,
+        },
+        { merge: true } // 기존 필드 유지
+    );
+};
+
 
 export const getOnSaleProperties = async (): Promise<Property[]> => {
-    const sanpshot = await firestore
+    const snapshot = await firestore
         .collection('properties')
-        .orderBy("onSale", "desc")
-        .limit(4)
+        .orderBy("updated", "desc")
+        .limit(20)
         .get()
 
-    const recentProperties = sanpshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-            id: doc.id,
-            ...data,
-            created: data.created?.toDate?.()?.toISOString() || new Date().toISOString(),
-            updated: data.updated?.toDate?.()?.toISOString() || new Date().toISOString(),
-            saleStartDate: data?.saleStartDate?.toDate?.()?.toISOString() || null,
-            saleEndDate: data?.saleEndDate?.toDate?.()?.toISOString() || null,
-        } as Property;
-    });
+    const now = new Date()
 
-    return recentProperties;
+    const activeSaleItems = snapshot.docs
+        .map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                ...data,
+                created: data.created?.toDate?.()?.toISOString() || new Date().toISOString(),
+                updated: data.updated?.toDate?.()?.toISOString() || new Date().toISOString(),
+                saleStartDate: data?.saleStartDate?.toDate?.()?.toISOString() || null,
+                saleEndDate: data?.saleEndDate?.toDate?.()?.toISOString() || null,
+            } as Property;
+        })
+        .filter(property => {
+            if (!property.onSale) {
+                return false
+            }
+            const startDate = property.saleStartDate ? new Date(property.saleStartDate) : null
+            const endDate = property.saleEndDate ? new Date(property.saleEndDate) : null
+            // 세일 기간 필터 유지
+            if (startDate && startDate > now) return false
+            if (endDate && endDate < now) return false
+            return true
+        })
+        .sort((a, b) => {
+            const aUpdated = a.updated ? new Date(a.updated).getTime() : 0
+            const bUpdated = b.updated ? new Date(b.updated).getTime() : 0
+            return bUpdated - aUpdated
+        })
+
+    return activeSaleItems;
 }

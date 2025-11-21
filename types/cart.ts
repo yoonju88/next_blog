@@ -2,8 +2,12 @@ import { Property } from './property'
 
 export type CartItem = {
     id: string;
-    property: Property
-    quantity: number
+    productId: string;
+    property: Property;
+    name: string;
+    price: number;
+    images?: string[];
+    quantity: number;
     createdAt?: string;
 }
 

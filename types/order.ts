@@ -6,7 +6,8 @@ export type OrderUser = {
     name: string | null;
     email: string;
     firebaseUID?: string;
-    address: Address;
+    address: Address | null;
+    points?: number;
 }
 
 export type Order = {

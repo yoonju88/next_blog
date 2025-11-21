@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from 'stripe'
-import { auth } from "@/firebase/server";
+import { auth, firestore } from "@/firebase/server";
+import { FieldValue } from "firebase-admin/firestore";
 
 
 // Ensure Node.js runtime (Prisma is not supported on the Edge runtime)
@@ -23,6 +24,7 @@ export async function POST(req: NextRequest) {
         // console.log("DEBUG 1: API Route Started.")
         //  1. 데이터 수신
         const { firebaseToken, cartItems, couponCode, discount, pointsUsed } = await req.json()
+
         //2. 인증 및 사용자 조회 → UID 추출
         //console.log("Received cartItems:", JSON.stringify(cartItems, null, 2));
         const decodedToken = await auth.verifyIdToken(firebaseToken)
@@ -54,10 +56,10 @@ export async function POST(req: NextRequest) {
         const finalAmount = Math.max(totalSubtotal - totalDiscountAmount, 0)
         //console.log("DEBUG 6: Total amount:", finalAmount);
         const productIds = cartItems
-            .map((item: any) => item.productId) // <-- (1) 오타 수정 (porductId -> productId)
-            .filter(Boolean);                   // <-- (2) 'undefined', 'null' 등 필터
+            .map((item: any) => item.productId)
+            .filter(Boolean);
 
-        // (3) 유효한 ID가 하나도 없는 경우
+        // 유효한 ID가 하나도 없는 경우
         if (productIds.length === 0) {
             return NextResponse.json(
                 { message: `Your cart contains no valid items.` },
@@ -185,6 +187,21 @@ export async function POST(req: NextRequest) {
             //console.log(JSON.stringify(cartItems))
             return createOrder
         })
+        try {
+            const batch = firestore.batch();
+            requestItems.forEach((item) => {
+                const docRef = firestore.collection('properties').doc(item.id);
+                batch.update(docRef, {
+                    stockQuantity: FieldValue.increment(-item.quantity),
+                    soldQuantity: FieldValue.increment(item.quantity),
+                    updated: new Date()
+                });
+            });
+            await batch.commit();
+        } catch (inventoryError) {
+            console.error("Failed to sync Firestore inventory:", inventoryError);
+        }
+
         return NextResponse.json({
             url: session.url,
             order // 트랜잭션에서 반환된 값

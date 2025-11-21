@@ -44,7 +44,7 @@ export async function getAllOrders(options: GetOrdersOptions = {}): Promise<GetO
         const ordersRaw = await prisma.order.findMany({
             where,
             include: {
-                user: { select: { name: true, email: true, firebaseUID: true } },
+                user: { select: { name: true, email: true, firebaseUID: true, points: true } },
                 payment: { select: { id: true, status: true, amount: true, provider: true, pointsUsed: true, couponCode: true, createdAt: true } },
                 items: { select: { id: true, productId: true, productName: true, price: true, quantity: true, imageUrl: true } },
             },
@@ -52,7 +52,7 @@ export async function getAllOrders(options: GetOrdersOptions = {}): Promise<GetO
         });
 
         const ordersPromises = ordersRaw.map(async (order) => {
-            const earnedPoints = order.payment ? Math.floor(order.payment.amount / 10) : 0;
+            const earnedPoints = order.payment ? Number((order.payment.amount * 0.01).toFixed(2)) : 0;
             let userAddress: Address | null = null;
             if (order.user.firebaseUID) {
                 try {
@@ -75,7 +75,8 @@ export async function getAllOrders(options: GetOrdersOptions = {}): Promise<GetO
                 payment: order.payment ? { ...order.payment, createdAt: order.payment.createdAt.toISOString() } : null,
                 user: {
                     ...order.user,
-                    address: userAddress // 👈 가져온 주소를 여기에 추가
+                    address: userAddress, // 👈 가져온 주소를 여기에 추가
+                    points: order.user.points ?? 0
                 }
             };
         });

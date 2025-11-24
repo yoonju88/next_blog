@@ -9,7 +9,7 @@ import { toast } from "sonner"
 import { doc, getDoc } from "firebase/firestore"
 import { db } from "@/firebase/client"
 import PickCalenderDate from '@/components/account/pickCalenderDate'
-import { useUserPoints } from "@/lib/user/useUserPoints"
+import { useUserPoints } from "@/hooks/useUserPoints"
 import { UserProfile } from "@/types/user"
 
 type FormData = Omit<UserProfile, 'preferences'>

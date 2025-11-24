@@ -11,7 +11,7 @@ import PointInput from "@/components/cart/PointInput";
 import SummaryPayment from "@/components/cart/SummaryPayment";
 import CheckoutButton from "./checkoutButton";
 import { toast } from "sonner"
-import { useUserPoints } from '@/lib/user/useUserPoints'
+import { useUserPoints } from '@/hooks/useUserPoints'
 
 export default function CheckoutPage() {
     const { user } = useAuth();

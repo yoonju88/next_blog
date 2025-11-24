@@ -78,10 +78,7 @@ await createOrder(orderData)
 | **Recherche/Filtre Produits** | Filtres par catégorie, recherche de produits | Firebase, filtre client |
 
 ### 💳 Système de Paiement
-
-```md
 ![Diagramme de Paiement](./docs/paymentdiagram.png) 
-```
 
 **Pourquoi Stripe ?**
 - 🌍 Solution de paiement standard internationale

@@ -43,7 +43,7 @@ Use the following information for Stripe test mode:
 
 ### **User Interface**
 
-![Home page](./docs/Home.png)  
+![Home page](./docs/home.png)  
 *Main home page*
 
 ![Product detail page](./docs/detail.png)  

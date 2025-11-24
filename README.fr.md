@@ -43,7 +43,7 @@ Utilisez les informations suivantes en mode test Stripe :
 
 ### **Interface Utilisateur**
 
-![Page d'accueil](./docs/Home.png)  
+![Page d'accueil](./docs/home.png)  
 *Page d’accueil principale*
 
 ![Page détail produit](./docs/detail.png)  

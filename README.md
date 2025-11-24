@@ -1,7 +1,7 @@
 <div align="right">
 
 🌐 **Languages**  
-[🇺🇸 English](./README.md) | [🇰🇷 한국어](./README.ko.md)
+[🇺🇸 English](./README.md) |[🇫🇷 Français](./README.fr.md)| [🇰🇷 한국어](./README.ko.md)
 
 </div>
 

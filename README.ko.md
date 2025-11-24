@@ -1,6 +1,69 @@
+<div align="right">
+
+🌐 **Languages**  
+[🇺🇸 English](./README.md) |[🇫🇷 Français](./README.fr.md)
+
+</div>
+
 # 🏪 Next.js E-Commerce Platform
 
 > 현대적인 풀스택 전자상거래 플랫폼 - Next.js 15, Firebase, Prisma를 활용한 실전 프로젝트
+
+---
+
+## 🌐 데모 사이트
+프로덕션 사이트: https://coscoree.vercel.app
+
+---
+
+## 🔐 테스트 계정
+
+### **관리자 계정**
+- **이메일:** hoyoonju2@gmail.com  
+- **비밀번호:** TestAdmin12*/
+
+### **일반 사용자 계정**
+- **이메일:** cosmk.ho@gmail.com  
+- **비밀번호:** TestUser88=*/  
+
+---
+
+## 💳 Stripe 테스트 결제 정보
+
+Stripe 테스트 모드에서는 아래 결제 정보를 사용하세요:
+
+- **카드 번호:** 4242 4242 4242 4242  
+- **만료일:** 미래 날짜 아무거나  
+- **CVC:** 아무 3자리 숫자  
+- **우편번호:** 아무 5자리 숫자  
+
+---
+
+## 📸 스크린샷
+
+### **사용자 화면**
+
+![홈 화면](./docs/Home.png)  
+*메인 홈 화면*
+
+![상품 상세 화면](./docs/detail.png)  
+*상품 상세 페이지*
+
+![장바구니](./docs/cart.png)  
+*장바구니 — 결제 전 실시간 가격 계산*
+
+---
+
+### **관리자 대시보드**
+
+![관리자 주문 리스트](./docs/admin-i.png)  
+*관리자 대시보드 — 주문 리스트 관리*
+
+![관리자 상품 관리](./docs/admin-p.png)  
+*관리자 대시보드 — 상품 관리*
+
+![관리자 배너 관리](./docs/admin-b.png)  
+*관리자 대시보드 — 배너 이미지 관리*
 
 ---
 

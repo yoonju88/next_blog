@@ -1,7 +1,7 @@
 <div align="right">
 
 🌐 **Languages**  
-[🇺🇸 English](./README.md) |[🇫🇷 Français](./README.fr.md)| [🇰🇷 한국어](./README.ko.md)
+[🇫🇷 Français](./README.fr.md)| [🇰🇷 한국어](./README.ko.md)
 
 </div>
 
@@ -10,6 +10,63 @@
 > A Modern Full-Stack E-Commerce Platform - Real-World Project with Next.js 15, Firebase, and Prisma
 
 ---
+
+## 🌐 Live Demo
+Production Site: https://coscoree.vercel.app
+
+---
+
+## 🔐 Test Accounts
+
+### **Admin Account**
+- **Email:** hoyoonju2@gmail.com  
+- **Password:** TestAdmin12*/
+
+### **Standard User Account**
+- **Email:** cosmk.ho@gmail.com  
+- **Password:** TestUser88=*/  
+
+---
+
+## 💳 Stripe Test Payment
+
+Use the following information for Stripe test mode:
+
+- **Card Number:** 4242 4242 4242 4242  
+- **Expiration Date:** Any future date  
+- **CVC:** Any 3 digits  
+- **Postal Code:** Any 5 digits  
+
+---
+
+## 📸 Screenshots
+
+### **User Interface**
+
+![Home page](./docs/Home.png)  
+*Main home page*
+
+![Product detail page](./docs/detail.png)  
+*Product detail page*
+
+![Cart](./docs/cart.png)  
+*Shopping cart — real-time price calculation before checkout*
+
+---
+
+### **Admin Dashboard**
+
+![Admin Order List](./docs/admin-i.png)  
+*Admin dashboard — Order list management*
+
+![Admin Product](./docs/admin-p.png)  
+*Admin dashboard — Product management*
+
+![Admin Banner](./docs/admin-b.png)  
+*Admin dashboard — Banner image management*
+
+---
+
 
 ## 📖 Project Overview
 

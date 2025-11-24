@@ -1,6 +1,69 @@
+<div align="right">
+
+🌐 **Languages**  
+[🇺🇸 English](./README.md) |[🇰🇷 한국어](./README.ko.md)
+
+</div>
+
 # 🏪 Plateforme E-Commerce Next.js
 
 > Une plateforme e-commerce full-stack moderne - Projet professionnel avec Next.js 15, Firebase et Prisma
+
+---
+
+## 🌐 Démo en ligne
+Site de production : https://coscoree.vercel.app
+
+---
+
+## 🔐 Comptes de test
+
+### **Compte Administrateur**
+- **Email :** hoyoonju2@gmail.com  
+- **Mot de passe :** TestAdmin12*/
+
+### **Compte Utilisateur Standard**
+- **Email :** cosmk.ho@gmail.com  
+- **Mot de passe :** TestUser88=*/  
+
+---
+
+## 💳 Paiement de test Stripe
+
+Utilisez les informations suivantes en mode test Stripe :
+
+- **Numéro de carte :** 4242 4242 4242 4242  
+- **Date d’expiration :** Toute date future  
+- **CVC :** N’importe quels 3 chiffres  
+- **Code postal :** N’importe quels 5 chiffres  
+
+---
+
+## 📸 Captures d’écran
+
+### **Interface Utilisateur**
+
+![Page d'accueil](./docs/Home.png)  
+*Page d’accueil principale*
+
+![Page détail produit](./docs/detail.png)  
+*Page de détail du produit*
+
+![Panier](./docs/cart.png)  
+*Panier — Calcul du prix en temps réel avant paiement*
+
+---
+
+### **Tableau de bord Administrateur**
+
+![Liste des commandes](./docs/admin-i.png)  
+*Dashboard admin — Gestion des commandes*
+
+![Gestion des produits](./docs/admin-p.png)  
+*Dashboard admin — Gestion des produits*
+
+![Gestion des bannières](./docs/admin-b.png)  
+*Dashboard admin — Gestion des images de bannière*
 
 ---
 

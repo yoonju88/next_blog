@@ -405,7 +405,8 @@ Copyright (c) 2025 TERRENOIRE HO Yoonju
 - [Documentation Prisma](https://www.prisma.io/docs)
 - [Documentation Stripe Checkout](https://stripe.com/docs/payments/checkout)
 - [Documentation Firebase](https://firebase.google.com/docs)
-
+- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
+- [shadcn/ui Documentation](https://ui.shadcn.com/)
 ---
 
 ## 📧 Contact

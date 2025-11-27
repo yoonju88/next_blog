@@ -149,18 +149,39 @@ export const getAllBanners = async (authToken: string) => {
     });
 };
 
+type StoredBannerImage = {
+    id?: string;
+    url?: string;
+    alt?: string;
+    path?: string;
+}
+
 export const getBannerById = async (bannerId: string): Promise<HomeBannerImage> => {
     const getDoc = firestore.collection("banners").doc(bannerId)
     const bannerIdSnapshot = await getDoc.get()
     if (!bannerIdSnapshot.exists) throw new Error("No banner")
 
-    const data = bannerIdSnapshot.data() as Omit<HomeBannerImage, "id">
+    const data = bannerIdSnapshot.data() ?? {}
+
+    const normalizeImages = (images: unknown): HomeBannerImage["webImages"] =>
+        Array.isArray(images)
+            ? images
+                .filter((image): image is StoredBannerImage => typeof image === "object" && image !== null)
+                .map((image, index) => ({
+                    id: image.id ?? `${bannerId}-image-${index}`,
+                    url: image.url ?? "",
+                    alt: image.alt,
+                    path: image.path,
+                }))
+                .filter((image) => Boolean(image.url))
+            : []
+
     return {
         id: bannerIdSnapshot.id,
-        url: data.url,
-        file: data.file,
-        webImages: Array.isArray(data.webImages) ? data.webImages : [],
-        mobileImages: Array.isArray(data.mobileImages) ? data.mobileImages : [],
+        webImages: normalizeImages(data.webImages),
+        mobileImages: normalizeImages(data.mobileImages),
+        created: data.created?.toMillis?.() ?? null,
+        updated: data.updated?.toMillis?.() ?? null,
     };
 }
 
@@ -200,4 +221,6 @@ export const deleteBannerImages = async (
         .collection('banners')
         .doc(bannerId)
         .delete()
+
+    return { success: true }
 }

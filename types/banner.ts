@@ -1,11 +1,14 @@
-type WebImages = { id: string; url: string }
-type MobileImages = { id: string; url: string }
-
+export type BannerImage = {
+    id: string;
+    url: string;
+    alt?: string;
+    path?: string;
+}
 
 export type HomeBannerImage = {
     id: string;
-    url: string;
-    file: string;
-    webImages?: WebImages[];
-    mobileImages?: MobileImages[];
+    webImages: BannerImage[];
+    mobileImages: BannerImage[];
+    created?: number | null;
+    updated?: number | null;
 }

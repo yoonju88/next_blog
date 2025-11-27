@@ -1,4 +1,3 @@
-
 "use client"
 import React from 'react'
 import { useForm } from "react-hook-form"
@@ -35,7 +34,7 @@ export default function BannerForm({
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmitAction)}>
-                <fieldset className="flex flex-col gap-6" disabled={form.formState.isSubmitting}>
+                <fieldset className="flex flex-col gap-6" >
                     <FormField
                         control={form.control}
                         name="webImages"
@@ -85,10 +84,11 @@ export default function BannerForm({
                     type="submit"
                     className="max-w-md mx-auto mt-4 w-full flex gap-2"
                     disabled={form.formState.isSubmitting}
+
                 >
                     {submitButtonLabel}
                 </Button>
             </form>
-        </Form>
+        </Form >
     )
 }

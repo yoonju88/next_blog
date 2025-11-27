@@ -9,7 +9,7 @@ import { storage } from '@/firebase/client';
 import { PlusCircleIcon } from "lucide-react";
 import { bannerImageSchema } from "@/validation/bannerSchema";
 import { createBanner, saveBannerImages } from "../action";
-import BannerForm from "../../../../components/home-banner/banner-form";
+import BannerForm from "@/components/home-banner/banner-form";
 
 export default function NewBannerForm() {
     const auth = useAuth();
@@ -17,7 +17,16 @@ export default function NewBannerForm() {
 
     const handleSubmit = async (data: z.infer<typeof bannerImageSchema>) => {
         const token = await auth?.user?.getIdToken()
-        if (!token) { return; }
+        if (!token) {
+            toast.error("Authentication failed");
+            return;
+        }
+
+        // ✅ 이미지 유효성 검증
+        if ((!data.webImages || data.webImages.length === 0) && (!data.mobileImages || data.mobileImages.length === 0)) {
+            toast.error("Please upload at least one image");
+            return;
+        }
 
         const uploadImage = async (
             image: z.infer<typeof bannerImageSchema>["webImages"][0] | z.infer<typeof bannerImageSchema>["mobileImages"][0],
@@ -58,7 +67,8 @@ export default function NewBannerForm() {
                 bannerId,
                 webImages: uploadedWebImages,
                 mobileImages: uploadedMobileImages
-            }, token
+            },
+            token
         )
         toast.success("Success! Banner images uploaded.")
         router.push('/admin-dashboard/banners')

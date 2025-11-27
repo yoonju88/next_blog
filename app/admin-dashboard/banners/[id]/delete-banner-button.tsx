@@ -18,6 +18,8 @@ import { storage } from '@/firebase/client';
 import { Button } from '@/components/ui/button';
 import { TrashIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { BannerImage } from '@/types/banner';
+import extractStoragePath from '@/lib/extractStoragePath';
 
 export default function DeleteBannerButton({
     bannerId,
@@ -27,8 +29,8 @@ export default function DeleteBannerButton({
 }: {
     bannerId: string;
     name: string;
-    webImages: string[];
-    mobileImages: string[];
+    webImages: BannerImage[];
+    mobileImages: BannerImage[];
 
 }) {
     const router = useRouter()
@@ -39,31 +41,31 @@ export default function DeleteBannerButton({
         const token = await auth?.user?.getIdToken()
         if (!token) { return }
         setIsDeleting(true)
-        const storageTasks: Promise<void>[] = [];
+        try {
+            const storageTasks: Promise<void>[] = [];
 
-        webImages.forEach((pathOrUrl) => {
-            storageTasks.push(deleteObject(ref(storage, pathOrUrl)));
-        });
-        mobileImages.forEach((pathOrUrl) => {
-            storageTasks.push(deleteObject(ref(storage, pathOrUrl)));
-        });
+            const enqueueDelete = (image: BannerImage) => {
+                const path = image.path ?? extractStoragePath(image.url);
+                if (!path) { return; }
+                storageTasks.push(deleteObject(ref(storage, path)));
+            }
 
-        // webImages.forEach(image => {
-        //     const path = typeof image === "string" ? image : image.path
-        //     storageTasks.push(deleteObject(ref(storage, path)))
-        // })
-        // mobileImages.forEach(image => {
-        //     const path = typeof image === "string" ? image : image.path
-        //     storageTasks.push(deleteObject(ref(storage, path)))
-        //})
+            webImages.forEach(enqueueDelete);
+            mobileImages.forEach(enqueueDelete);
 
-        await Promise.all(storageTasks)
-        await deleteBannerImages({ bannerId }, token)
-        setIsDeleting(false)
-        toast.success("Success", {
-            description: "All Banner images deleted successfully 👏🏼"
-        })
-        router.push('/admin-dashboard/banners/new-banner')
+            await Promise.all(storageTasks)
+            await deleteBannerImages({ bannerId }, token)
+            toast.success("Success", {
+                description: "All Banner images deleted successfully 👏🏼"
+            })
+            router.refresh() // ✅ 캐시 초기화
+            router.push('/admin-dashboard/banners')
+        } catch (error) {
+            console.error(error)
+            toast.error("Failed to delete banner images")
+        } finally {
+            setIsDeleting(false)
+        }
     }
 
     return (

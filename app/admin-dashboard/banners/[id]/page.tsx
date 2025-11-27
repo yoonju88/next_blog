@@ -19,8 +19,6 @@ export default async function EditBanners({
     //console.log("bannerdata?: ", bannersData)
     const webImages = bannersData.webImages ?? [];
     const mobileImages = bannersData.mobileImages ?? [];
-    const webImageUrls = (bannersData.webImages ?? []).map(img => img.url)
-    const mobileImageUrls = (bannersData.mobileImages ?? []).map(img => img.url)
     //console.log("webImages", webImages);
     //console.log("mobileImages", mobileImages);
 
@@ -30,8 +28,8 @@ export default async function EditBanners({
             <DeleteBannerButton
                 bannerId={bannersData.id}
                 name='Delete all images'
-                webImages={webImageUrls}
-                mobileImages={mobileImageUrls}
+                webImages={webImages}
+                mobileImages={mobileImages}
             />
             <BannersTab
                 webImages={webImages}

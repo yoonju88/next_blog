@@ -81,8 +81,8 @@ export default function BannerMultiImageUpload({
             <Button
                 type="button"
                 onClick={() => uploadInputRef?.current?.click()}
-                className="w-full"
-                variant="outline"
+                className="max-w-md mx-auto"
+                variant="default"
             >
                 {buttonName}
             </Button>

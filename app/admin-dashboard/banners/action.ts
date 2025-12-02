@@ -4,6 +4,7 @@ import { bannerImageSchema } from "@/validation/bannerSchema"
 import admin from "firebase-admin"
 import { z } from "zod"
 import type { HomeBannerImage } from "@/types/banner"
+import { revalidatePath } from 'next/cache'
 
 if (!admin.apps.length) {
     admin.initializeApp({
@@ -38,6 +39,9 @@ export const createBanner = async (
         created: new Date(),
         updated: new Date()
     })
+
+    revalidatePath('/admin/banners')
+    revalidatePath('/')
     return {
 
         bannerId: banner.id
@@ -83,6 +87,11 @@ export const saveBannerImages = async ({
         mobileImages,
         updated: new Date(),
     });
+
+    revalidatePath('/admin/banners')
+    revalidatePath('/')
+
+    return { success: true }
 }
 
 export const getWebBanners = async () => {
@@ -221,6 +230,9 @@ export const deleteBannerImages = async (
         .collection('banners')
         .doc(bannerId)
         .delete()
+
+    revalidatePath('/admin/banners')
+    revalidatePath('/', 'layout')
 
     return { success: true }
 }

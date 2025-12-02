@@ -89,16 +89,16 @@ export default function BannerMultiImageUpload({
             <DragDropContext onDragEnd={handleDragEnd}>
                 <Droppable
                     droppableId="property-images"
-                    direction="horizontal"
+                    direction="vertical"
                 >
                     {(provided) => (
                         <div
-                            {...provided.droppableProps}
+
                             ref={provided.innerRef}
                         >
                             {images.map((image, index) => {
                                 const formattedUrl = urlFormatterAction(image);
-                                //console.log("🔍 Formatted image URL:", formattedUrl); // ✅ 요기!
+                                //console.log("🔍 Formatted image URL:", formattedUrl);
                                 return (
                                     < Draggable
                                         key={image.id}
@@ -108,11 +108,11 @@ export default function BannerMultiImageUpload({
                                         {(provided) => (
                                             <div
                                                 {...provided.draggableProps}
-                                                {...provided.dragHandleProps}
+
                                                 ref={provided.innerRef}
                                                 className="relative p-2"
                                             >
-                                                <div className="bg-gray-100  rounded-lg flex items-center overflow-hidden gap-4 mt-6">
+                                                <div className="relative flex flex-col overflow-hidden mt-6">
                                                     <div className={`${displayWidth} relative`}>
                                                         <Image
                                                             src={formattedUrl}
@@ -121,9 +121,23 @@ export default function BannerMultiImageUpload({
                                                             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                                             className='object-cover'
                                                         />
+                                                        <div className="flex items-center gap-2 absolute top-4 right-4">
+                                                            <button
+
+                                                                className="text-orange-500 hover:scale-105 transition-all duration-300"
+                                                                onClick={() => handleDelete(image.id)}>
+                                                                <XIcon />
+                                                            </button>
+                                                            <div
+                                                                {...provided.dragHandleProps}
+                                                                className="text-blue-400 hover:scale-105 transition-all duration-300"
+                                                            >
+                                                                <MoveIcon />
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div className="flex gap-2 absolute bottom-6 left-10">
-                                                        <p className="text-sm text-primary font-semibold">
+                                                    <div className="flex gap-2 items-center mt-4 ml-4">
+                                                        <p className="text-sm text-primary font-semibold whitespace-nowrap">
                                                             Image {index + 1}
                                                         </p>
                                                         {index === 0 &&
@@ -136,19 +150,10 @@ export default function BannerMultiImageUpload({
                                                             placeholder="Enter alt text..."
                                                             value={image.alt || ""}
                                                             onChange={(e) => handleAltChange(image.id, e.target.value)}
-                                                            className="w-full"
+                                                            onMouseDown={(e) => e.stopPropagation()} // 🔥 드래그 막기
+                                                            onTouchStart={(e) => e.stopPropagation()} // 🔥 터치 드래그 막기
+                                                            className="w-[300px] bg-gray-100"
                                                         />
-                                                    </div>
-                                                    <div className="flex items-center gap-2 absolute top-14 right-8">
-                                                        <button
-
-                                                            className="text-orange-500 hover:scale-105 transition-all duration-300"
-                                                            onClick={() => handleDelete(image.id)}>
-                                                            <XIcon />
-                                                        </button>
-                                                        <div className="text-blue-400 hover:scale-105 transition-all duration-300">
-                                                            <MoveIcon />
-                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

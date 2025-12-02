@@ -9,6 +9,7 @@ import BannerMultiImageUpload from '@/components/home-banner/Banner-multi-upload
 import { bannerImageSchema } from '@/validation/bannerSchema'
 import { ImageUpload } from '@/types/image'
 import imageDisplayUrlFormatter from "@/lib/imageDisplayUrlFormatter";
+import { Separator } from '../ui/separator'
 
 type Props = {
     submitButtonLabel: React.ReactNode;
@@ -34,7 +35,7 @@ export default function BannerForm({
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(handleSubmitAction)}>
-                <fieldset className="flex flex-col gap-6" >
+                <fieldset className="flex flex-col gap-10" >
                     <FormField
                         control={form.control}
                         name="webImages"
@@ -57,6 +58,7 @@ export default function BannerForm({
                             </FormItem>
                         )}
                     />
+                    <Separator />
                     <FormField
                         control={form.control}
                         name="mobileImages"

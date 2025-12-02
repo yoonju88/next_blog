@@ -5,6 +5,7 @@ import admin from "firebase-admin"
 import { z } from "zod"
 import type { HomeBannerImage } from "@/types/banner"
 import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
 
 if (!admin.apps.length) {
     admin.initializeApp({
@@ -40,8 +41,8 @@ export const createBanner = async (
         updated: new Date()
     })
 
-    revalidatePath('/admin/banners')
-    revalidatePath('/')
+    revalidatePath('/admin-dashboard/banners')
+    redirect('/admin-dashboard/banners')
     return {
 
         bannerId: banner.id
@@ -231,8 +232,8 @@ export const deleteBannerImages = async (
         .doc(bannerId)
         .delete()
 
-    revalidatePath('/admin/banners')
-    revalidatePath('/', 'layout')
+    revalidatePath('/admin-dashboard/banners/')
+    redirect('/admin-dashboard/banners')
 
     return { success: true }
 }

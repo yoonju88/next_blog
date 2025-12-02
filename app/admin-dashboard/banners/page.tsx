@@ -5,6 +5,8 @@ import { Edit2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic'
+
 export default async function BannerPage() {
     const webImages = await getWebBanners();
     const mobileImages = await getMobileBanners();

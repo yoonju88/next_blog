@@ -5,6 +5,8 @@ import BannersTab from './bannersTab';
 
 type RouteParams = { id: string | string[] }
 
+export const dynamic = 'force-dynamic'
+
 export default async function EditBanners({
     params,
 }: {
@@ -19,8 +21,6 @@ export default async function EditBanners({
     //console.log("bannerdata?: ", bannersData)
     const webImages = bannersData.webImages ?? [];
     const mobileImages = bannersData.mobileImages ?? [];
-    //console.log("webImages", webImages);
-    //console.log("mobileImages", mobileImages);
 
     return (
         <>

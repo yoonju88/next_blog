@@ -12,10 +12,10 @@ export default async function BannerPage() {
     const mobileImages = await getMobileBanners();
 
     const allWebImages: string[] = (webImages ?? []).flatMap((b) =>
-        (b.images ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
+        (b.webImages ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
     );
     const allMobileImages: string[] = (mobileImages ?? []).flatMap((b) =>
-        (b.images ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
+        (b.mobileImages ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
     );
 
     const BannerId = webImages[0]?.id;
@@ -26,10 +26,10 @@ export default async function BannerPage() {
             <h1> Banner Images</h1>
             <div className="mt-10">
                 {webImages.length === 0 && mobileImages.length === 0 ? (
-                    <Button>
+                    <Button variant='default'>
                         <Link
                             href={`/admin-dashboard/banners/new-banner`}
-                            className='flex gap-2'
+                            className='flex gap-2 text-gray-800'
                         >
                             <Edit2 /> Add New Banner Images
                         </Link>

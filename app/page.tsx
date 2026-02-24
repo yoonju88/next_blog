@@ -13,10 +13,10 @@ export default async function Home() {
   const saleItems = await getOnSaleProperties()
 
   const allWebImages: string[] = (webImages ?? []).flatMap((b) =>
-    (b.images ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
+    (b.webImages ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
   );
   const allMobileImages: string[] = (mobileImages ?? []).flatMap((b) =>
-    (b.images ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
+    (b.mobileImages ?? []).map((img: any) => (typeof img === "string" ? img : img?.url)).filter(Boolean)
   );
 
   return (

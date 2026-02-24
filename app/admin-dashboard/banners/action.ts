@@ -41,8 +41,6 @@ export const createBanner = async (
         updated: new Date()
     })
 
-    revalidatePath('/admin-dashboard/banners')
-    redirect('/admin-dashboard/banners')
     return {
 
         bannerId: banner.id
@@ -88,6 +86,11 @@ export const saveBannerImages = async ({
         mobileImages,
         updated: new Date(),
     });
+    console.log("🔥 저장 들어온 값:", {
+        bannerId,
+        webImages,
+        mobileImages
+    })
 
     revalidatePath('/admin/banners')
     revalidatePath('/')
@@ -106,7 +109,7 @@ export const getWebBanners = async () => {
         const data = doc.data()
         return {
             id: doc.id,
-            images: data.webImages || [],
+            webImages: data.webImages || [],
             created: data.created?.toMillis() ?? null,
             updated: data.updated?.toMillis() ?? null
         }
@@ -125,7 +128,7 @@ export const getMobileBanners = async () => {
         const data = doc.data()
         return {
             id: doc.id,
-            images: data.mobileImages || [],
+            mobileImages: data.mobileImages || [],
             created: data.created?.toMillis() ?? null,
             updated: data.updated?.toMillis() ?? null
         }

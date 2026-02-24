@@ -86,42 +86,29 @@ export const addOrUpdateProperty = async (property: any) => {
 
 
 export const getOnSaleProperties = async (): Promise<Property[]> => {
-    const snapshot = await firestore
-        .collection('properties')
-        .orderBy("updated", "desc")
-        .limit(20)
-        .get()
 
     const now = new Date()
 
-    const activeSaleItems = snapshot.docs
-        .map(doc => {
-            const data = doc.data();
-            return {
-                id: doc.id,
-                ...data,
-                created: data.created?.toDate?.()?.toISOString() || new Date().toISOString(),
-                updated: data.updated?.toDate?.()?.toISOString() || new Date().toISOString(),
-                saleStartDate: data?.saleStartDate?.toDate?.()?.toISOString() || null,
-                saleEndDate: data?.saleEndDate?.toDate?.()?.toISOString() || null,
-            } as Property;
-        })
-        .filter(property => {
-            if (!property.onSale) {
-                return false
-            }
-            const startDate = property.saleStartDate ? new Date(property.saleStartDate) : null
-            const endDate = property.saleEndDate ? new Date(property.saleEndDate) : null
-            // 세일 기간 필터 유지
-            if (startDate && startDate > now) return false
-            if (endDate && endDate < now) return false
-            return true
-        })
-        .sort((a, b) => {
-            const aUpdated = a.updated ? new Date(a.updated).getTime() : 0
-            const bUpdated = b.updated ? new Date(b.updated).getTime() : 0
-            return bUpdated - aUpdated
-        })
+    const snapshot = await firestore
+        .collection('properties')
+        .where('onSale', '==', true)
+        .where('saleStartDate', '<=', now)
+        .where('saleEndDate', '>=', now)
+        .orderBy('updated', 'desc')
+        .limit(30)
+        .get()
+
+    const activeSaleItems: Property[] = snapshot.docs.map((doc) => {
+        const data = doc.data()
+        return {
+            id: doc.id,
+            ...data,
+            created: data.created?.toDate?.()?.toISOString() ?? null,
+            updated: data.updated?.toDate?.()?.toISOString() ?? null,
+            saleStartDate: data.saleStartDate?.toDate?.()?.toISOString() ?? null,
+            saleEndDate: data.saleEndDate?.toDate?.()?.toISOString() ?? null,
+        } as Property
+    })
 
     return activeSaleItems;
 }

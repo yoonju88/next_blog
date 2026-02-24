@@ -28,7 +28,7 @@ export default function SlideImages({
                                     alt={`Image ${index + 1}`}
                                     fill
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                    className="object-cover object-center rounded group-hover:scale-105 transition-all duration-300"
+                                    className="object-contain object-center rounded group-hover:scale-105 transition-all duration-300"
                                 />
                             </div>
                         </CarouselItem>

@@ -12,9 +12,7 @@ interface itemsProps {
 }
 
 export default function ItemSection({ data, title, link }: itemsProps) {
-    if (!data) {
-        return null
-    }
+    if (!data?.length) return null
     const hoverEffect = "transition-all duration-300"
 
     return (
